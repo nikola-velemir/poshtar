@@ -112,9 +112,13 @@ public class GetUserHandler implements RequestHandler<GetUserQuery, UserDto> {
 ```
  
 Internally, PoshtaR:
+
 	- Resolves the correct handler (via reflection or adapter)
+	
 	- Executes the configured pipeline behaviors
+	
 	- Invokes the handler
+	
 	- Returns the result
 
 ### **Notifications**/Events
