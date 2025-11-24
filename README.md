@@ -109,9 +109,9 @@ public class GetUserHandler implements RequestHandler<GetUserQuery, UserDto> {
 	
 	UserDto user = mediator.send(new GetUserQuery("123"));
 	
-	```
+```
  
- Internally, PoshtaR:
+Internally, PoshtaR:
 	- Resolves the correct handler (via reflection or adapter)
 	- Executes the configured pipeline behaviors
 	- Invokes the handler
