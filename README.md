@@ -113,13 +113,10 @@ public class GetUserHandler implements RequestHandler<GetUserQuery, UserDto> {
  
 Internally, PoshtaR:
 
-	- Resolves the correct handler (via reflection or adapter)
-	
-	- Executes the configured pipeline behaviors
-	
-	- Invokes the handler
-	
-	- Returns the result
+- Resolves the correct handler (via reflection or adapter)
+- Executes the configured pipeline behaviors
+- Invokes the handler
+- Returns the result
 
 ### **Notifications**/Events
 
@@ -155,7 +152,7 @@ mediator.publish(new UserCreatedNotification("123"));
 All handlers registered for `UserCreatedNotification` will be invoked automatically.
 
 ---
-### **Pipeline Behaviors (Chain of Responsibility)**
+### **Pipeline Behaviors**
 
 Pipeline behavior represents a piece of logic that is executed before or after a request is handled. In other words, behaviors wrap around handler execution. **Pipelines are related only to request handling, not notifications**. These behaviors can be used for logging, validation, authorization and authentication, etc. 
 
