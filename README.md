@@ -193,8 +193,6 @@ To integrate with different environments, PoshtaR uses adapters:
 	Uses reflection or Spring `ApplicationContext` to discover handlers.
 - **Google Guice**
 	Uses the `ServiceFactory` interface.
-- **Manual Dependency Injection**
-	Uses reflection to discover correct handlers
 
 ---
 
