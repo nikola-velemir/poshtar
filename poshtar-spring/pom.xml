@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <parent>
@@ -21,31 +21,23 @@
     </parent>
 
     <dependencies>
-
-            <dependency>
-                <groupId>org.example</groupId>
-                <artifactId>poshtar-core</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-        <!-- Spring DI container -->
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>poshtar-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.2.7</version>
-        </dependency>
-
-        <!-- Required so Spring can read parameter types, generics, etc. -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>6.2.10</version>
-        </dependency>
-
-        <!-- Optional but VERY helpful for scanning -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>6.2.11</version>
         </dependency>
     </dependencies>
 
