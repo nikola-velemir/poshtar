@@ -207,13 +207,13 @@ The library will be available on **Maven Central**. PoshtaR's users will be able
 
 Example:
 
-groupId: io.github.velimir  
+groupId: io.github.velemir  
 artifactId: poshtar-core  
 version: 1.0.0
 
 ```xml
 <dependency>
-    <groupId>io.github.velimir</groupId>
+    <groupId>io.github.velemir</groupId>
     <artifactId>poshtar-core</artifactId>
     <version>1.0.0</version>
 </dependency>
