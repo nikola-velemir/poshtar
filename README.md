@@ -7,7 +7,6 @@ Inspired by the popular `.NET MediatR` library, PoshtaR provides a simple way to
 PoshtaR itself is designed to work with **different DI frameworks**:
 - Spring
 - Guice
-- Plain Java (manual DI/Reflection based)
 
 In `.NET` ecosystem, `MediatR` library is widely adopted, and today is considered a de-facto standard when building a large enterprise application. 
 
@@ -194,8 +193,6 @@ To integrate with different environments, PoshtaR uses adapters:
 	Uses reflection or Spring `ApplicationContext` to discover handlers.
 - **Google Guice**
 	Uses the `ServiceFactory` interface.
-- **Manual Dependency Injection**
-	Uses reflection to discover correct handlers
 
 ---
 
