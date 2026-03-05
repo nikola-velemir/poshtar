@@ -1,4 +1,4 @@
-# Poshtar - DI agnostic Mediator & Pipeline library
+# PoshtaR - DI agnostic Mediator & Pipeline library
 
 PoshtaR is a dependency-injection-agnostic implementation of the
 **Mediator pattern** for Java.  
