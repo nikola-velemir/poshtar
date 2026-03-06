@@ -37,6 +37,17 @@ PoshtaR aims to solve this by introducing:
 - Optional annotation-based or compile-time handler discovery
 - Compile-time type safety
 
+## Architectural Impact & Clean Code
+PoshtaR aims to shift how Java applications are structured, strongly enforcing SOLID principles and enabling modern architectural patterns:
+
+- Single Responsibility Principle (SRP): Traditional Java codebases often suffer from the "Fat Service" anti-pattern, where a single service class handles dozens of unrelated operations. PoshtaR replaces this by ensuring every use case has exactly one dedicated Handler. Each class has only one reason to change, improving maintainability.
+
+- Open/Closed Principle (OCP): Through Pipeline Behaviors, cross-cutting concerns (such as logging, performance metrics, or transaction management) can be introduced globally without modifying a single line of existing handler logic. The system is open for extension but closed for modification.
+
+- Dependency Inversion (DIP): Presentation layers (e.g., REST Controllers) no longer depend on concrete business services. They depend only on the Mediator abstraction. This achieves decoupling between the web layer and business logic.
+
+- Vertical Slice Architecture & CQRS: PoshtaR naturally pushes developers away from N-Tier (layered) architectures toward feature-based organization. Commands, Queries, and their respective Handlers can be grouped by feature (Vertical Slices), reducing cognitive load and avoiding the effects common in horizontally layered systems.
+
 ## Core concepts
 
 ### Request/response pattern
