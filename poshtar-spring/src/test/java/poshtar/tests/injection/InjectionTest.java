@@ -1,16 +1,13 @@
 package poshtar.tests.injection;
 
-import adapter.PoshtarSpringAutoConfiguration;
 import org.example.core.mediator.IMediator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import poshtar.tests.TestApplication;
-import poshtar.tests.ping.PingRequest;
-import poshtar.tests.ping.PingRequestHandler;
 
-@SpringBootTest(classes = {TestApplication.class, PoshtarSpringAutoConfiguration.class})
+@SpringBootTest(classes = {TestApplication.class})
 class InjectionTest {
     @Autowired
     private IMediator mediator; // Sada bi trebalo da pozeleni
