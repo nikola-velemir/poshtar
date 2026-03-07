@@ -1,6 +1,5 @@
-package poshtar.tests.ping;
+package poshtar.tests.request.ping;
 
-import adapter.PoshtarSpringAutoConfiguration;
 import org.example.core.mediator.IMediator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

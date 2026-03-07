@@ -1,4 +1,4 @@
-package poshtar.tests.ping;
+package poshtar.tests.request.ping;
 
 import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;

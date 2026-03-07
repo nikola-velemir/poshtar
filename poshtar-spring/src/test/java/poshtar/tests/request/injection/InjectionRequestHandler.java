@@ -1,4 +1,4 @@
-package poshtar.tests.injection;
+package poshtar.tests.request.injection;
 
 import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;

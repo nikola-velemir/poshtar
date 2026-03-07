@@ -1,4 +1,4 @@
-package poshtar.tests.injection;
+package poshtar.tests.request.injection;
 
 import org.springframework.stereotype.Service;
 
