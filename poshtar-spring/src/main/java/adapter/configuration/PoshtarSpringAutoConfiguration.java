@@ -1,7 +1,6 @@
 package adapter.configuration;
 
 
-import adapter.registrar.PoshtarSpringRegistrar;
 import adapter.registry.SpringHandlerRegistry;
 import adapter.registry.SpringNotificationRegistry;
 import org.example.core.mediator.IMediator;
@@ -12,10 +11,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(PoshtarSpringRegistrar.class)
 public class PoshtarSpringAutoConfiguration {
     private final ApplicationContext context;
 

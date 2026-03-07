@@ -14,7 +14,9 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ClassUtils;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
@@ -27,22 +29,29 @@ public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+
+        buildFilters(scanner);
+
+        Map<String, Object> attrs = importingClassMetadata.getAnnotationAttributes(EnablePoshtar.class.getName());
+        String[] packages = (attrs != null && ((String[]) attrs.get("basePackages")).length > 0)
+                ? (String[]) attrs.get("basePackages")
+                : new String[]{ ClassUtils.getPackageName(importingClassMetadata.getClassName()) };
+
+        for (String basePackage : packages) {
+            for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
+                GenericBeanDefinition beanDef = new GenericBeanDefinition();
+                beanDef.setBeanClassName(bd.getBeanClassName());
+                beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
+                registry.registerBeanDefinition(Objects.requireNonNull(bd.getBeanClassName()), beanDef);
+            }
+        }
+
+    }
+
+    private static void buildFilters(ClassPathScanningCandidateComponentProvider scanner) {
         scanner.addIncludeFilter(new AnnotationTypeFilter(RequestHandler.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(NotificationHandler.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(PipelineBehaviour.class));
-        String basePackage = findBasePackage(registry);
-
-        if (basePackage == null) {
-            throw new IllegalStateException("Nije pronađena klasa sa @EnablePoshtar anotacijom!");
-        }
-
-        for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
-            GenericBeanDefinition beanDef = new GenericBeanDefinition();
-            beanDef.setBeanClassName(bd.getBeanClassName());
-            beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
-            registry.registerBeanDefinition(Objects.requireNonNull(bd.getBeanClassName()), beanDef);
-        }
-
     }
 
     @Nullable
