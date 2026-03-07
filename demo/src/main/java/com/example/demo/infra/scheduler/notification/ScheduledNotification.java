@@ -1,4 +1,6 @@
 package com.example.demo.infra.scheduler.notification;
 
-public record ScheduledNotification() {
+import org.example.core.notification.INotification;
+
+public record ScheduledNotification() implements INotification {
 }

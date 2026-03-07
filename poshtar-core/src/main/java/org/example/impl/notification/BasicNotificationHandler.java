@@ -7,8 +7,7 @@ import org.example.core.annotations.NotificationHandler;
 @NotificationHandler
 public class BasicNotificationHandler implements INotificationHandler<BasicNotification> {
     @Override
-    public Unit handle(BasicNotification notification) {
+    public void handle(BasicNotification notification) {
         System.out.println("Notification handler basic received notification: " + notification);
-            return Unit.Value;
     }
 }

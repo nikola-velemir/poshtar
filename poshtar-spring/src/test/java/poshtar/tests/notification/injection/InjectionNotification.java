@@ -1,4 +1,7 @@
 package poshtar.tests.notification.injection;
 
-public class InjectionNotification {
+import org.example.core.notification.INotification;
+
+public class InjectionNotification implements INotification {
+    public int value = 0;
 }

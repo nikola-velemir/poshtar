@@ -1,10 +1,10 @@
-package adapter;
+package adapter.registry;
 
 import org.example.core.notification.INotification;
 import org.example.core.notification.handler.INotificationHandler;
 import org.example.core.notification.registry.INotificationRegistry;
+import org.example.core.request.handler.IRequestHandler;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.ResolvableType;
 
 import java.util.ArrayList;
@@ -49,6 +49,8 @@ public class SpringNotificationRegistry implements INotificationRegistry {
 
     @Override
     public <TNotification extends INotification> List<INotificationHandler> resolve(Class<TNotification> aClass) {
-        return List.of();
-    }
+        List<String> beanNames = handlerMap.getOrDefault(aClass, List.of());
+        return beanNames.stream()
+                .map(name -> context.getBean(name, INotificationHandler.class))
+                .toList();    }
 }

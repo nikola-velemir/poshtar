@@ -4,7 +4,7 @@ import org.example.core.mediator.IMediator;
 import org.example.core.pipeline.IPipelineRegistry;
 import org.example.core.pipeline.behaviour.IPipelineBehaviour;
 import org.example.core.pipeline.delegate.RequestDelegate;
-import org.example.core.request.registry.IHandlerRegistry;
+import org.example.core.request.registry.IRequestRegistry;
 import org.example.core.notification.registry.INotificationRegistry;
 import org.example.core.notification.INotification;
 import org.example.core.request.IRequest;
@@ -13,15 +13,16 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class Mediator implements IMediator {
-    private final IHandlerRegistry requestRegistry;
+    private final IRequestRegistry requestRegistry;
     private final INotificationRegistry notificationRegistry;
     private final IPipelineRegistry pipelineRegistry;
 
-    public Mediator(IHandlerRegistry registry, INotificationRegistry notificationRegistry,IPipelineRegistry pipelineRegistry) {
+    public Mediator(IRequestRegistry registry, INotificationRegistry notificationRegistry, IPipelineRegistry pipelineRegistry) {
         this.requestRegistry = registry;
         this.notificationRegistry = notificationRegistry;
         this.pipelineRegistry = pipelineRegistry;
     }
+    @SuppressWarnings("unchecked")
     @Override
     public <TRequest extends IRequest<TResponse>, TResponse> TResponse send(TRequest tRequest) {
 
@@ -47,11 +48,14 @@ public class Mediator implements IMediator {
         }
         return next.handle();
     }
+    @SuppressWarnings("unchecked")
     @Override
     public <TNotification extends INotification> void publish(TNotification notification) {
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
-        for(var handler: handlers) {
-            handler.handle(notification);
+        if (handlers != null) {
+            for(var handler : handlers) {
+                handler.handle(notification);
+            }
         }
     }
 }

@@ -1,4 +1,13 @@
 package poshtar.tests.notification.ping;
 
-public class PingSecondHandler {
+import org.example.core.annotations.NotificationHandler;
+import org.example.core.notification.handler.INotificationHandler;
+import org.example.core.types.Unit;
+
+@NotificationHandler
+public class PingSecondHandler implements INotificationHandler<PingNotification> {
+    @Override
+    public void handle(PingNotification pingNotification) {
+        pingNotification.payload += 1;
+    }
 }

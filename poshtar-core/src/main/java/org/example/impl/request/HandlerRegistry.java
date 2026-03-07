@@ -1,13 +1,13 @@
 package org.example.impl.request;
 
 import org.example.core.request.handler.IRequestHandler;
-import org.example.core.request.registry.IHandlerRegistry;
+import org.example.core.request.registry.IRequestRegistry;
 import org.example.core.request.IRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class HandlerRegistry implements IHandlerRegistry {
+public class HandlerRegistry implements IRequestRegistry {
     private final Map<Class<?>, IRequestHandler> handlers = new HashMap<>();
 
     public <TRequest extends IRequest<TResponse>,TResponse> void register(Class<TRequest> requestClass,IRequestHandler<TRequest,TResponse> requestHandler) {

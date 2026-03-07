@@ -1,8 +1,8 @@
-package adapter;
+package adapter.registry;
 
 import org.example.core.request.IRequest;
 import org.example.core.request.handler.IRequestHandler;
-import org.example.core.request.registry.IHandlerRegistry;
+import org.example.core.request.registry.IRequestRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SpringHandlerRegistry implements IHandlerRegistry {
+public class SpringHandlerRegistry implements IRequestRegistry {
     private final ApplicationContext context;
     private final Map<Class<?>,String> handlerBeans = new HashMap<>();
 
