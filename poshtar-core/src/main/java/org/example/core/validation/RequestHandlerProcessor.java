@@ -23,12 +23,10 @@ public class RequestHandlerProcessor extends AbstractProcessor {
 
             TypeElement handlerClass = (TypeElement) element;
 
-            // Find the generic type argument of IRequestHandler<TRequest, TResponse>
             TypeMirror requestType = null;
             for (TypeMirror iface : handlerClass.getInterfaces()) {
                 String ifaceStr = iface.toString();
                 if (ifaceStr.startsWith("org.example.types.requestHandler.IRequestHandler<")) {
-                    // Extract TRequest from the generic interface
                     String inside = ifaceStr.substring(ifaceStr.indexOf("<") + 1, ifaceStr.lastIndexOf(","));
                     requestType = processingEnv.getElementUtils()
                             .getTypeElement(inside).asType();
@@ -54,6 +52,6 @@ public class RequestHandlerProcessor extends AbstractProcessor {
             }
         }
 
-        return true; // annotations claimed
+        return true;
     }
 }

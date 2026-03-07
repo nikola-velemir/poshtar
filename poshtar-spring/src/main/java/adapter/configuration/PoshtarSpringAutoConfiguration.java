@@ -1,4 +1,4 @@
-package adapter;
+package adapter.configuration;
 
 
 import adapter.registrar.PoshtarSpringRegistrar;
@@ -6,10 +6,8 @@ import adapter.registry.SpringHandlerRegistry;
 import adapter.registry.SpringNotificationRegistry;
 import org.example.core.mediator.IMediator;
 import org.example.core.notification.registry.INotificationRegistry;
-import org.example.core.pipeline.IPipelineRegistry;
 import org.example.core.request.registry.IRequestRegistry;
 import org.example.impl.Mediator;
-import org.example.impl.pipeline.PipelineRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,15 +34,10 @@ public class PoshtarSpringAutoConfiguration {
     public INotificationRegistry notificationRegistry(){
         return new SpringNotificationRegistry(context);
     }
+
     @Bean
     @ConditionalOnMissingBean
-    public IPipelineRegistry pipelineRegistry() {
-        // Skenira sve IPipelineBehaviour bean-ove u sistemu
-        return new PipelineRegistry();
-    }
-    @Bean
-    @ConditionalOnMissingBean
-    public IMediator mediator(IRequestRegistry handlerRegistry,INotificationRegistry notificationRegistry, IPipelineRegistry pipelineRegistry){
-        return new Mediator(handlerRegistry, notificationRegistry, pipelineRegistry);
+    public IMediator mediator(IRequestRegistry handlerRegistry,INotificationRegistry notificationRegistry){
+        return new Mediator(handlerRegistry, notificationRegistry);
     }
 }

@@ -1,13 +1,12 @@
 package poshtar.tests.notification.ping;
 
+import adapter.EnablePoshtar;
 import org.example.core.mediator.IMediator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import poshtar.tests.TestApplication;
-import poshtar.tests.request.ping.PingRequest;
-import poshtar.tests.request.ping.PingRequestHandler;
 
 @SpringBootTest(classes = {TestApplication.class})
 public class PingIntegrationTest {

@@ -1,5 +1,6 @@
 package poshtar.tests.notification.injection;
 
+import adapter.EnablePoshtar;
 import org.example.core.mediator.IMediator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

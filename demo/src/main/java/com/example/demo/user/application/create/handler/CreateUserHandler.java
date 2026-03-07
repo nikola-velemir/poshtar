@@ -3,10 +3,11 @@ package com.example.demo.user.application.create.handler;
 import com.example.demo.user.application.create.command.CreateUserCommand;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -20,7 +21,7 @@ public class CreateUserHandler implements IRequestHandler<CreateUserCommand, Voi
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public Void handle(CreateUserCommand createUserCommand) {
         String name = createUserCommand.name();
         User user = new User(name);
