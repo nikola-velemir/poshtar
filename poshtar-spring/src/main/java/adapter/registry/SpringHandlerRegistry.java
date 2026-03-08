@@ -15,13 +15,12 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.*;
 
 
-public class SpringHandlerRegistry implements IRequestRegistry {
+public class SpringHandlerRegistry implements IRequestRegistry, ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final Map<Class<?>, RequestChain<?, ?>> handlerBeans = new HashMap<>();
 
     public SpringHandlerRegistry(ApplicationContext context) {
         this.context = context;
-        init(context);
     }
 
     @SuppressWarnings("unchecked")
@@ -99,4 +98,10 @@ public class SpringHandlerRegistry implements IRequestRegistry {
         return beanName;
     }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext() == context) {
+            init(context);
+        }
+    }
 }

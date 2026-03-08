@@ -5,6 +5,8 @@ import org.example.core.notification.handler.INotificationHandler;
 import org.example.core.notification.registry.INotificationRegistry;
 import org.example.core.request.handler.IRequestHandler;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
 
 import java.util.ArrayList;
@@ -12,20 +14,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SpringNotificationRegistry implements INotificationRegistry {
+public class SpringNotificationRegistry implements INotificationRegistry, ApplicationListener<ContextRefreshedEvent> {
 
     private final ApplicationContext context;
     private final Map<Class<?>, List<String>> handlerMap = new HashMap<>();
 
     public SpringNotificationRegistry(ApplicationContext context) {
         this.context = context;
-        init();
     }
 
-    private void init(){
+    private void init(ApplicationContext context) {
         String[] beanNames = context.getBeanNamesForType(INotificationHandler.class);
 
-        for(String beanName:beanNames){
+        for (String beanName : beanNames) {
             Class<?> targetType = context.getType(beanName);
             if (targetType == null) continue;
 
@@ -52,5 +53,13 @@ public class SpringNotificationRegistry implements INotificationRegistry {
         List<String> beanNames = handlerMap.getOrDefault(aClass, List.of());
         return beanNames.stream()
                 .map(name -> context.getBean(name, INotificationHandler.class))
-                .toList();    }
+                .toList();
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext() == context) {
+            init(context);
+        }
+    }
 }
