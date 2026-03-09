@@ -1,4 +1,4 @@
-package poshtar.tests.infrastructure.deps;
+package poshtar.tests.request.deps.infrastructure;
 
 import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;

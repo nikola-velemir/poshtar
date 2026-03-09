@@ -1,10 +1,15 @@
 package org.example.impl;
 
+import org.example.core.exceptions.AggregateNotificationException;
 import org.example.core.mediator.IMediator;
+import org.example.core.notification.handler.INotificationHandler;
 import org.example.core.request.registry.IRequestRegistry;
 import org.example.core.notification.registry.INotificationRegistry;
 import org.example.core.notification.INotification;
 import org.example.core.request.IRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Mediator implements IMediator {
     private final IRequestRegistry requestRegistry;
@@ -17,21 +22,38 @@ public class Mediator implements IMediator {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> TResponse send(TRequest tRequest) {
+    public <TReq extends IRequest<TRes>, TRes> TRes send(TReq request) {
 
-
-        var requestChain = requestRegistry.resolve((Class<TRequest>) tRequest.getClass());
-        return requestChain.execute(tRequest);
+        if(request == null)
+            throw new IllegalArgumentException("Request cannot be null");
+        var requestChain = requestRegistry.resolve((Class<TReq>) request.getClass());
+        return requestChain.execute(request);
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <TNotification extends INotification> void publish(TNotification notification) {
+        if(notification == null)
+            throw new IllegalArgumentException("Request cannot be null");
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
+        List<Throwable> collectedErrors = new ArrayList<>();
         if (handlers != null) {
-            for (var handler : handlers) {
+            dispatchNotifications(notification, handlers, collectedErrors);
+        }
+        if (!collectedErrors.isEmpty())
+            throw new AggregateNotificationException(collectedErrors);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <TNotification extends INotification> void dispatchNotifications(TNotification notification, List<INotificationHandler> handlers, List<Throwable> collectedErrors) {
+        for (var handler : handlers) {
+            try {
                 handler.handle(notification);
+
+            } catch (Exception e) {
+                collectedErrors.add(e);
+                System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
             }
         }
     }
