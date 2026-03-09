@@ -4,7 +4,6 @@ import adapter.EnablePoshtar;
 import org.example.core.annotations.NotificationHandler;
 import org.example.core.annotations.PipelineBehaviour;
 import org.example.core.annotations.RequestHandler;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -20,11 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
-    private BeanFactory beanFactory;
 
-    public void setBeanFactory(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
-    }
+
     @Override
     public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
