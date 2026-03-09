@@ -4,6 +4,6 @@ import org.example.core.notification.INotification;
 import org.example.core.request.IRequest;
 
 public interface IMediator {
-    <TRequest extends IRequest<TResponse>,TResponse> TResponse send(TRequest request) throws Exception;
+    <TRequest extends IRequest<TResponse>,TResponse> TResponse send(TRequest request);
     <TNotification extends INotification> void publish(TNotification notification);
 }
