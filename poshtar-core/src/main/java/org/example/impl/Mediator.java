@@ -1,6 +1,5 @@
 package org.example.impl;
 
-import org.example.core.exceptions.PipelineExecutionException;
 import org.example.core.mediator.IMediator;
 import org.example.core.request.registry.IRequestRegistry;
 import org.example.core.notification.registry.INotificationRegistry;
@@ -15,17 +14,14 @@ public class Mediator implements IMediator {
         this.requestRegistry = registry;
         this.notificationRegistry = notificationRegistry;
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public <TRequest extends IRequest<TResponse>, TResponse> TResponse send(TRequest tRequest) {
 
 
         var requestChain = requestRegistry.resolve((Class<TRequest>) tRequest.getClass());
-        try {
-            return  requestChain.execute(tRequest);
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
+        return requestChain.execute(tRequest);
 
     }
 
@@ -34,7 +30,7 @@ public class Mediator implements IMediator {
     public <TNotification extends INotification> void publish(TNotification notification) {
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
         if (handlers != null) {
-            for(var handler : handlers) {
+            for (var handler : handlers) {
                 handler.handle(notification);
             }
         }

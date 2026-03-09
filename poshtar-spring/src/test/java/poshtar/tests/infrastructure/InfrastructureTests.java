@@ -20,7 +20,6 @@ public class InfrastructureTests {
        NotFoundRequest request = new NotFoundRequest();
        Exception exception = assertThrowsExactly(HandlerNotFoundException.class,()->{
            mediator.send(request);
-
        });
        String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
        String actualMessage = exception.getMessage();
