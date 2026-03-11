@@ -1,0 +1,145 @@
+<div class="min-h-screen bg-zinc-950 flex items-center justify-center p-6 relative overflow-hidden font-mono">
+
+  <!-- Geometric background grid -->
+  <div class="absolute inset-0 pointer-events-none"
+       style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+              background-size: 48px 48px;">
+  </div>
+
+  <!-- Accent blobs -->
+  <div class="absolute top-[-80px] right-[-80px] w-72 h-72 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(234,179,8,0.12) 0%, transparent 70%);">
+  </div>
+  <div class="absolute bottom-[-60px] left-[-60px] w-64 h-64 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(234,179,8,0.08) 0%, transparent 70%);">
+  </div>
+
+  <!-- Card -->
+  <div class="relative w-full max-w-md">
+
+    <!-- Top rule -->
+    <div class="flex items-center gap-3 mb-8">
+      <div class="h-px flex-1 bg-yellow-400"></div>
+      <span class="text-yellow-400 text-xs tracking-[0.3em] uppercase">System Access</span>
+      <div class="h-px flex-1 bg-yellow-400"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-10">
+      <div class="text-zinc-600 text-xs tracking-widest uppercase mb-2">Welcome back</div>
+      <h1 class="text-white text-4xl font-bold tracking-tight leading-none">
+        Sign In<span class="text-yellow-400">.</span>
+      </h1>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" novalidate class="space-y-5">
+
+      <!-- username -->
+      <div class="group">
+        <label for="username"
+               class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
+Username        </label>
+        <div class="relative">
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            autocomplete="text"
+            placeholder="example"
+            class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none
+                   placeholder-zinc-600 transition-all duration-200
+                   focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
+                   hover:border-zinc-500"
+            [class.border-red-500]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+          />
+          <!-- Error indicator -->
+          <span *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">
+            ✕
+          </span>
+        </div>
+        <p *ngIf="loginForm.get('username')?.errors?.['required'] && loginForm.get('username')?.touched"
+           class="mt-1.5 text-red-400 text-xs tracking-wide">
+          username is required.
+        </p>
+        <p *ngIf="loginForm.get('username')?.errors?.['username'] && loginForm.get('username')?.touched"
+           class="mt-1.5 text-red-400 text-xs tracking-wide">
+          Enter a valid username address.
+        </p>
+      </div>
+
+      <!-- Password -->
+      <div class="group">
+        <div class="flex items-center justify-between mb-2">
+          <label for="password"
+                 class="text-zinc-400 text-xs tracking-widest uppercase transition-colors group-focus-within:text-yellow-400">
+            Password
+          </label>
+         
+        </div>
+        <div class="relative">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 pr-10 outline-none
+                   placeholder-zinc-600 transition-all duration-200
+                   focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
+                   hover:border-zinc-500"
+            [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          />
+          <!-- Toggle visibility -->
+          <button type="button"
+                  (click)="togglePassword()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-yellow-400 transition-colors text-xs select-none">
+            {{ showPassword ? 'HIDE' : 'SHOW' }}
+          </button>
+        </div>
+        <p *ngIf="loginForm.get('password')?.errors?.['required'] && loginForm.get('password')?.touched"
+           class="mt-1.5 text-red-400 text-xs tracking-wide">
+          Password is required.
+        </p>
+        <p *ngIf="loginForm.get('password')?.errors?.['minlength'] && loginForm.get('password')?.touched"
+           class="mt-1.5 text-red-400 text-xs tracking-wide">
+          Minimum 8 characters required.
+        </p>
+      </div>
+
+      
+
+      <!-- Server error -->
+      <div *ngIf="errorMessage"
+           class="border border-red-800 bg-red-950 px-4 py-3 text-red-400 text-xs tracking-wide flex items-start gap-2">
+        <span class="mt-px">⚠</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Submit button -->
+      <div class="pt-2">
+        <button
+          type="submit"
+          [disabled]="isLoading || loginForm.invalid"
+          class="w-full bg-yellow-400 text-zinc-900 font-bold text-sm tracking-widest uppercase py-3.5 px-6
+                 transition-all duration-200 outline-none
+                 hover:bg-yellow-300 active:scale-[0.99]
+                 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-yellow-400
+                 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">
+         <span *ngIf="!isLoading">Sign In →</span>
+          <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
+            <svg class="animate-spin h-4 w-4 text-zinc-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            Authenticating...
+          </span>
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

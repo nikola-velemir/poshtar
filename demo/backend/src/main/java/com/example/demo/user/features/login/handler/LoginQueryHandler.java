@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;
+import org.jspecify.annotations.NonNull;
+
+import java.nio.file.AccessDeniedException;
 
 @RequiredArgsConstructor
 @RequestHandler
@@ -23,8 +26,14 @@ public class LoginQueryHandler implements IRequestHandler<LoginQuery, LoginRespo
         String password = loginQuery.password();
         User user = userRepository.findUserByUsername(username).orElseThrow(Exception::new);
         boolean passwordsMatch = doPasswordsMatch(password, user.getPassword());
-        return new LoginResponseDTO(passwordsMatch);
+        if(!passwordsMatch)
+            throw new AccessDeniedException("Wrong credentials");
+        return createResponse(user);
 
+    }
+
+    private static @NonNull LoginResponseDTO createResponse(User user) {
+        return new LoginResponseDTO(user.getUsername(), user.getFirstName(), user.getLastName(), user.getId());
     }
 
     private boolean doPasswordsMatch(String provided, String actual) {
