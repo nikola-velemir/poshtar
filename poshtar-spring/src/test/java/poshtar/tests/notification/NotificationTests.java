@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.IllegalTransactionStateException;
 import poshtar.tests.MockTransactionConfig;
 import poshtar.tests.TestApplication;
+import poshtar.tests.notification.deps.async.FailForAsyncNotification;
 import poshtar.tests.notification.deps.nullNotification.NullNotification;
 import poshtar.tests.notification.deps.infrastructure.FailedExecutionNotification;
 import poshtar.tests.notification.deps.injection.InjectionNotification;
@@ -21,6 +23,8 @@ import poshtar.tests.notification.deps.ping.PingNotification;
 import poshtar.tests.notification.deps.ping.PingSecondHandler;
 import poshtar.tests.notification.deps.transactional.MandatoryNotification;
 import poshtar.tests.notification.deps.transactional.TransactionalNotification;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,16 +44,19 @@ public class NotificationTests {
         });
         assertEquals(0, noneNotification.payload);
     }
+
     @Test
     void handles_Null_Send() {
         NullNotification notification = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
             mediator.publish(notification);
         });
+        assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
     }
+
     @Test
     void should_Register_And_Execute_Handler_Automatically() {
         boolean firstBeanExists = context.containsBean(PingFirstHandler.class.getName());
@@ -110,8 +117,24 @@ public class NotificationTests {
         AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> {
             mediator.publish(failNotification);
         });
-        assertEquals(1, ex.getErrors().size());
+        var errors = ex.getErrors();
+        assertEquals(1, errors.size());
+        assertInstanceOf(IllegalTransactionStateException.class, errors.getFirst());
         assertEquals(1, failNotification.payload);
         System.out.println(">>> TEST PASSED <<<");
+    }
+
+    @Test
+    void should_Fail_For_Async() {
+        var failAsyncNotification = new FailForAsyncNotification();
+        AggregateNotificationException ex = assertThrowsExactly(
+                AggregateNotificationException.class, () -> {
+                    mediator.publish(failAsyncNotification);
+
+                }
+        );
+        List<Throwable> errors = ex.getErrors();
+        assertEquals(1, errors.size());
+        assertInstanceOf(IllegalTransactionStateException.class, errors.getFirst());
     }
 }

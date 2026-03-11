@@ -7,6 +7,8 @@ import org.example.core.notification.handler.INotificationHandler;
 import org.example.core.types.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @NotificationHandler
 public class NumeroTresNotificationHandler implements INotificationHandler<ScheduledNotification> {
@@ -18,7 +20,9 @@ public class NumeroTresNotificationHandler implements INotificationHandler<Sched
     }
 
     @Override
+
     @Async
+    @Transactional(propagation = Propagation.MANDATORY)
     public void handle(ScheduledNotification scheduledNotification) {
         logger.logActivity("Test3","Test 3");
     }

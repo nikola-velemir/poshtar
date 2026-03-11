@@ -6,7 +6,7 @@ import org.example.core.exceptions.HandlerNotFoundException;
 import org.example.core.pipeline.behaviour.IPipelineBehaviour;
 import org.example.core.pipeline.delegate.RequestDelegate;
 import org.example.core.request.IRequest;
-import org.example.core.request.RequestChain;
+import org.example.core.request.RequestInvoicationChain;
 import org.example.core.request.handler.IRequestHandler;
 
 import java.util.HashMap;
@@ -15,12 +15,12 @@ import java.util.Map;
 
 public abstract class AbstractRequestRegistry implements IRequestRegistry {
 
-    protected final Map<Class<?>, RequestChain<?, ?>> handlerMappings = new HashMap<>();
+    protected final Map<Class<?>, RequestInvoicationChain<?, ?>> handlerMappings = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> RequestChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
-        RequestChain<TRequest, TResponse> requestChain = (RequestChain<TRequest, TResponse>) handlerMappings.get(requestType);
+    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvoicationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
+        RequestInvoicationChain<TRequest, TResponse> requestChain = (RequestInvoicationChain<TRequest, TResponse>) handlerMappings.get(requestType);
         if (requestChain == null)
             throw new HandlerNotFoundException(requestType);
         return requestChain;
@@ -28,7 +28,7 @@ public abstract class AbstractRequestRegistry implements IRequestRegistry {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> RequestChain<TRequest, TResponse> buildChain(IRequestHandler<?, ?> rawHandler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
+    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvoicationChain<TRequest, TResponse> buildChain(IRequestHandler<?, ?> rawHandler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
         IRequestHandler<TRequest, TResponse> handler =
                 (IRequestHandler<TRequest, TResponse>) rawHandler;
 

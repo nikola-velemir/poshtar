@@ -36,6 +36,7 @@ public class RequestTests {
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
             mediator.send(request);
         });
+        assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
@@ -44,11 +45,12 @@ public class RequestTests {
     @Test
     void should_fail_for_unregistered_handler() {
         NotFoundRequest request = new NotFoundRequest();
-        Exception exception = assertThrowsExactly(HandlerNotFoundException.class, () -> {
+        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> {
             mediator.send(request);
         });
+        assertInstanceOf(HandlerNotFoundException.class, ex);
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
-        String actualMessage = exception.getMessage();
+        String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -72,6 +74,7 @@ public class RequestTests {
             mediator.send(request);
 
         });
+        assertInstanceOf(IllegalTransactionStateException.class, ex);
         String expectedMessage = "No existing transaction found for transaction marked with propagation 'mandatory'";
         String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
@@ -82,29 +85,23 @@ public class RequestTests {
     void should_Register_And_Execute_Handler_Automatically() {
 
         boolean beanExists = context.containsBean(PingRequestHandler.class.getName());
-        assert beanExists : "Handler bean nije registrovan preko @RequestHandler!";
+        assert beanExists : "Handler bean not registered thru @RequestHandler!";
 
         String response = mediator.send(new PingRequest("Hello Poshtar"));
 
         assert response.equals("Pong: Hello Poshtar") : "Odgovor nije ispravan!";
-        System.out.println(">>> TEST PROŠAO: " + response);
-    }
-
-    @Test
-    void debug_handler_proxy() {
-        Object handler = context.getBean(TransactionalRequestHandler.class);
-        System.out.println(">>> KLASA HANDLERA: " + handler.getClass().getName());
+        System.out.println(">>> TEST PASSED: " + response);
     }
 
     @Test
     void should_Register_And_Inject_Service() {
 
         boolean beanExists = context.containsBean(InjectionRequestHandler.class.getName());
-        assert beanExists : "Handler bean nije registrovan preko @RequestHandler!";
+        assert beanExists : "Handler not registered thru @RequestHandler!";
 
         String response = mediator.send(new InjectionRequest("Hello Poshtar"));
 
-        assert response.equals("Request with Logged: Hello Poshtar") : "Odgovor nije ispravan!";
+        assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
         System.out.println(">>> TEST PROŠAO: " + response);
     }
 }
