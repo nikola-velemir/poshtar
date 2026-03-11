@@ -1,5 +1,6 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.user.features.activate.command.ActivateUserCommand;
 import com.example.demo.user.features.login.query.LoginQuery;
 import com.example.demo.user.features.login.response.LoginResponseDTO;
 import com.example.demo.user.features.register.command.RegisterCommand;
@@ -34,5 +35,10 @@ public class UserController {
     public ResponseEntity<Void> createUser(@RequestBody RegisterCommand command) {
         mediator.send(command);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    @PutMapping("activate/{name}")
+    public ResponseEntity<Void> activateUser(@PathVariable("name") String username){
+        mediator.send(new ActivateUserCommand(username));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -25,15 +24,22 @@ public class User {
     String firstName;
     @Column(name = "last_name", nullable = false)
     String lastName;
+    @Column(name = "email", nullable = false)
+    String email;
+    @Setter
+    @Column(name="status",nullable = false)
+    UserStatus status;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoItem> todos = new ArrayList<>();
 
-    public User(String username, String hashedPassword, String firstName, String lastName) {
+    public User(String username, String email, String hashedPassword, String firstName, String lastName) {
         this.id = null;
         this.username = username;
+        this.email = email;
         this.password = hashedPassword;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.status = UserStatus.PENDING;
         this.todos = new ArrayList<>();
     }
 

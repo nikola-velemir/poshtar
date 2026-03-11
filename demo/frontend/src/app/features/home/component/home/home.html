@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-zinc-950 flex font-mono text-white">
+<div *ngIf="user$ | async as userData" class="min-h-screen bg-zinc-950 flex font-mono text-white">
 
     <!-- Sidebar -->
     <aside class="hidden lg:flex flex-col w-56 border-r border-zinc-800 px-5 py-8 shrink-0">
@@ -32,7 +32,7 @@
             <div>
                 <div class="text-zinc-600 text-xs tracking-widest uppercase">{{ todayDate }}</div>
                 <h1 class="text-white text-xl font-bold tracking-tight mt-0.5">
-                    Good {{ greeting }}, <span class="text-yellow-400">{{ userData?.firsName }}</span>.
+                    Good {{ greeting }}, <span class="text-yellow-400">{{ userData.firstName }}</span>.
                 </h1>
             </div>
             <!-- Notification dot -->

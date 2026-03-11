@@ -15,7 +15,7 @@ public class NotificationScheduler {
         this.mediator = mediator;
     }
 
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedRate = 1005000)
     public void runScheduler(){
         ScheduledNotification notification = new ScheduledNotification();
         mediator.publish(notification);

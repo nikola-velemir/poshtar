@@ -1,6 +1,6 @@
-export interface LoginResponse{
-    username:string,
+export interface User{
     firstName:string,
     lastName:string,
+    username:string
     id:number
 }

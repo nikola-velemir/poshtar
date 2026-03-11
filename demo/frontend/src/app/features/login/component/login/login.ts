@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { LoginService } from "../../service/loginService";
+import { UserService } from "../../../../infra/service/user-service";
 
 @Component({
   selector: "app-login",
@@ -24,7 +25,7 @@ export class LoginComponent {
       validators: [Validators.required]
     }),
   })
-  constructor(private service: LoginService, private router: Router) {
+  constructor(private service: LoginService, private userService: UserService, private router: Router) {
 
   }
 
@@ -47,9 +48,10 @@ export class LoginComponent {
     this.service.login({ username, password }).subscribe(
       {
         next: (response) => {
-          this.router.navigate(["home"],
-            { state: {user:response} }
-          )
+          this.userService.setUser({
+              ...response
+          });
+          this.router.navigate(["home"])
         }
 
       }
