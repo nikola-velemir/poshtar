@@ -1,6 +1,7 @@
 package com.example.demo.user.features.register.handler;
 
 import com.example.demo.infra.scheduler.logger.LoggingService;
+import com.example.demo.infra.service.EmailService;
 import com.example.demo.user.features.register.notification.RegisterNotification;
 import lombok.RequiredArgsConstructor;
 import org.example.core.annotations.NotificationHandler;
@@ -12,13 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @NotificationHandler
 public class RegisterNotificationHandler implements INotificationHandler<RegisterNotification> {
-    private final LoggingService loggingService;
+
+    private final EmailService emailService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Async
-    public void handle(RegisterNotification registerNotification) {
-        String username = registerNotification.username();
-        loggingService.logActivity("USER REGISTERED", "User username with name :" + username);
+    public void handle(RegisterNotification notification) {
+        String username = notification.username();
+        String email = notification.email();
+        emailService.sendEmail(email, "Activate account", "http://localhost:4200/activate/" + username);
     }
 }

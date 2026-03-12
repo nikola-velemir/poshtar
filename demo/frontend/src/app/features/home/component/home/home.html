@@ -1,24 +1,67 @@
 <div *ngIf="user$ | async as userData" class="min-h-screen bg-zinc-950 flex font-mono text-white">
+    <!-- ADD TODO MODAL -->
+    <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" (click)="closeModal()"></div>
+
+        <!-- Modal -->
+        <div class="relative z-10 w-full max-w-md bg-zinc-900 border border-zinc-800 p-6">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-white text-sm font-bold tracking-widest uppercase">
+                        New Task
+                    </h3>
+                    <div class="h-px bg-yellow-400 mt-2 w-6"></div>
+                </div>
+                <button (click)="closeModal()" class="text-zinc-600 hover:text-white transition-colors text-xs">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Title input -->
+            <div class="mb-4">
+                <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">Task Title</label>
+                <input #titleInput [(ngModel)]="newTodo.title" (keydown.enter)="submitTodo()" type="text"
+                    placeholder="What needs to be done?"
+                    class="w-full bg-zinc-950 border border-zinc-800 px-3 py-2.5 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-yellow-400 transition-colors" />
+            </div>
+
+            <!-- Due date input -->
+            <div class="mb-4">
+                <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">Description <span
+                        class="text-zinc-700">(optional)</span></label>
+                <input [(ngModel)]="newTodo.description" type="text"
+                    class="w-full bg-zinc-950 border border-zinc-800 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400 transition-colors scheme-dark" />
+            </div>
+
+            <!-- Priority selector -->
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+                <button (click)="closeModal()"
+                    class="flex-1 py-2.5 text-xs border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-all tracking-widest uppercase">
+                    Cancel
+                </button>
+                <button (click)="submitTodo()" [disabled]="!newTodo.title.trim()"
+                    class="flex-1 py-2.5 text-xs bg-yellow-400 text-zinc-900 font-bold tracking-widest uppercase hover:bg-yellow-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    Create Task
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Sidebar -->
-    <aside class="hidden lg:flex flex-col w-56 border-r border-zinc-800 px-5 py-8 shrink-0">
-        <!-- Logo -->
-        <div class="mb-10">
-            <span class="text-yellow-400 text-xl font-bold tracking-tight">WORK<span
-                    class="text-white">SPACE</span></span>
-            <div class="h-px bg-yellow-400 mt-2 w-8"></div>
-        </div>
-
-
-
-        <!-- User -->
-        <div class="border-t border-zinc-800 pt-4 mt-4">
+    <aside class="hidden lg:flex flex-col w-56 border-r border-zinc-800 px-5 py-3 shrink-0">
+        
+        <div class="border-b border-zinc-800 py-4">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-yellow-400 flex items-center justify-center text-zinc-900 text-xs font-bold">
                 </div>
                 <div>
-                    <div class="text-white text-xs font-bold">{{userData?. username }}</div>
-                    <div class="text-zinc-600 text-[10px] tracking-wide">Pro Plan</div>
+                    <div class="text-white text-xs font-bold">
+                        {{ userData?.username }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,37 +69,53 @@
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col min-w-0">
-
         <!-- Top bar -->
         <header class="border-b border-zinc-800 px-6 lg:px-8 py-4 flex items-center justify-between shrink-0">
             <div>
-                <div class="text-zinc-600 text-xs tracking-widest uppercase">{{ todayDate }}</div>
+                <div class="text-zinc-600 text-xs tracking-widest uppercase">
+                    {{ todayDate }}
+                </div>
                 <h1 class="text-white text-xl font-bold tracking-tight mt-0.5">
-                    Good {{ greeting }}, <span class="text-yellow-400">{{ userData.firstName }}</span>.
+                    Good {{ greeting }},
+                    <span class="text-yellow-400">{{ userData.firstName }}</span>.
                 </h1>
             </div>
-            <!-- Notification dot -->
-            <button
-                class="relative w-8 h-8 border border-zinc-800 flex items-center justify-center text-zinc-500 hover:text-white hover:border-zinc-600 transition-all">
-                <span class="text-sm">🔔</span>
-                <span class="absolute top-1 right-1 w-1.5 h-1.5 bg-yellow-400 rounded-full"></span>
+            <button (click)="logout()"
+                class="text-xs border border-zinc-800 px-3 py-1.5 text-zinc-500 hover:text-red-400 hover:border-red-400 transition-all tracking-widest uppercase">
+                Logout
             </button>
         </header>
 
         <!-- Body -->
         <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-8">
-
-            <!-- Stats row -->
-            <!-- <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div *ngFor="let stat of stats"
-                    class="border border-zinc-800 bg-zinc-900 px-5 py-4 relative overflow-hidden">
-                    <div class="text-zinc-600 text-[10px] tracking-widest uppercase mb-1">{{ stat.label }}</div>
-                    <div class="text-2xl font-bold" [class]="stat.color">{{ stat.value }}</div>
-                    <div class="text-zinc-600 text-[10px] mt-1">{{ stat.sub }}</div>
-                    <div class="absolute bottom-0 right-0 w-8 h-8 border-l border-t border-zinc-700 opacity-40"></div>
+            <ng-container *ngIf="todos$ | async as todos">
+                <!-- Header row -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-white text-sm font-bold tracking-widest uppercase">
+                            Tasks
+                        </h2>
+                    </div>
+                    <button (click)="openModal()"
+                        class="text-xs border border-zinc-800 px-3 py-1.5 text-zinc-500 hover:text-yellow-400 hover:border-yellow-400 transition-all tracking-wide uppercase">
+                        + Add
+                    </button>
                 </div>
-            </div> -->
 
+                <!-- Empty state -->
+                <div *ngIf="todos.length === 0" class="flex flex-col items-center justify-center py-20 text-zinc-700">
+                    <div class="text-4xl mb-3">✓</div>
+                    <div class="text-sm tracking-wide">
+                        Nothing to do. Enjoy the silence.
+                    </div>
+                </div>
+
+                <!-- Todo list -->
+                <ul class="space-y-2">
+                    <app-todo-card *ngFor="let todo of todos; trackBy: trackById" [todo]="todo"
+                        (emitChangeStatus)="changeStatus($event)" (emitDelete)="deleteTodo($event)" />
+                </ul>
+            </ng-container>
         </main>
     </div>
 </div>

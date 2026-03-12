@@ -33,7 +33,7 @@ public class RegisterCommandHandler implements IRequestHandler<RegisterCommand, 
     public Unit handle(RegisterCommand command) {
         User user = createUser(command);
         userRepository.save(user);
-        mediator.publish(new RegisterNotification(user.getUsername()));
+        mediator.publish(new RegisterNotification(user.getUsername(), user.getEmail()));
         return Unit.Value;
     }
 

@@ -50,4 +50,7 @@ public class User {
     public void removeTodo(TodoItem todo) {
         todos.remove(todo);
     }
+    public void removeTodo(Long todoId){
+        todos.removeIf(f-> f.getId().equals(todoId));
+    }
 }

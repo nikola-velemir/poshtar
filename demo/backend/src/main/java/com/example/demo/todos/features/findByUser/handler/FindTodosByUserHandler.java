@@ -1,7 +1,7 @@
-package com.example.demo.todos.features.getByUser.handler;
+package com.example.demo.todos.features.findByUser.handler;
 
-import com.example.demo.todos.features.getByUser.query.FindTodosByUser;
-import com.example.demo.todos.features.getByUser.response.FindTodoByUserResponseDTO;
+import com.example.demo.todos.features.findByUser.query.FindTodosByUser;
+import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
 import com.example.demo.todos.model.TodoItem;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
@@ -28,7 +28,8 @@ public class FindTodosByUserHandler implements IRequestHandler<FindTodosByUser, 
         return todos.stream().map(t -> new FindTodoByUserResponseDTO(
                 t.getId(),
                 t.getTitle(),
-                t.getDescription()
+                t.getDescription(),
+                t.getStatus().toString()
         )).toList();
     }
 }

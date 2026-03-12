@@ -1,16 +1,15 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivateService } from "../../service/activate-service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { delay, Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 
 @Component({
   selector: "app-activate",
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: "./activate.html",
   styleUrl: "./activate.css",
-  changeDetection: ChangeDetectionStrategy.OnPush  // <-- this is the culprit
-
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivateComponent implements OnInit, OnDestroy {
   errorMessage: string = '';
@@ -19,20 +18,23 @@ export class ActivateComponent implements OnInit, OnDestroy {
   isResending: boolean = false;
 
   private username: string | null = null;
-  private sub: Subscription | null = null;
+
+  private activateSub$ : Observable<any> | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private activateService: ActivateService
+    private activateService: ActivateService,
+    private cdr: ChangeDetectorRef // <-- 1. Inject ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.username = this.route.snapshot.paramMap.get('username');
+    if(!this.username)
+      return;
+    this.activateSub$ = this.activateService.activate(this.username);
   }
 
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 
   onActivate(): void {
     if (!this.username) {
@@ -40,39 +42,39 @@ export class ActivateComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Invalid activation link.';
       return;
     }
-    this.sub?.unsubscribe(); // prevent overlapping subscriptions on retry
+    
     this.errorMessage = '';
-
-    this.sub = this.activateService.activate(this.username).subscribe({
-      next: () => {
-        this.activationState = 'success';
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.activationState = 'error';
-        this.errorMessage = err?.error?.message ?? 'Activation failed.';
-        this.isLoading = false;
-      }
-    });
+    this.isLoading = true; // Optional: set loading state before call
+    
+    this.activate();
   }
 
   onRetry(): void {
-    this.activationState = null;   // back to default state
+    this.activationState = null;
     this.errorMessage = '';
     this.onResend();
   }
 
   onResend(): void {
-    if(!this.username) return;
-    this.sub = this.activateService.activate(this.username).subscribe({
+    if (!this.username) return;
+    
+    this.isLoading = true;
+    
+    this.activate();
+  }
+
+  private activate() {
+    this.activateSub$?.subscribe({
       next: () => {
         this.activationState = 'success';
         this.isLoading = false;
+        this.cdr.markForCheck(); // <-- 4. Mark for check here too
       },
       error: (err) => {
         this.activationState = 'error';
         this.errorMessage = err?.error?.message ?? 'Activation failed.';
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }

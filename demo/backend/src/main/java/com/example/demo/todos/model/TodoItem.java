@@ -26,6 +26,9 @@ public class TodoItem {
     @JoinColumn(name = "user_id") // This creates the foreign key column
     private User user;
 
+    @Column(name = "status", nullable = false)
+    private TodoStatus status = TodoStatus.PENDING;
+
     public TodoItem(String title, String description, User user) {
         this.id = null;
         this.title = title;

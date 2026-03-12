@@ -1,10 +1,13 @@
 package com.example.demo.todos.controller;
 
 import com.example.demo.todos.features.create.command.CreateTodo;
-import com.example.demo.todos.features.getByUser.query.FindTodosByUser;
-import com.example.demo.todos.features.getByUser.response.FindTodoByUserResponseDTO;
+import com.example.demo.todos.features.delete.command.DeleteTodo;
+import com.example.demo.todos.features.findByUser.query.FindTodosByUser;
+import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
+import com.example.demo.todos.features.updateStatus.command.UpdateStatusCommand;
 import lombok.RequiredArgsConstructor;
 import org.example.core.mediator.IMediator;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +27,26 @@ public class TodoController {
         var response = mediator.send(new FindTodosByUser(userId));
         return ResponseEntity.ok(response);
     }
+
     @PostMapping
-    public ResponseEntity<Void> createTodo(@RequestBody CreateTodo command){
+    public ResponseEntity<Void> createTodo(@RequestBody CreateTodo command) {
         mediator.send(command);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("{userId}/{todoId}")
+    public ResponseEntity<Void> deleteTodo(
+            @PathVariable Long userId,
+            @PathVariable Long todoId) {
+        var command = new DeleteTodo(userId, todoId);
+        mediator.send(command);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateTodoStatus(@RequestBody UpdateStatusCommand command){
+        mediator.send(command);
+        return ResponseEntity.status(HttpStatus.OK).build();
+
     }
 }

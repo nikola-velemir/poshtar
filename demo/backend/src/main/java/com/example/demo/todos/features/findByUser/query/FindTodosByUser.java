@@ -1,6 +1,6 @@
-package com.example.demo.todos.features.getByUser.query;
+package com.example.demo.todos.features.findByUser.query;
 
-import com.example.demo.todos.features.getByUser.response.FindTodoByUserResponseDTO;
+import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
 import org.example.core.request.IRequest;
 
 import java.util.List;
