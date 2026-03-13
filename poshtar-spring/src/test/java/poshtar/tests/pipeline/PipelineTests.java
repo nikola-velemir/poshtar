@@ -1,11 +1,141 @@
 package poshtar.tests.pipeline;
 
+import org.example.core.mediator.IMediator;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.IllegalTransactionStateException;
 import poshtar.tests.MockTransactionConfig;
 import poshtar.tests.TestApplication;
+import poshtar.tests.pipeline.deps.dead.DeadRequest;
+import poshtar.tests.pipeline.deps.global.GlobalPipelineTestRequest;
+import poshtar.tests.pipeline.deps.order.OrderRequest;
+import poshtar.tests.pipeline.deps.specific.NotSpecificRequest;
+import poshtar.tests.pipeline.deps.specific.SpecificRequest;
+import poshtar.tests.pipeline.deps.transactional.TransactionalPipeline;
+import poshtar.tests.pipeline.deps.transactional.TransactionalRequest;
+import poshtar.tests.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
+import poshtar.tests.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequest;
+import poshtar.tests.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
+import poshtar.tests.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequest;
+import poshtar.tests.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequestHandler;
+import poshtar.tests.pipeline.deps.validate.ValidationBehaviour;
+import poshtar.tests.pipeline.deps.validate.ValidationRequest;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestApplication.class)
 @Import(MockTransactionConfig.class)
 public class PipelineTests {
+    @Autowired
+    private IMediator mediator;
+    @Autowired
+    private ApplicationContext context;
+
+    @Test
+    void should_Call_Global_Pipeline() {
+        assertDoesNotThrow(() -> {
+            mediator.send(new GlobalPipelineTestRequest());
+
+        });
+    }
+
+    @Test
+    void should_Call_Specific_Pipeline() {
+        var specificRequest = new SpecificRequest();
+        mediator.send(specificRequest);
+        assertEquals(1, specificRequest.payload);
+
+        var notSpecificRequest = new NotSpecificRequest();
+        mediator.send(notSpecificRequest);
+        assertEquals(0, notSpecificRequest.payload);
+    }
+
+    @Test
+    void should_call_Dead_Pipeline() {
+        var deadRequest = new DeadRequest();
+        assertDoesNotThrow(() -> {
+            var result = mediator.send(deadRequest);
+            assertNull(result);
+        });
+    }
+
+    @Test
+    void should_Respect_Order() {
+        var orderRequest = new OrderRequest();
+        assertDoesNotThrow(() -> {
+            mediator.send(orderRequest);
+
+        });
+        assertEquals(3, orderRequest.payload);
+    }
+
+    @Test
+    void should_Pass_For_Transactional() {
+        boolean beanExists = context.containsBean(TransactionalPipeline.class.getName());
+        assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
+        Object bean = context.getBean(TransactionalPipeline.class);
+        System.out.println("Bean Class Name: " + bean.getClass().getName());
+        var transactionalRequest = new TransactionalRequest();
+        assertDoesNotThrow(() -> {
+            mediator.send(transactionalRequest);
+        });
+        assertEquals(2, transactionalRequest.payload);
+    }
+
+    @Test
+    void should_Fail_For_Mandatory() {
+        boolean beanExists = context.containsBean(FailMandatoryPipeline.class.getName());
+        assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
+        Object bean = context.getBean(FailMandatoryPipeline.class);
+        System.out.println("Bean Class Name: " + bean.getClass().getName());
+
+        var failMandatoryRequest = new FailMandatoryRequest();
+        Exception ex = assertThrowsExactly(IllegalTransactionStateException.class, () -> {
+            mediator.send(failMandatoryRequest);
+
+        });
+        String expectedMessage = "No existing transaction found for transaction marked with propagation 'mandatory'";
+        String actualMessage = ex.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+        assertEquals(0, failMandatoryRequest.payload);
+    }
+
+    @Test
+    void should_Pass_For_Mandatory() {
+
+        boolean beanExists = context.containsBean(SucceedForMandatoryPipeline.class.getName());
+        assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
+        Object bean = context.getBean(SucceedForMandatoryPipeline.class);
+        System.out.println("Bean Class Name: " + bean.getClass().getName());
+        Object handler = context.getBean(SucceedForMandatoryRequestHandler.class);
+        System.out.println("Bean Class Name: " + handler.getClass().getName());
+        var succeedForMandatoryRequest = new SucceedForMandatoryRequest();
+        assertDoesNotThrow(() -> {
+            mediator.send(succeedForMandatoryRequest);
+        });
+        assertEquals(1, succeedForMandatoryRequest.payload);
+    }
+
+    @Test
+    void should_Work_For_Validation() {
+        boolean beanExists = context.containsBean(ValidationBehaviour.class.getName());
+        assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
+
+        var goodValidationRequest = new ValidationRequest(1);
+        assertDoesNotThrow(() -> {
+            var response = mediator.send(goodValidationRequest);
+            assertEquals(2, response);
+        });
+        var badValidatioNRequest = new ValidationRequest(0);
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
+            mediator.send(badValidatioNRequest);
+        });
+        assertEquals(0, badValidatioNRequest.payload());
+        String actual = ex.getMessage();
+        String expected = "Payload is wrong";
+        assertEquals(expected, actual);
+    }
 }

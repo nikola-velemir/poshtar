@@ -12,15 +12,17 @@ import org.example.core.types.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @RequestHandler
 public class RegisterCommandHandler implements IRequestHandler<RegisterCommand, Unit> {
     @Autowired
+    private final PasswordService passwordService;
+    @Autowired
     private final UserRepository userRepository;
     @Autowired
     private final IMediator mediator;
-    @Autowired
-    private final PasswordService passwordService;
+
 
     public RegisterCommandHandler(UserRepository userRepository, IMediator mediator, PasswordService passwordService) {
         this.userRepository = userRepository;
@@ -29,8 +31,10 @@ public class RegisterCommandHandler implements IRequestHandler<RegisterCommand, 
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.MANDATORY)
     public Unit handle(RegisterCommand command) {
+        boolean isActive = TransactionSynchronizationManager.isActualTransactionActive();
+        System.out.println("Is Transaction REALLY Active? " + isActive);
         User user = createUser(command);
         userRepository.save(user);
         mediator.publish(new RegisterNotification(user.getUsername(), user.getEmail()));

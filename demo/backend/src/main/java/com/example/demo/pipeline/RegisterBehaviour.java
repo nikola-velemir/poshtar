@@ -8,6 +8,8 @@ import org.example.core.types.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @PipelineBehaviour
 @Order(0)
@@ -15,8 +17,9 @@ public class RegisterBehaviour implements IPipelineBehaviour<RegisterCommand, Un
     private static final Logger logger = LoggerFactory.getLogger(RegisterBehaviour.class);
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Unit handle(RegisterCommand command, RequestDelegate<RegisterCommand, Unit> requestDelegate) {
-        logger.info("Stigao request za create: " + command.username());
+        logger.info("Request for register arrived: {}", command.username());
 
         return requestDelegate.handle(command);
     }

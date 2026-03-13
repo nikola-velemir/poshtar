@@ -18,6 +18,7 @@ public class UserController {
     @Autowired
     private final IMediator mediator;
 
+
     public UserController(IMediator mediator) {
         this.mediator = mediator;
     }
