@@ -1,6 +1,6 @@
 package org.example.core.request;
 
 @FunctionalInterface
-public interface RequestInvoicationChain<TRequest, TResponse> {
+public interface RequestInvocationChain<TRequest, TResponse> {
     TResponse execute(TRequest request);
 }

@@ -1,6 +1,5 @@
 package org.example.core.pipeline.delegate;
 
-@FunctionalInterface
-public interface RequestDelegate<TResponse> {
-    TResponse handle();
+public interface RequestDelegate<TRequest,TResponse> {
+    TResponse handle(TRequest request);
 }

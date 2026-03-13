@@ -4,55 +4,36 @@ import jdk.jshell.spi.ExecutionControl;
 import org.example.core.exceptions.AmbiguousHandlerException;
 import org.example.core.exceptions.HandlerNotFoundException;
 import org.example.core.pipeline.behaviour.IPipelineBehaviour;
+import org.example.core.pipeline.builder.PipelineBuilder;
 import org.example.core.pipeline.delegate.RequestDelegate;
 import org.example.core.request.IRequest;
-import org.example.core.request.RequestInvoicationChain;
+import org.example.core.request.RequestInvocationChain;
 import org.example.core.request.handler.IRequestHandler;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractRequestRegistry implements IRequestRegistry {
+public  class AbstractRequestRegistry implements IRequestRegistry {
 
-    protected final Map<Class<?>, RequestInvoicationChain<?, ?>> handlerMappings = new HashMap<>();
+    protected final Map<Class<?>, RequestInvocationChain<?, ?>> handlerMappings = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvoicationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
-        RequestInvoicationChain<TRequest, TResponse> requestChain = (RequestInvoicationChain<TRequest, TResponse>) handlerMappings.get(requestType);
+    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
+        RequestInvocationChain<TRequest, TResponse> requestChain = (RequestInvocationChain<TRequest, TResponse>) handlerMappings.get(requestType);
         if (requestChain == null)
             throw new HandlerNotFoundException(requestType);
         return requestChain;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvoicationChain<TRequest, TResponse> buildChain(IRequestHandler<?, ?> rawHandler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
-        IRequestHandler<TRequest, TResponse> handler =
-                (IRequestHandler<TRequest, TResponse>) rawHandler;
 
-        List<IPipelineBehaviour<TRequest, TResponse>> behaviours = rawBehaviours.stream()
-                .map(b -> (IPipelineBehaviour<TRequest, TResponse>) b)
-                .toList();
-
-        return (request) -> {
-            RequestDelegate<TResponse> next = () -> handler.handle(request);
-
-            for (int i = behaviours.size() - 1; i >= 0; i--) {
-                IPipelineBehaviour<TRequest, TResponse> behaviour = behaviours.get(i);
-                RequestDelegate<TResponse> currentNext = next;
-                next = () -> behaviour.handle(request, currentNext);
-            }
-
-            return next.handle();
-        };
-    }
 
     @Override
     public void register(Class<?> requestType, IRequestHandler<?, ?> rawHandler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
+        var builtPipeline = PipelineBuilder.build(rawHandler, rawBehaviours);
         var putResult =
-                handlerMappings.putIfAbsent(requestType, buildChain(rawHandler, rawBehaviours));
+                handlerMappings.putIfAbsent(requestType, builtPipeline);
         if (putResult != null)
             throw new AmbiguousHandlerException(requestType, List.of(rawHandler.getClass()));
     }

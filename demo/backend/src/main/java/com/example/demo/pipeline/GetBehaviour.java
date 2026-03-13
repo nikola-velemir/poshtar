@@ -16,8 +16,8 @@ public class GetBehaviour implements IPipelineBehaviour<GetUserByIdQuery, GetUse
     private static final Logger logger = LoggerFactory.getLogger(GetBehaviour.class);
 
     @Override
-    public GetUserResponseDTO handle(GetUserByIdQuery query, RequestDelegate<GetUserResponseDTO> requestDelegate) {
+    public GetUserResponseDTO handle(GetUserByIdQuery query, RequestDelegate<GetUserByIdQuery,GetUserResponseDTO> requestDelegate) {
         logger.info("Stigao request za get: " + query.id());
-        return requestDelegate.handle();
+        return requestDelegate.handle(query);
     }
 }

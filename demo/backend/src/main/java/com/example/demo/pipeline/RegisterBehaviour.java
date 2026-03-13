@@ -15,9 +15,9 @@ public class RegisterBehaviour implements IPipelineBehaviour<RegisterCommand, Un
     private static final Logger logger = LoggerFactory.getLogger(RegisterBehaviour.class);
 
     @Override
-    public Unit handle(RegisterCommand command, RequestDelegate<Unit> requestDelegate) {
+    public Unit handle(RegisterCommand command, RequestDelegate<RegisterCommand, Unit> requestDelegate) {
         logger.info("Stigao request za create: " + command.username());
 
-        return requestDelegate.handle();
+        return requestDelegate.handle(command);
     }
 }
