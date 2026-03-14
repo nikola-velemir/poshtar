@@ -1,7 +1,7 @@
 package poshtar.tests.notification;
 
 import org.example.core.exceptions.AggregateNotificationException;
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MockTransactionConfig.class)
 public class NotificationTests {
     @Autowired
-    private IMediator mediator;
+    private IPoshtar poshtar;
     @Autowired
     private ApplicationContext context;
 
@@ -40,7 +40,7 @@ public class NotificationTests {
     void should_Not_Fail_For_None_Registered() {
         var noneNotification = new NoneRegisteredNotification();
         assertDoesNotThrow(() -> {
-            mediator.publish(noneNotification);
+            poshtar.publish(noneNotification);
         });
         assertEquals(0, noneNotification.payload);
     }
@@ -49,7 +49,7 @@ public class NotificationTests {
     void handles_Null_Send() {
         NullNotification notification = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            mediator.publish(notification);
+            poshtar.publish(notification);
         });
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
@@ -65,7 +65,7 @@ public class NotificationTests {
         assert secondBeanExists : "Handler bean not registered thru @NotificationHandler!";
 
         PingNotification notification = new PingNotification();
-        mediator.publish(notification);
+        poshtar.publish(notification);
 
         assert notification.payload == 2;
         System.out.println(">>> TEST PASSED <<<");
@@ -81,7 +81,7 @@ public class NotificationTests {
         assert thirdBeanExists : "Handler bean not registered thru @NotificationHandler!";
 
         InjectionNotification notification = new InjectionNotification();
-        mediator.publish(notification);
+        poshtar.publish(notification);
 
         assert notification.value == 3;
         System.out.println(">>> TEST PASSED <<<");
@@ -91,7 +91,7 @@ public class NotificationTests {
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
         assertDoesNotThrow(() -> {
-            mediator.publish(transactionNotification);
+            poshtar.publish(transactionNotification);
         });
         System.out.println(">>> TEST PASSED <<<");
 
@@ -101,7 +101,7 @@ public class NotificationTests {
     void should_Fail_For_Mandatory() {
         var mandatoryNotification = new MandatoryNotification();
         AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class, () -> {
-            mediator.publish(mandatoryNotification);
+            poshtar.publish(mandatoryNotification);
         });
         Exception ex = (Exception) mainEx.getErrors().getFirst();
         String expected = "No existing transaction found for transaction marked with propagation 'mandatory'";
@@ -115,7 +115,7 @@ public class NotificationTests {
         var failNotification = new FailedExecutionNotification();
 
         AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> {
-            mediator.publish(failNotification);
+            poshtar.publish(failNotification);
         });
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
@@ -129,7 +129,7 @@ public class NotificationTests {
         var failAsyncNotification = new FailForAsyncNotification();
         AggregateNotificationException ex = assertThrowsExactly(
                 AggregateNotificationException.class, () -> {
-                    mediator.publish(failAsyncNotification);
+                    poshtar.publish(failAsyncNotification);
 
                 }
         );

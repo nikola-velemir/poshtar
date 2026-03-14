@@ -1,7 +1,7 @@
 package poshtar.tests.request;
 
 import org.example.core.exceptions.HandlerNotFoundException;
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MockTransactionConfig.class)
 public class RequestTests {
     @Autowired
-    private IMediator mediator;
+    private IPoshtar poshtar;
     @Autowired
     private ApplicationContext context;
 
@@ -34,7 +34,7 @@ public class RequestTests {
     void handles_Null_Send() {
         NullRequest request = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            mediator.send(request);
+            poshtar.send(request);
         });
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
@@ -46,7 +46,7 @@ public class RequestTests {
     void should_fail_for_unregistered_handler() {
         NotFoundRequest request = new NotFoundRequest();
         Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> {
-            mediator.send(request);
+            poshtar.send(request);
         });
         assertInstanceOf(HandlerNotFoundException.class, ex);
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
@@ -59,7 +59,7 @@ public class RequestTests {
         boolean beanExists = context.containsBean(TransactionalRequestHandler.class.getName());
         assert beanExists : "Handler bean has not been registered thru @RequestHandler!";
         assertDoesNotThrow(() -> {
-            String response = mediator.send(new TransactionalRequest("Hello Poshtar"));
+            String response = poshtar.send(new TransactionalRequest("Hello Poshtar"));
             assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
             System.out.println(">>> TEST PASSED: " + response);
         });
@@ -71,7 +71,7 @@ public class RequestTests {
     void should_Fail_For_Mandatory_Propagation() {
         var request = new MandatoryRequest("Payload");
         Exception ex = assertThrowsExactly(IllegalTransactionStateException.class, () -> {
-            mediator.send(request);
+            poshtar.send(request);
 
         });
         assertInstanceOf(IllegalTransactionStateException.class, ex);
@@ -87,7 +87,7 @@ public class RequestTests {
         boolean beanExists = context.containsBean(PingRequestHandler.class.getName());
         assert beanExists : "Handler bean not registered thru @RequestHandler!";
 
-        String response = mediator.send(new PingRequest("Hello Poshtar"));
+        String response = poshtar.send(new PingRequest("Hello Poshtar"));
 
         assert response.equals("Pong: Hello Poshtar") : "Odgovor nije ispravan!";
         System.out.println(">>> TEST PASSED: " + response);
@@ -99,7 +99,7 @@ public class RequestTests {
         boolean beanExists = context.containsBean(InjectionRequestHandler.class.getName());
         assert beanExists : "Handler not registered thru @RequestHandler!";
 
-        String response = mediator.send(new InjectionRequest("Hello Poshtar"));
+        String response = poshtar.send(new InjectionRequest("Hello Poshtar"));
 
         assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
         System.out.println(">>> TEST PROŠAO: " + response);

@@ -6,7 +6,7 @@ import com.example.demo.user.service.PasswordService;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
 import org.example.core.annotations.RequestHandler;
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.example.core.request.handler.IRequestHandler;
 import org.example.core.types.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ public class RegisterCommandHandler implements IRequestHandler<RegisterCommand, 
     @Autowired
     private final UserRepository userRepository;
     @Autowired
-    private final IMediator mediator;
+    private final IPoshtar poshtar;
 
 
-    public RegisterCommandHandler(UserRepository userRepository, IMediator mediator, PasswordService passwordService) {
+    public RegisterCommandHandler(UserRepository userRepository, IPoshtar poshtar, PasswordService passwordService) {
         this.userRepository = userRepository;
-        this.mediator = mediator;
+        this.poshtar = poshtar;
         this.passwordService = passwordService;
     }
 
@@ -37,7 +37,7 @@ public class RegisterCommandHandler implements IRequestHandler<RegisterCommand, 
         System.out.println("Is Transaction REALLY Active? " + isActive);
         User user = createUser(command);
         userRepository.save(user);
-        mediator.publish(new RegisterNotification(user.getUsername(), user.getEmail()));
+        poshtar.publish(new RegisterNotification(user.getUsername(), user.getEmail()));
         return Unit.Value;
     }
 

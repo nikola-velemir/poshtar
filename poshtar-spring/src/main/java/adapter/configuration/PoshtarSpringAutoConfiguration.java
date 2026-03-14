@@ -3,10 +3,10 @@ package adapter.configuration;
 
 import adapter.registry.SpringRequestRegistry;
 import adapter.registry.SpringNotificationRegistry;
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.example.core.notification.registry.INotificationRegistry;
 import org.example.core.request.registry.IRequestRegistry;
-import org.example.impl.Mediator;
+import org.example.impl.Poshtar;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -22,19 +22,19 @@ public class PoshtarSpringAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public IRequestRegistry handlerRegistry(){
+    public IRequestRegistry provideRequestRegistry(){
         return new SpringRequestRegistry(context);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public INotificationRegistry notificationRegistry(){
+    public INotificationRegistry provideNotificationRegistry(){
         return new SpringNotificationRegistry(context);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public IMediator mediator(IRequestRegistry handlerRegistry,INotificationRegistry notificationRegistry){
-        return new Mediator(handlerRegistry, notificationRegistry);
+    public IPoshtar configurePoshtar(IRequestRegistry handlerRegistry, INotificationRegistry notificationRegistry){
+        return new Poshtar(handlerRegistry, notificationRegistry);
     }
 }

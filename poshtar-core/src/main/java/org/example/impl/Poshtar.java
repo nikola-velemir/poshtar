@@ -1,7 +1,7 @@
 package org.example.impl;
 
 import org.example.core.exceptions.AggregateNotificationException;
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.example.core.notification.handler.INotificationHandler;
 import org.example.core.request.registry.IRequestRegistry;
 import org.example.core.notification.registry.INotificationRegistry;
@@ -11,11 +11,11 @@ import org.example.core.request.IRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mediator implements IMediator {
+public class Poshtar implements IPoshtar {
     private final IRequestRegistry requestRegistry;
     private final INotificationRegistry notificationRegistry;
 
-    public Mediator(IRequestRegistry registry, INotificationRegistry notificationRegistry) {
+    public Poshtar(IRequestRegistry registry, INotificationRegistry notificationRegistry) {
         this.requestRegistry = registry;
         this.notificationRegistry = notificationRegistry;
     }

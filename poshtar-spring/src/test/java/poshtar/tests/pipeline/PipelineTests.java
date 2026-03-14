@@ -1,6 +1,6 @@
 package poshtar.tests.pipeline;
 
-import org.example.core.mediator.IMediator;
+import org.example.core.mediator.IPoshtar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MockTransactionConfig.class)
 public class PipelineTests {
     @Autowired
-    private IMediator mediator;
+    private IPoshtar poshtar;
     @Autowired
     private ApplicationContext context;
 
     @Test
     void should_Call_Global_Pipeline() {
         assertDoesNotThrow(() -> {
-            mediator.send(new GlobalPipelineTestRequest());
+            poshtar.send(new GlobalPipelineTestRequest());
 
         });
     }
@@ -45,11 +45,11 @@ public class PipelineTests {
     @Test
     void should_Call_Specific_Pipeline() {
         var specificRequest = new SpecificRequest();
-        mediator.send(specificRequest);
+        poshtar.send(specificRequest);
         assertEquals(1, specificRequest.payload);
 
         var notSpecificRequest = new NotSpecificRequest();
-        mediator.send(notSpecificRequest);
+        poshtar.send(notSpecificRequest);
         assertEquals(0, notSpecificRequest.payload);
     }
 
@@ -57,7 +57,7 @@ public class PipelineTests {
     void should_call_Dead_Pipeline() {
         var deadRequest = new DeadRequest();
         assertDoesNotThrow(() -> {
-            var result = mediator.send(deadRequest);
+            var result = poshtar.send(deadRequest);
             assertNull(result);
         });
     }
@@ -66,7 +66,7 @@ public class PipelineTests {
     void should_Respect_Order() {
         var orderRequest = new OrderRequest();
         assertDoesNotThrow(() -> {
-            mediator.send(orderRequest);
+            poshtar.send(orderRequest);
 
         });
         assertEquals(3, orderRequest.payload);
@@ -80,7 +80,7 @@ public class PipelineTests {
         System.out.println("Bean Class Name: " + bean.getClass().getName());
         var transactionalRequest = new TransactionalRequest();
         assertDoesNotThrow(() -> {
-            mediator.send(transactionalRequest);
+            poshtar.send(transactionalRequest);
         });
         assertEquals(2, transactionalRequest.payload);
     }
@@ -94,7 +94,7 @@ public class PipelineTests {
 
         var failMandatoryRequest = new FailMandatoryRequest();
         Exception ex = assertThrowsExactly(IllegalTransactionStateException.class, () -> {
-            mediator.send(failMandatoryRequest);
+            poshtar.send(failMandatoryRequest);
 
         });
         String expectedMessage = "No existing transaction found for transaction marked with propagation 'mandatory'";
@@ -114,7 +114,7 @@ public class PipelineTests {
         System.out.println("Bean Class Name: " + handler.getClass().getName());
         var succeedForMandatoryRequest = new SucceedForMandatoryRequest();
         assertDoesNotThrow(() -> {
-            mediator.send(succeedForMandatoryRequest);
+            poshtar.send(succeedForMandatoryRequest);
         });
         assertEquals(1, succeedForMandatoryRequest.payload);
     }
@@ -126,12 +126,12 @@ public class PipelineTests {
 
         var goodValidationRequest = new ValidationRequest(1);
         assertDoesNotThrow(() -> {
-            var response = mediator.send(goodValidationRequest);
+            var response = poshtar.send(goodValidationRequest);
             assertEquals(2, response);
         });
         var badValidatioNRequest = new ValidationRequest(0);
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            mediator.send(badValidatioNRequest);
+            poshtar.send(badValidatioNRequest);
         });
         assertEquals(0, badValidatioNRequest.payload());
         String actual = ex.getMessage();

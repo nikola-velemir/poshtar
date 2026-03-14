@@ -6,8 +6,7 @@ import com.example.demo.todos.features.findByUser.query.FindTodosByUser;
 import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
 import com.example.demo.todos.features.updateStatus.command.UpdateStatusCommand;
 import lombok.RequiredArgsConstructor;
-import org.example.core.mediator.IMediator;
-import org.hibernate.sql.Update;
+import org.example.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +19,17 @@ import java.util.List;
 @RequestMapping("api/todos")
 public class TodoController {
     @Autowired
-    private final IMediator mediator;
+    private final IPoshtar poshtar;
 
     @GetMapping("user/{id}")
     public ResponseEntity<List<FindTodoByUserResponseDTO>> findTodosByUser(@PathVariable("id") Long userId) {
-        var response = mediator.send(new FindTodosByUser(userId));
+        var response = poshtar.send(new FindTodosByUser(userId));
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<Void> createTodo(@RequestBody CreateTodo command) {
-        mediator.send(command);
+        poshtar.send(command);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -39,13 +38,13 @@ public class TodoController {
             @PathVariable Long userId,
             @PathVariable Long todoId) {
         var command = new DeleteTodo(userId, todoId);
-        mediator.send(command);
+        poshtar.send(command);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PutMapping
     public ResponseEntity<Void> updateTodoStatus(@RequestBody UpdateStatusCommand command){
-        mediator.send(command);
+        poshtar.send(command);
         return ResponseEntity.status(HttpStatus.OK).build();
 
     }
