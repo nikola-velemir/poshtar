@@ -12,10 +12,10 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.*;
 
 
-public class SpringHandlerRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
+public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
 
-    public SpringHandlerRegistry(ApplicationContext context) {
+    public SpringRequestRegistry(ApplicationContext context) {
         this.context = context;
     }
 

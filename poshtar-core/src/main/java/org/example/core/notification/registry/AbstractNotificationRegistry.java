@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractNotificationRegistry implements INotificationRegistry{
-    private final Map<Class<?>, List<INotificationHandler<?>>> handlerMap = new HashMap<>();
+    private final Map<Class<?>, List<INotificationHandler<?>>> handlerMappings = new HashMap<>();
 
     @Override
     public <TNotification extends INotification> void register(Class<TNotification> notificationClass, INotificationHandler<TNotification> handler) {
-        handlerMap.computeIfAbsent(notificationClass, k -> new ArrayList<>())
+        handlerMappings.computeIfAbsent(notificationClass, k -> new ArrayList<>())
                 .add(handler);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public <TNotification extends INotification> List<INotificationHandler> resolve(Class<TNotification> type) {
-        return (List) handlerMap.getOrDefault(type, List.of());
+        return (List) handlerMappings.getOrDefault(type, List.of());
     }
 }

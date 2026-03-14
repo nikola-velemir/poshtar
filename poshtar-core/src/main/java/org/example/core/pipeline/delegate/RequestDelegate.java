@@ -1,5 +1,7 @@
 package org.example.core.pipeline.delegate;
 
-public interface RequestDelegate<TRequest,TResponse> {
+import org.example.core.request.IRequest;
+
+public interface RequestDelegate<TRequest extends IRequest<TResponse>,TResponse> {
     TResponse handle(TRequest request);
 }

@@ -1,7 +1,7 @@
 package adapter.configuration;
 
 
-import adapter.registry.SpringHandlerRegistry;
+import adapter.registry.SpringRequestRegistry;
 import adapter.registry.SpringNotificationRegistry;
 import org.example.core.mediator.IMediator;
 import org.example.core.notification.registry.INotificationRegistry;
@@ -23,7 +23,7 @@ public class PoshtarSpringAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public IRequestRegistry handlerRegistry(){
-        return new SpringHandlerRegistry(context);
+        return new SpringRequestRegistry(context);
     }
 
     @Bean
