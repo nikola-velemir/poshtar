@@ -18,227 +18,156 @@
   <!-- Card -->
   <div class="relative w-full max-w-md">
 
-    <!-- Top rule -->
-    <div class="flex items-center gap-3 mb-8">
-      <div class="h-px flex-1 bg-yellow-400"></div>
-      <span class="text-yellow-400 text-xs tracking-[0.3em] uppercase">New Account</span>
-      <div class="h-px flex-1 bg-yellow-400"></div>
+    <!-- SUCCESS SCREEN -->
+    <div *ngIf="isSuccess()">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="h-px flex-1 bg-yellow-400"></div>
+        <span class="text-yellow-400 text-xs tracking-[0.3em] uppercase">Account Created</span>
+        <div class="h-px flex-1 bg-yellow-400"></div>
+      </div>
+
+      <div class="mb-10 text-center">
+        <div class="flex items-center justify-center mb-6">
+          <div class="w-16 h-16 border-2 border-yellow-400 flex items-center justify-center">
+            <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="square" stroke-linejoin="miter" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+        </div>
+        <div class="text-zinc-600 text-xs tracking-widest uppercase mb-2">Welcome aboard</div>
+        <h1 class="text-white text-4xl font-bold tracking-tight leading-none mb-4">
+          You're in<span class="text-yellow-400">.</span>
+        </h1>
+        <p class="text-zinc-400 text-sm tracking-wide leading-relaxed">
+          Your account has been created.<br/>
+          Check your email to activate it.
+        </p>
+      </div>
+
+      <a routerLink="/login"
+         class="flex items-center justify-center w-full bg-yellow-400 text-zinc-900 font-bold text-sm
+                tracking-widest uppercase py-3.5 px-6 transition-all duration-200
+                hover:bg-yellow-300 active:scale-[0.99]">
+        Go to Login →
+      </a>
     </div>
 
-    <!-- Header -->
-    <div class="mb-10">
-      <div class="text-zinc-600 text-xs tracking-widest uppercase mb-2">Get started</div>
-      <h1 class="text-white text-4xl font-bold tracking-tight leading-none">
-        Register<span class="text-yellow-400">.</span>
-      </h1>
-    </div>
+    <!-- REGISTER FORM -->
+    <div *ngIf="!isSuccess()">
 
-    <!-- Form -->
-    <form (ngSubmit)="onSubmit()" [formGroup]="registerForm" novalidate class="space-y-5">
+      <!-- Top rule -->
+      <div class="flex items-center gap-3 mb-8">
+        <div class="h-px flex-1 bg-yellow-400"></div>
+        <span class="text-yellow-400 text-xs tracking-[0.3em] uppercase">New Account</span>
+        <div class="h-px flex-1 bg-yellow-400"></div>
+      </div>
 
-      <!-- First name + Last name (side by side) -->
-      <div class="grid grid-cols-2 gap-4">
+      <!-- Header -->
+      <div class="mb-10">
+        <div class="text-zinc-600 text-xs tracking-widest uppercase mb-2">Get started</div>
+        <h1 class="text-white text-4xl font-bold tracking-tight leading-none">
+          Register<span class="text-yellow-400">.</span>
+        </h1>
+      </div>
 
-        <!-- First name -->
-        <div class="group">
-          <label for="firstName"
-                 class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
-            First Name
-          </label>
-          <div class="relative">
-            <input
-              id="firstName"
-              type="text"
-              formControlName="firstName"
-              autocomplete="given-name"
-              placeholder="Jane"
-              class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none
-                     placeholder-zinc-600 transition-all duration-200
-                     focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
-                     hover:border-zinc-500"
-              [class.border-red-500]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
-            />
-            <span *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">
-              ✕
-            </span>
+      <!-- Form -->
+      <form (ngSubmit)="onSubmit()" [formGroup]="registerForm" novalidate class="space-y-5">
+
+        <!-- First name + Last name (side by side) -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="group">
+            <label for="firstName" class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">First Name</label>
+            <div class="relative">
+              <input id="firstName" type="text" formControlName="firstName" autocomplete="given-name" placeholder="Jane"
+                class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none placeholder-zinc-600 transition-all duration-200 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 hover:border-zinc-500"
+                [class.border-red-500]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"/>
+              <span *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">✕</span>
+            </div>
+            <p *ngIf="registerForm.get('firstName')?.errors?.['required'] && registerForm.get('firstName')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Required.</p>
           </div>
-          <p *ngIf="registerForm.get('firstName')?.errors?.['required'] && registerForm.get('firstName')?.touched"
-             class="mt-1.5 text-red-400 text-xs tracking-wide">
-            Required.
-          </p>
-        </div>
 
-        <!-- Last name -->
-        <div class="group">
-          <label for="lastName"
-                 class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
-            Last Name
-          </label>
-          <div class="relative">
-            <input
-              id="lastName"
-              type="text"
-              formControlName="lastName"
-              autocomplete="family-name"
-              placeholder="Doe"
-              class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none
-                     placeholder-zinc-600 transition-all duration-200
-                     focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
-                     hover:border-zinc-500"
-              [class.border-red-500]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
-            />
-            <span *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">
-              ✕
-            </span>
+          <div class="group">
+            <label for="lastName" class="block text-zinc-400 text-xs tracking-widests uppercase mb-2 transition-colors group-focus-within:text-yellow-400">Last Name</label>
+            <div class="relative">
+              <input id="lastName" type="text" formControlName="lastName" autocomplete="family-name" placeholder="Doe"
+                class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none placeholder-zinc-600 transition-all duration-200 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 hover:border-zinc-500"
+                [class.border-red-500]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"/>
+              <span *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">✕</span>
+            </div>
+            <p *ngIf="registerForm.get('lastName')?.errors?.['required'] && registerForm.get('lastName')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Required.</p>
           </div>
-          <p *ngIf="registerForm.get('lastName')?.errors?.['required'] && registerForm.get('lastName')?.touched"
-             class="mt-1.5 text-red-400 text-xs tracking-wide">
-            Required.
-          </p>
         </div>
 
-      </div>
-
-      <!-- Username -->
-      <div class="group">
-        <label for="username"
-               class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
-          Username
-        </label>
-        <div class="relative">
-          <input
-            id="username"
-            type="text"
-            formControlName="username"
-            autocomplete="username"
-            placeholder="janedoe"
-            class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none
-                   placeholder-zinc-600 transition-all duration-200
-                   focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
-                   hover:border-zinc-500"
-            [class.border-red-500]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-          />
-          <span *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">
-            ✕
-          </span>
+        <!-- Username -->
+        <div class="group">
+          <label for="username" class="block text-zinc-400 text-xs tracking-widests uppercase mb-2 transition-colors group-focus-within:text-yellow-400">Username</label>
+          <div class="relative">
+            <input id="username" type="text" formControlName="username" autocomplete="username" placeholder="janedoe"
+              class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none placeholder-zinc-600 transition-all duration-200 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 hover:border-zinc-500"
+              [class.border-red-500]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"/>
+            <span *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">✕</span>
+          </div>
+          <p *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Username is required.</p>
+          <p *ngIf="registerForm.get('username')?.errors?.['minlength'] && registerForm.get('username')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Minimum 3 characters required.</p>
         </div>
-        <p *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Username is required.
-        </p>
-        <p *ngIf="registerForm.get('username')?.errors?.['minlength'] && registerForm.get('username')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Minimum 3 characters required.
-        </p>
-      </div>
 
-      <!-- Email -->
-      <div class="group">
-        <label for="email"
-               class="block text-zinc-400 text-xs tracking-widest uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
-          Email
-        </label>
-        <div class="relative">
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="jane@example.com"
-            class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none
-                   placeholder-zinc-600 transition-all duration-200
-                   focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
-                   hover:border-zinc-500"
-            [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-          />
-          <span *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">
-            ✕
-          </span>
+        <!-- Email -->
+        <div class="group">
+          <label for="email" class="block text-zinc-400 text-xs tracking-widests uppercase mb-2 transition-colors group-focus-within:text-yellow-400">Email</label>
+          <div class="relative">
+            <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="jane@example.com"
+              class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 outline-none placeholder-zinc-600 transition-all duration-200 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 hover:border-zinc-500"
+              [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"/>
+            <span *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 text-xs">✕</span>
+          </div>
+          <p *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Email is required.</p>
+          <p *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Enter a valid email address.</p>
         </div>
-        <p *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Email is required.
-        </p>
-        <p *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Enter a valid email address.
-        </p>
-      </div>
 
-      <!-- Password -->
-      <div class="group">
-        <label for="password"
-               class="block text-zinc-400 text-xs tracking-widests uppercase mb-2 transition-colors group-focus-within:text-yellow-400">
-          Password
-        </label>
-        <div class="relative">
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-            autocomplete="new-password"
-            placeholder="••••••••"
-            class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 pr-16 outline-none
-                   placeholder-zinc-600 transition-all duration-200
-                   focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400
-                   hover:border-zinc-500"
-            [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-          />
-          <button type="button"
-                  (click)="togglePassword()"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-yellow-400 transition-colors text-xs select-none">
-            {{ showPassword ? 'HIDE' : 'SHOW' }}
+        <!-- Password -->
+        <div class="group">
+          <label for="password" class="block text-zinc-400 text-xs tracking-widests uppercase mb-2 transition-colors group-focus-within:text-yellow-400">Password</label>
+          <div class="relative">
+            <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="••••••••"
+              class="w-full bg-zinc-900 border border-zinc-700 text-white text-sm px-4 py-3 pr-16 outline-none placeholder-zinc-600 transition-all duration-200 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 hover:border-zinc-500"
+              [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"/>
+            <button type="button" (click)="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-yellow-400 transition-colors text-xs select-none">
+              {{ showPassword() ? 'HIDE' : 'SHOW' }}
+            </button>
+          </div>
+          <p *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Password is required.</p>
+          <p *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched" class="mt-1.5 text-red-400 text-xs tracking-wide">Minimum 8 characters required.</p>
+        </div>
+
+        <!-- Server error -->
+        <div *ngIf="errorMessage()" class="border border-red-800 bg-red-950 px-4 py-3 text-red-400 text-xs tracking-wide flex items-start gap-2">
+          <span class="mt-px">⚠</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <!-- Submit button -->
+        <div class="pt-2">
+          <button type="submit" [disabled]="isLoading() || registerForm.invalid"
+            class="w-full bg-yellow-400 text-zinc-900 font-bold text-sm tracking-widest uppercase py-3.5 px-6 transition-all duration-200 outline-none hover:bg-yellow-300 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-yellow-400 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">
+            <span *ngIf="!isLoading()">Create Account →</span>
+            <span *ngIf="isLoading()" class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-zinc-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+              </svg>
+              Creating account...
+            </span>
           </button>
         </div>
-        <p *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Password is required.
+
+        <!-- Sign in link -->
+        <p class="text-center text-zinc-600 text-xs tracking-wide pt-1">
+          Already have an account?
+          <a routerLink="/login" class="text-yellow-400 hover:text-yellow-300 transition-colors ml-1">Sign in →</a>
         </p>
-        <p *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched"
-           class="mt-1.5 text-red-400 text-xs tracking-wide">
-          Minimum 8 characters required.
-        </p>
-      </div>
 
-      <!-- Server error -->
-      <div *ngIf="errorMessage"
-           class="border border-red-800 bg-red-950 px-4 py-3 text-red-400 text-xs tracking-wide flex items-start gap-2">
-        <span class="mt-px">⚠</span>
-        <span>{{ errorMessage }}</span>
-      </div>
-
-      <!-- Submit button -->
-      <div class="pt-2">
-        <button
-          type="submit"
-          [disabled]="isLoading || registerForm.invalid"
-          class="w-full bg-yellow-400 text-zinc-900 font-bold text-sm tracking-widest uppercase py-3.5 px-6
-                 transition-all duration-200 outline-none
-                 hover:bg-yellow-300 active:scale-[0.99]
-                 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-yellow-400
-                 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">
-          <span *ngIf="!isLoading">Create Account →</span>
-          <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-4 w-4 text-zinc-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
-            Creating account...
-          </span>
-        </button>
-      </div>
-
-      <!-- Sign in link -->
-      <p class="text-center text-zinc-600 text-xs tracking-wide pt-1">
-        Already have an account?
-        <a routerLink="/login" class="text-yellow-400 hover:text-yellow-300 transition-colors ml-1">Sign in →</a>
-      </p>
-
-    </form>
+      </form>
+    </div>
 
   </div>
 </div>

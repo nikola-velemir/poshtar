@@ -1,20 +1,20 @@
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { RegisterService } from "../../service/register-service";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-register",
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: "./register.html",
   styleUrl: "./register.css",
 })
 export class RegisterComponent {
 
-  errorMessage = '';
-  isLoading = false;
-
-  showPassword: boolean = false;
+  errorMessage = signal("");
+  isLoading = signal(false);
+  isSuccess = signal(false);
+  showPassword = signal(false);
   registerForm = new FormGroup({
     username: new FormControl('', {
       nonNullable: true,
@@ -41,14 +41,16 @@ export class RegisterComponent {
 
   }
   togglePassword() {
-    this.showPassword = !this.showPassword
+    this.showPassword.update(v => !v)
   }
   onSubmit() {
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
     const { username, password, email, firstName, lastName } = this.registerForm.value;
-    if (!username || !password || !email || !firstName || !lastName)
+    if (!username || !password || !email || !firstName || !lastName) {
+      this.isLoading.set(false);
       return;
+    }
     this.registerService.register({
       username,
       password,
@@ -56,10 +58,16 @@ export class RegisterComponent {
       firstName,
       lastName
     }).subscribe({
-      next :()=>{
-        this.isLoading = false;
+      next: () => {
+        this.isLoading.set(false);
+        this.isSuccess.set(true);
       },
-      error : ()=> this.isLoading = false
+      error: () => {
+        this.errorMessage.set("Could not register");
+        this.isLoading.set(false);
+        this.isSuccess.set(false);
+      }
+
     })
   }
 }

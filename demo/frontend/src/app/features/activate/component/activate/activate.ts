@@ -24,7 +24,7 @@ export class ActivateComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private activateService: ActivateService,
-    private cdr: ChangeDetectorRef // <-- 1. Inject ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {

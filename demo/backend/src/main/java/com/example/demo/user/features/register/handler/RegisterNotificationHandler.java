@@ -15,13 +15,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterNotificationHandler implements INotificationHandler<RegisterNotification> {
 
     private final EmailService emailService;
+    private final LoggingService loggingService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Async
     public void handle(RegisterNotification notification) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         String username = notification.username();
         String email = notification.email();
+
         emailService.sendEmail(email, "Activate account", "http://localhost:4200/activate/" + username);
+        loggingService.logActivity("EMAIL SENT", "email sent to " + email);
     }
 }

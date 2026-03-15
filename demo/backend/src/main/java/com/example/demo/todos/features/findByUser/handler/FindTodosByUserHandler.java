@@ -10,6 +10,7 @@ import org.example.core.annotations.RequestHandler;
 import org.example.core.request.handler.IRequestHandler;
 import org.jspecify.annotations.NonNull;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,7 +26,9 @@ public class FindTodosByUserHandler implements IRequestHandler<FindTodosByUser, 
     }
 
     private static @NonNull List<FindTodoByUserResponseDTO> createResponse(List<TodoItem> todos) {
-        return todos.stream().map(t -> new FindTodoByUserResponseDTO(
+        return todos.stream()
+                .sorted(Comparator.comparing(TodoItem::getTitle))
+                .map(t -> new FindTodoByUserResponseDTO(
                 t.getId(),
                 t.getTitle(),
                 t.getDescription(),
