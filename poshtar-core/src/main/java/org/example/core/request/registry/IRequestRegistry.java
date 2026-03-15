@@ -10,9 +10,9 @@ import java.util.List;
 public interface IRequestRegistry {
     <TRequest extends IRequest<TResponse>, TResponse> RequestInvocationChain<TRequest,TResponse> resolve(Class<TRequest> requestType);
 
-    void register(
-            Class<?> requestType,
-            IRequestHandler<?, ?> rawHandler,
+     <TRequest extends IRequest<TResponse>, TResponse> void register(
+            Class<TRequest> requestType,
+            IRequestHandler<TRequest, TResponse> rawHandler,
             List<IPipelineBehaviour<?, ?>> rawBehaviours);
 
 }

@@ -1,6 +1,7 @@
 package adapter.registry;
 
 import org.example.core.pipeline.behaviour.IPipelineBehaviour;
+import org.example.core.request.IRequest;
 import org.example.core.request.handler.IRequestHandler;
 import org.example.core.request.registry.AbstractRequestRegistry;
 import org.springframework.context.ApplicationContext;
@@ -32,10 +33,16 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
             Class<?> requestType = ResolvableType.forClass(handler.getClass())
                     .as(IRequestHandler.class)
                     .getGeneric(0).resolve();
-            if (requestType == null) continue;
+            if (requestType == null || !IRequest.class.isAssignableFrom(requestType)) {
+                continue;
+            }
 
             List<IPipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours(allBehaviours, requestType);
-            register(requestType, handler, filteredBehaviours);
+
+            Class<IRequest<Object>> castedRequest = (Class<IRequest<Object>>) requestType;
+            IRequestHandler<IRequest<Object>, Object> castedHandler = (IRequestHandler<IRequest<Object>, Object>) handler;
+
+            register(castedRequest, castedHandler, filteredBehaviours);
         }
 
     }

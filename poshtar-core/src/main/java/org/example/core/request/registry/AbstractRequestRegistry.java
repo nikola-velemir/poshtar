@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public  class AbstractRequestRegistry implements IRequestRegistry {
+public abstract class AbstractRequestRegistry implements IRequestRegistry {
 
     protected final Map<Class<?>, RequestInvocationChain<?, ?>> handlerMappings = new HashMap<>();
 
@@ -28,14 +28,13 @@ public  class AbstractRequestRegistry implements IRequestRegistry {
     }
 
 
-
     @Override
-    public void register(Class<?> requestType, IRequestHandler<?, ?> rawHandler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
-        var builtPipeline = PipelineBuilder.build(rawHandler, rawBehaviours);
+    public <TRequest extends IRequest<TResponse>, TResponse> void register(Class<TRequest> requestType, IRequestHandler<TRequest, TResponse> handler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
+        var builtPipeline = PipelineBuilder.build(handler, rawBehaviours);
         var putResult =
                 handlerMappings.putIfAbsent(requestType, builtPipeline);
         if (putResult != null)
-            throw new AmbiguousHandlerException(requestType, List.of(rawHandler.getClass()));
+            throw new AmbiguousHandlerException(requestType, List.of(handler.getClass()));
     }
 
     protected List<IPipelineBehaviour<?, ?>> filterBehaviours(

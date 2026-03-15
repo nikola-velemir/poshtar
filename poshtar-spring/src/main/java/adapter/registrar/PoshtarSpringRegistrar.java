@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 import java.util.Map;
@@ -28,19 +27,27 @@ public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
         buildFilters(scanner);
 
         Map<String, Object> attrs = importingClassMetadata.getAnnotationAttributes(EnablePoshtar.class.getName());
-        String[] packages = (attrs != null && ((String[]) attrs.get("basePackages")).length > 0)
-                ? (String[]) attrs.get("basePackages")
-                : new String[]{ ClassUtils.getPackageName(importingClassMetadata.getClassName()) };
+        String[] packages = discoverPackages(importingClassMetadata, attrs);
 
         for (String basePackage : packages) {
             for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
-                GenericBeanDefinition beanDef = new GenericBeanDefinition();
-                beanDef.setBeanClassName(bd.getBeanClassName());
-                beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
-                registry.registerBeanDefinition(Objects.requireNonNull(bd.getBeanClassName()), beanDef);
+                registerBean(registry, bd);
             }
         }
 
+    }
+
+    private static void registerBean(BeanDefinitionRegistry registry, BeanDefinition bd) {
+        GenericBeanDefinition beanDef = new GenericBeanDefinition();
+        beanDef.setBeanClassName(bd.getBeanClassName());
+        beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
+        registry.registerBeanDefinition(Objects.requireNonNull(bd.getBeanClassName()), beanDef);
+    }
+
+    private static String[] discoverPackages(@NonNull AnnotationMetadata importingClassMetadata, Map<String, Object> attrs) {
+        return (attrs != null && ((String[]) attrs.get("basePackages")).length > 0)
+                ? (String[]) attrs.get("basePackages")
+                : new String[]{ ClassUtils.getPackageName(importingClassMetadata.getClassName()) };
     }
 
     private static void buildFilters(ClassPathScanningCandidateComponentProvider scanner) {
@@ -49,20 +56,4 @@ public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
         scanner.addIncludeFilter(new AnnotationTypeFilter(PipelineBehaviour.class));
     }
 
-    @Nullable
-    private static String findBasePackage(BeanDefinitionRegistry registry) {
-        String basePackage = null;
-        for (String beanName : registry.getBeanDefinitionNames()) {
-            BeanDefinition bd = registry.getBeanDefinition(beanName);
-            if (bd.getBeanClassName() == null) continue;
-            try {
-                Class<?> clazz = Class.forName(bd.getBeanClassName());
-                if (clazz.isAnnotationPresent(EnablePoshtar.class)) {
-                    basePackage = clazz.getPackageName();
-                    break;
-                }
-            } catch (ClassNotFoundException ignored) {}
-        }
-        return basePackage;
-    }
 }
