@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivateService } from "../../service/activate-service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Observable, Subscription } from "rxjs";
+import { ThemeService } from "../../../../infra/theme/theme-service";
 
 @Component({
   selector: "app-activate",
@@ -24,9 +25,12 @@ export class ActivateComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private activateService: ActivateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private themeService:ThemeService
   ) { }
-
+  get theme(){
+    return this.themeService.theme;
+  }
   ngOnInit(): void {
     this.username = this.route.snapshot.paramMap.get('username');
     if(!this.username)

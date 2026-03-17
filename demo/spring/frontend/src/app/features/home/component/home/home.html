@@ -1,121 +1,145 @@
-<div *ngIf="user$ | async as userData" class="min-h-screen bg-zinc-950 flex font-mono text-white">
-    <!-- ADD TODO MODAL -->
-    <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" (click)="closeModal()"></div>
+<div *ngIf="user$ | async as userData"
+  class="min-h-screen flex font-mono text-white"
+  [ngClass]="{ 'bg-zinc-950': theme === 'spring', 'bg-slate-950': theme === 'guice' }">
 
-        <!-- Modal -->
-        <div class="relative z-10 w-full max-w-md bg-zinc-900 border border-zinc-800 p-6">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="text-white text-sm font-bold tracking-widest uppercase">
-                        New Task
-                    </h3>
-                    <div class="h-px bg-yellow-400 mt-2 w-6"></div>
-                </div>
-                <button (click)="closeModal()" class="text-zinc-600 hover:text-white transition-colors text-xs">
-                    ✕
-                </button>
-            </div>
+  <!-- ADD TODO MODAL -->
+  <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center">
 
-            <!-- Title input -->
-            <div class="mb-4">
-                <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">Task Title</label>
-                <input #titleInput [(ngModel)]="newTodo.title" (keydown.enter)="submitTodo()" type="text"
-                    placeholder="What needs to be done?"
-                    class="w-full bg-zinc-950 border border-zinc-800 px-3 py-2.5 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-yellow-400 transition-colors" />
-            </div>
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" (click)="closeModal()"></div>
 
-            <!-- Due date input -->
-            <div class="mb-4">
-                <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">Description <span
-                        class="text-zinc-700">(optional)</span></label>
-                <input [(ngModel)]="newTodo.description" type="text"
-                    class="w-full bg-zinc-950 border border-zinc-800 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400 transition-colors scheme-dark" />
-            </div>
+    <!-- Modal -->
+    <div class="relative z-10 w-full max-w-md border p-6"
+      [ngClass]="{
+        'bg-zinc-900 border-zinc-800': theme === 'spring',
+        'bg-slate-900 border-slate-800': theme === 'guice'
+      }">
 
-            <!-- Priority selector -->
-
-            <!-- Actions -->
-            <div class="flex gap-3">
-                <button (click)="closeModal()"
-                    class="flex-1 py-2.5 text-xs border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-all tracking-widest uppercase">
-                    Cancel
-                </button>
-                <button (click)="submitTodo()" [disabled]="!newTodo.title.trim()"
-                    class="flex-1 py-2.5 text-xs bg-yellow-400 text-zinc-900 font-bold tracking-widest uppercase hover:bg-yellow-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                    Create Task
-                </button>
-            </div>
+      <!-- Modal header -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-white text-sm font-bold tracking-widest uppercase">New Task</h3>
+          <div class="h-px mt-2 w-6" [ngClass]="theme === 'spring' ? 'bg-green-400' : 'bg-blue-500'"></div>
         </div>
+        <button (click)="closeModal()" class="text-zinc-600 hover:text-white transition-colors text-xs">✕</button>
+      </div>
+
+      <!-- Title input -->
+      <div class="mb-4">
+        <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">Task Title</label>
+        <input #titleInput [(ngModel)]="newTodo.title" (keydown.enter)="submitTodo()" type="text"
+          placeholder="What needs to be done?"
+          class="w-full border px-3 py-2.5 text-sm text-white placeholder-zinc-700 focus:outline-none transition-colors"
+          [ngClass]="{
+            'bg-zinc-950 border-zinc-800 focus:border-green-400': theme === 'spring',
+            'bg-slate-950 border-slate-800 focus:border-blue-500': theme === 'guice'
+          }" />
+      </div>
+
+      <!-- Description input -->
+      <div class="mb-4">
+        <label class="text-zinc-500 text-[10px] tracking-widest uppercase block mb-2">
+          Description <span class="text-zinc-700">(optional)</span>
+        </label>
+        <input [(ngModel)]="newTodo.description" type="text"
+          class="w-full border px-3 py-2.5 text-sm text-white focus:outline-none transition-colors scheme-dark"
+          [ngClass]="{
+            'bg-zinc-950 border-zinc-800 focus:border-green-400': theme === 'spring',
+            'bg-slate-950 border-slate-800 focus:border-blue-500': theme === 'guice'
+          }" />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button (click)="closeModal()"
+          class="flex-1 py-2.5 text-xs border text-zinc-500 hover:text-white hover:border-zinc-600 transition-all tracking-widest uppercase"
+          [ngClass]="theme === 'spring' ? 'border-zinc-800' : 'border-slate-800'">
+          Cancel
+        </button>
+        <button (click)="submitTodo()" [disabled]="!newTodo.title.trim()"
+          class="flex-1 py-2.5 text-xs font-bold tracking-widest uppercase transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          [ngClass]="{
+            'bg-green-400 text-zinc-900 hover:bg-green-300': theme === 'spring',
+            'bg-blue-500 text-white hover:bg-blue-400': theme === 'guice'
+          }">
+          Create Task
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="hidden lg:flex flex-col w-56 border-r px-5 py-3 shrink-0"
+    [ngClass]="theme === 'spring' ? 'border-zinc-800' : 'border-slate-800'">
+
+    <div class="border-b py-4" [ngClass]="theme === 'spring' ? 'border-zinc-800' : 'border-slate-800'">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 flex items-center justify-center text-xs font-bold"
+          [ngClass]="{
+            'bg-green-400 text-zinc-900': theme === 'spring',
+            'bg-blue-500 text-white': theme === 'guice'
+          }">
+        </div>
+        <div>
+          <div class="text-white text-xs font-bold">{{ userData?.username }}</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Sidebar -->
-    <aside class="hidden lg:flex flex-col w-56 border-r border-zinc-800 px-5 py-3 shrink-0">
-        
-        <div class="border-b border-zinc-800 py-4">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-yellow-400 flex items-center justify-center text-zinc-900 text-xs font-bold">
-                </div>
-                <div>
-                    <div class="text-white text-xs font-bold">
-                        {{ userData?.username }}
-                    </div>
-                </div>
-            </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Top bar -->
+    <header class="border-b px-6 lg:px-8 py-4 flex items-center justify-between shrink-0"
+      [ngClass]="theme === 'spring' ? 'border-zinc-800' : 'border-slate-800'">
+      <div>
+        <div class="text-zinc-600 text-xs tracking-widest uppercase">{{ todayDate }}</div>
+        <h1 class="text-white text-xl font-bold tracking-tight mt-0.5">
+          Good {{ greeting }},
+          <span [ngClass]="theme === 'spring' ? 'text-green-400' : 'text-blue-400'">{{ userData.firstName }}</span>.
+        </h1>
+      </div>
+      <button (click)="logout()"
+        class="text-xs border px-3 py-1.5 text-zinc-500 hover:text-red-400 hover:border-red-400 transition-all tracking-widest uppercase"
+        [ngClass]="theme === 'spring' ? 'border-zinc-800' : 'border-slate-800'">
+        Logout
+      </button>
+    </header>
+
+    <!-- Body -->
+    <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-8">
+      <ng-container *ngIf="todos$ | async as todos">
+
+        <!-- Header row -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-white text-sm font-bold tracking-widest uppercase">Tasks</h2>
+          <button (click)="openModal()"
+            class="text-xs border px-3 py-1.5 text-zinc-500 transition-all tracking-wide uppercase"
+            [ngClass]="{
+              'border-zinc-800 hover:text-green-400 hover:border-green-400': theme === 'spring',
+              'border-slate-800 hover:text-blue-400 hover:border-blue-500': theme === 'guice'
+            }">
+            + Add
+          </button>
         </div>
-    </aside>
 
-    <!-- Main content -->
-    <div class="flex-1 flex flex-col min-w-0">
-        <!-- Top bar -->
-        <header class="border-b border-zinc-800 px-6 lg:px-8 py-4 flex items-center justify-between shrink-0">
-            <div>
-                <div class="text-zinc-600 text-xs tracking-widest uppercase">
-                    {{ todayDate }}
-                </div>
-                <h1 class="text-white text-xl font-bold tracking-tight mt-0.5">
-                    Good {{ greeting }},
-                    <span class="text-yellow-400">{{ userData.firstName }}</span>.
-                </h1>
-            </div>
-            <button (click)="logout()"
-                class="text-xs border border-zinc-800 px-3 py-1.5 text-zinc-500 hover:text-red-400 hover:border-red-400 transition-all tracking-widest uppercase">
-                Logout
-            </button>
-        </header>
+        <!-- Empty state -->
+        <div *ngIf="todos.length === 0" class="flex flex-col items-center justify-center py-20 text-zinc-700">
+          <div class="text-4xl mb-3">✓</div>
+          <div class="text-sm tracking-wide">Nothing to do. Enjoy the silence.</div>
+        </div>
 
-        <!-- Body -->
-        <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-8">
-            <ng-container *ngIf="todos$ | async as todos">
-                <!-- Header row -->
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 class="text-white text-sm font-bold tracking-widest uppercase">
-                            Tasks
-                        </h2>
-                    </div>
-                    <button (click)="openModal()"
-                        class="text-xs border border-zinc-800 px-3 py-1.5 text-zinc-500 hover:text-yellow-400 hover:border-yellow-400 transition-all tracking-wide uppercase">
-                        + Add
-                    </button>
-                </div>
+        <!-- Todo list -->
+        <ul class="space-y-2">
+          <app-todo-card *ngFor="let todo of todos; trackBy: trackById" [todo]="todo"
+            (emitChangeStatus)="changeStatus($event)" (emitDelete)="deleteTodo($event)" />
+        </ul>
 
-                <!-- Empty state -->
-                <div *ngIf="todos.length === 0" class="flex flex-col items-center justify-center py-20 text-zinc-700">
-                    <div class="text-4xl mb-3">✓</div>
-                    <div class="text-sm tracking-wide">
-                        Nothing to do. Enjoy the silence.
-                    </div>
-                </div>
+      </ng-container>
+    </main>
 
-                <!-- Todo list -->
-                <ul class="space-y-2">
-                    <app-todo-card *ngFor="let todo of todos; trackBy: trackById" [todo]="todo"
-                        (emitChangeStatus)="changeStatus($event)" (emitDelete)="deleteTodo($event)" />
-                </ul>
-            </ng-container>
-        </main>
-    </div>
+  </div>
 </div>

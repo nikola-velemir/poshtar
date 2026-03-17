@@ -2,6 +2,7 @@ import { Component, signal } from "@angular/core";
 import { RegisterService } from "../../service/register-service";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { ThemeService } from "../../../../infra/theme/theme-service";
 
 @Component({
   selector: "app-register",
@@ -10,7 +11,6 @@ import { CommonModule } from "@angular/common";
   styleUrl: "./register.css",
 })
 export class RegisterComponent {
-
   errorMessage = signal("");
   isLoading = signal(false);
   isSuccess = signal(false);
@@ -37,8 +37,11 @@ export class RegisterComponent {
       validators: [Validators.required, Validators.email]
     }),
   })
-  constructor(private registerService: RegisterService) {
+  constructor(private registerService: RegisterService,private themeService:ThemeService) {
 
+  }
+  get theme(){
+    return this.themeService.theme;
   }
   togglePassword() {
     this.showPassword.update(v => !v)

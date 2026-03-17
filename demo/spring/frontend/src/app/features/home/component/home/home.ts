@@ -4,18 +4,19 @@ import { LoginResponse } from "../../../login/model/response";
 import { UserService } from "../../../../infra/service/user-service";
 import { BehaviorSubject, Observable, of, switchMap } from "rxjs";
 import { User } from "../../../../infra/model/user";
-import { AsyncPipe, NgFor, NgIf } from '@angular/common'; // Import the pipe
+import { AsyncPipe, CommonModule, NgFor, NgIf } from '@angular/common'; // Import the pipe
 import { HomeService } from "../../service/home-service";
 import { Todo, TODO_STATUS } from "../../model/todo";
 import { FormsModule } from "@angular/forms";
 import { TodoCard } from "../todo-card/todo-card";
+import { ThemeService } from "../../../../infra/theme/theme-service";
 
 
 
 @Component({
 
   selector: "app-home",
-  imports: [NgIf, NgFor, AsyncPipe, FormsModule, TodoCard],
+  imports: [NgIf, NgFor,CommonModule, AsyncPipe, FormsModule, TodoCard],
   templateUrl: "./home.html",
   styleUrl: "./home.css",
 })
@@ -33,7 +34,11 @@ export class HomeComponent implements OnInit {
   todayDate = '';
   greeting = '';
   showAddModal: any;
-  constructor(private router: Router, private userService: UserService, private homeService: HomeService) {
+  constructor(
+    private themeService:ThemeService,
+    private router: Router, 
+    private userService: UserService,
+     private homeService: HomeService) {
   }
   ngOnInit(): void {
     this.user$ = this.userService.user$;
@@ -50,6 +55,9 @@ export class HomeComponent implements OnInit {
       );
     }));
 
+  }
+  get theme(){
+    return this.themeService.theme;
   }
   changeStatus($event: { id: number, status: TODO_STATUS }) {
     if (!this.user) return;

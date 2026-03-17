@@ -1,14 +1,15 @@
-import { NgIf } from "@angular/common";
+import { CommonModule, NgIf } from "@angular/common";
 import { ChangeDetectorRef, Component, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { LoginService } from "../../service/loginService";
 import { UserService } from "../../../../infra/service/user-service";
 import { single } from "rxjs";
+import { ThemeService } from "../../../../infra/theme/theme-service";
 
 @Component({
   selector: "app-login",
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule, NgIf,CommonModule],
   templateUrl: "./login.html",
   styleUrl: "./login.css",
   standalone: true,
@@ -27,7 +28,14 @@ export class LoginComponent {
       validators: [Validators.required]
     }),
   })
-  constructor(private service: LoginService, private userService: UserService, private router: Router) {
+  get theme(){
+    return this.themeService.theme;
+  }
+  constructor(
+    private service: LoginService,
+     private userService: UserService, 
+    private router: Router,
+  private themeService:ThemeService) {
 
   }
 
