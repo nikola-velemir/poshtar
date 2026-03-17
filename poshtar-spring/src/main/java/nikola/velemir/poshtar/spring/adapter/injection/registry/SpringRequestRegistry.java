@@ -1,8 +1,8 @@
-package nikola.velemir.poshtar.spring.adapter.registry;
+package nikola.velemir.poshtar.spring.adapter.injection.registry;
 
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
-import org.nikola.velemir.poshtar.core.request.IRequest;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import org.nikola.velemir.poshtar.core.request.Request;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.core.request.registry.AbstractRequestRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -22,25 +22,25 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
 
     @SuppressWarnings("unchecked")
     private void init(ApplicationContext context) {
-        @SuppressWarnings("rawtypes") Map<String, IRequestHandler> allHandlers = context.getBeansOfType(IRequestHandler.class);
-        List<IPipelineBehaviour<?, ?>> allBehaviours =
-                new ArrayList<>((Collection<IPipelineBehaviour<?, ?>>) (Collection<?>)
-                        context.getBeansOfType(IPipelineBehaviour.class).values()
+        @SuppressWarnings("rawtypes") Map<String, RequestHandler> allHandlers = context.getBeansOfType(RequestHandler.class);
+        List<PipelineBehaviour<?, ?>> allBehaviours =
+                new ArrayList<>((Collection<PipelineBehaviour<?, ?>>) (Collection<?>)
+                        context.getBeansOfType(PipelineBehaviour.class).values()
                 );
         AnnotationAwareOrderComparator.sort(allBehaviours);
 
-        for (IRequestHandler<?, ?> handler : allHandlers.values()) {
+        for (RequestHandler<?, ?> handler : allHandlers.values()) {
             Class<?> requestType = ResolvableType.forClass(handler.getClass())
-                    .as(IRequestHandler.class)
+                    .as(RequestHandler.class)
                     .getGeneric(0).resolve();
-            if (requestType == null || !IRequest.class.isAssignableFrom(requestType)) {
+            if (requestType == null || !Request.class.isAssignableFrom(requestType)) {
                 continue;
             }
 
-            List<IPipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours(allBehaviours, requestType);
+            List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours(allBehaviours, requestType);
 
-            Class<IRequest<Object>> castedRequest = (Class<IRequest<Object>>) requestType;
-            IRequestHandler<IRequest<Object>, Object> castedHandler = (IRequestHandler<IRequest<Object>, Object>) handler;
+            Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
+            RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
 
             register(castedRequest, castedHandler, filteredBehaviours);
         }
@@ -48,9 +48,9 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
     }
 
     @Override
-    protected boolean supportsRequest(IPipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
+    protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
         ResolvableType behaviourInterface = ResolvableType.forClass(behaviour.getClass())
-                .as(IPipelineBehaviour.class);
+                .as(PipelineBehaviour.class);
         Class<?> genericRequestType = behaviourInterface.getGeneric(0).resolve();
         if (genericRequestType == null) {
             return behaviourInterface.getGeneric(0).isAssignableFrom(requestType);

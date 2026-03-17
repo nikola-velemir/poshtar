@@ -1,7 +1,6 @@
 package poshtar.tests.notification.deps.async;
 
+import org.nikola.velemir.poshtar.core.notification.Notification;
 
-import org.nikola.velemir.poshtar.core.notification.INotification;
-
-public class FailForAsyncNotification implements INotification {
+public class FailForAsyncNotification implements Notification {
 }

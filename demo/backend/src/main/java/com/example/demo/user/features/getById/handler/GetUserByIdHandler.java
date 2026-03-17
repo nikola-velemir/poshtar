@@ -4,12 +4,12 @@ import com.example.demo.user.features.getById.query.GetUserByIdQuery;
 import com.example.demo.user.features.getById.response.GetUserResponseDTO;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RequestHandler
-public class GetUserByIdHandler implements IRequestHandler<GetUserByIdQuery, GetUserResponseDTO> {
+@Handler
+public class GetUserByIdHandler implements RequestHandler<GetUserByIdQuery, GetUserResponseDTO> {
     @Autowired
     private final UserRepository repository;
 

@@ -1,7 +1,7 @@
 package poshtar.tests.pipeline;
 
 import org.junit.jupiter.api.Test;
-import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MockTransactionConfig.class)
 public class PipelineTests {
     @Autowired
-    private IPoshtar poshtar;
+    private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
 

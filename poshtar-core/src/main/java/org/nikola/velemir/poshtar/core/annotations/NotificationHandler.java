@@ -9,5 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Named
-public @interface NotificationHandler {
+
+@Deprecated
+ @interface NotificationHandler {
 }

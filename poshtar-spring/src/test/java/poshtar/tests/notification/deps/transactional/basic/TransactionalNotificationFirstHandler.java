@@ -1,14 +1,14 @@
-package poshtar.tests.notification.deps.transactional;
+package poshtar.tests.notification.deps.transactional.basic;
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@NotificationHandler
-public class TransactionalNotificationFirstHandler implements INotificationHandler<TransactionalNotification> {
+@Handler
+public class TransactionalNotificationFirstHandler implements NotificationHandler<TransactionalNotification> {
     @Override
     @Transactional
     public void handle(TransactionalNotification transactionalNotification) {

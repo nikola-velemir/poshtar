@@ -2,7 +2,7 @@ package poshtar.tests.notification;
 
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.exceptions.AggregateNotificationException;
-import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -21,8 +21,8 @@ import poshtar.tests.notification.deps.noneRegistered.NoneRegisteredNotification
 import poshtar.tests.notification.deps.ping.PingFirstHandler;
 import poshtar.tests.notification.deps.ping.PingNotification;
 import poshtar.tests.notification.deps.ping.PingSecondHandler;
-import poshtar.tests.notification.deps.transactional.MandatoryNotification;
-import poshtar.tests.notification.deps.transactional.TransactionalNotification;
+import poshtar.tests.notification.deps.transactional.mandatory.MandatoryNotification;
+import poshtar.tests.notification.deps.transactional.basic.TransactionalNotification;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MockTransactionConfig.class)
 public class NotificationTests {
     @Autowired
-    private IPoshtar poshtar;
+    private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
 

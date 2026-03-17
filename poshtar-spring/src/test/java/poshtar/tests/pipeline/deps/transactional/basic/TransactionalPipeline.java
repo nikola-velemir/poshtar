@@ -1,12 +1,12 @@
 package poshtar.tests.pipeline.deps.transactional.basic;
-import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.core.types.Unit;
 import org.springframework.transaction.annotation.Transactional;
 
-@PipelineBehaviour
-public class TransactionalPipeline implements IPipelineBehaviour<TransactionalRequest, Unit> {
+@Behaviour
+public class TransactionalPipeline implements PipelineBehaviour<TransactionalRequest, Unit> {
     @Override
     @Transactional
     public Unit handle(TransactionalRequest request, RequestDelegate<TransactionalRequest, Unit> requestDelegate) {

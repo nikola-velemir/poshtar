@@ -3,15 +3,15 @@ package com.example.demo.infra.scheduler.handler;
 import com.example.demo.shared.logger.LoggingService;
 import com.example.demo.infra.scheduler.notification.ScheduledNotification;
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@NotificationHandler
-public class NumeroTresNotificationHandler implements INotificationHandler<ScheduledNotification> {
+@Handler
+public class NumeroTresNotificationHandler implements NotificationHandler<ScheduledNotification> {
     @Autowired
     private final LoggingService logger;
 

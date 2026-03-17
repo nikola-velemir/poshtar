@@ -1,10 +1,10 @@
 package poshtar.tests.notification.deps.ping;
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 
-@NotificationHandler
-public class PingSecondHandler implements INotificationHandler<PingNotification> {
+@Handler
+public class PingSecondHandler implements NotificationHandler<PingNotification> {
     @Override
     public void handle(PingNotification pingNotification) {
         pingNotification.payload += 1;

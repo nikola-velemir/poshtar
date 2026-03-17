@@ -1,17 +1,17 @@
 package com.example.demo.pipeline;
 
-import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import org.nikola.velemir.poshtar.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
-@PipelineBehaviour
+@Behaviour
 @Order(1)
-public class LoggingBehaviour<TRequest extends IRequest<TResponse>, TResponse>
-        implements IPipelineBehaviour<TRequest, TResponse> {
+public class LoggingBehaviour<TRequest extends Request<TResponse>, TResponse>
+        implements PipelineBehaviour<TRequest, TResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingBehaviour.class);
 

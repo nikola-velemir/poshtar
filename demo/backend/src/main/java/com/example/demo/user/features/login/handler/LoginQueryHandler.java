@@ -8,14 +8,14 @@ import com.example.demo.user.service.PasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 
 import java.nio.file.AccessDeniedException;
 
 @RequiredArgsConstructor
-@RequestHandler
-public class LoginQueryHandler implements IRequestHandler<LoginQuery, LoginResponseDTO> {
+@Handler
+public class LoginQueryHandler implements RequestHandler<LoginQuery, LoginResponseDTO> {
     private final PasswordService passwordService;
     private final UserRepository userRepository;
 

@@ -6,7 +6,7 @@ import com.example.demo.user.features.login.response.LoginResponseDTO;
 import com.example.demo.user.features.register.command.RegisterCommand;
 import com.example.demo.user.features.getById.query.GetUserByIdQuery;
 import com.example.demo.user.features.getById.response.GetUserResponseDTO;
-import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/users")
 public class UserController {
     @Autowired
-    private final IPoshtar poshtar;
+    private final Poshtar poshtar;
 
 
-    public UserController(IPoshtar mediator) {
-        this.poshtar = mediator;
+    public UserController(Poshtar _poshtar) {
+        this.poshtar = _poshtar;
     }
 
     @GetMapping("{id}")

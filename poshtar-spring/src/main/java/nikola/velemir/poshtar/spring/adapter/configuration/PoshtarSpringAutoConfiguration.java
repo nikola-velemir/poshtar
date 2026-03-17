@@ -1,13 +1,13 @@
 package nikola.velemir.poshtar.spring.adapter.configuration;
 
 
-import nikola.velemir.poshtar.spring.adapter.registry.SpringRequestRegistry;
-import nikola.velemir.poshtar.spring.adapter.registry.SpringNotificationRegistry;
+import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringRequestRegistry;
+import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringNotificationRegistry;
 
-import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
-import org.nikola.velemir.poshtar.core.notification.registry.INotificationRegistry;
-import org.nikola.velemir.poshtar.core.request.registry.IRequestRegistry;
-import org.nikola.velemir.poshtar.impl.Poshtar;
+import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.core.mediator.impl.PoshtarImpl;
+import org.nikola.velemir.poshtar.core.notification.registry.NotificationRegistry;
+import org.nikola.velemir.poshtar.core.request.registry.RequestRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -23,19 +23,19 @@ public class PoshtarSpringAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public IRequestRegistry provideRequestRegistry(){
+    public RequestRegistry provideRequestRegistry(){
         return new SpringRequestRegistry(context);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public INotificationRegistry provideNotificationRegistry(){
+    public NotificationRegistry provideNotificationRegistry(){
         return new SpringNotificationRegistry(context);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public IPoshtar configurePoshtar(IRequestRegistry handlerRegistry, INotificationRegistry notificationRegistry){
-        return new Poshtar(handlerRegistry, notificationRegistry);
+    public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry){
+        return new PoshtarImpl(handlerRegistry, notificationRegistry);
     }
 }

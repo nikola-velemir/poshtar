@@ -1,7 +1,7 @@
-package nikola.velemir.poshtar.spring.adapter.registry;
+package nikola.velemir.poshtar.spring.adapter.injection.registry;
 
-import org.nikola.velemir.poshtar.core.notification.INotification;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.notification.Notification;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -20,20 +20,20 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void init(ApplicationContext context) {
-        Map<String, INotificationHandler> allHandlers  = context.getBeansOfType(INotificationHandler.class);
+        Map<String, NotificationHandler> allHandlers  = context.getBeansOfType(NotificationHandler.class);
 
-        for (INotificationHandler<INotification> handler : allHandlers.values()) {
+        for (NotificationHandler<Notification> handler : allHandlers.values()) {
 
 
             ResolvableType resolvableType = ResolvableType.forClass(handler.getClass())
-                    .as(INotificationHandler.class);
+                    .as(NotificationHandler.class);
 
             Class<?> notificationType = resolvableType.getGeneric(0).resolve();
 
-            if (notificationType != null && INotification.class.isAssignableFrom(notificationType)) {
+            if (notificationType != null && Notification.class.isAssignableFrom(notificationType)) {
                 @SuppressWarnings("unchecked")
-                Class<? extends INotification> castedType = (Class<? extends INotification>) notificationType;
-                register(castedType, (INotificationHandler) handler);
+                Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;
+                register(castedType, (NotificationHandler) handler);
             }
 
         }

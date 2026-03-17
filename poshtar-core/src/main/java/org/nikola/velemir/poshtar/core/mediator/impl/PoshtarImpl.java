@@ -1,28 +1,28 @@
-package org.nikola.velemir.poshtar.impl;
+package org.nikola.velemir.poshtar.core.mediator.impl;
 
 import org.nikola.velemir.poshtar.core.exceptions.AggregateNotificationException;
-import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
-import org.nikola.velemir.poshtar.core.request.registry.IRequestRegistry;
-import org.nikola.velemir.poshtar.core.notification.registry.INotificationRegistry;
-import org.nikola.velemir.poshtar.core.notification.INotification;
-import org.nikola.velemir.poshtar.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
+import org.nikola.velemir.poshtar.core.request.registry.RequestRegistry;
+import org.nikola.velemir.poshtar.core.notification.registry.NotificationRegistry;
+import org.nikola.velemir.poshtar.core.notification.Notification;
+import org.nikola.velemir.poshtar.core.request.Request;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Poshtar implements IPoshtar {
-    private final IRequestRegistry requestRegistry;
-    private final INotificationRegistry notificationRegistry;
+public class PoshtarImpl implements Poshtar {
+    private final RequestRegistry requestRegistry;
+    private final NotificationRegistry notificationRegistry;
 
-    public Poshtar(IRequestRegistry registry, INotificationRegistry notificationRegistry) {
+    public PoshtarImpl(RequestRegistry registry, NotificationRegistry notificationRegistry) {
         this.requestRegistry = registry;
         this.notificationRegistry = notificationRegistry;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TReq extends IRequest<TRes>, TRes> TRes send(TReq request) {
+    public <TReq extends Request<TRes>, TRes> TRes send(TReq request) {
 
         if(request == null)
             throw new IllegalArgumentException("Request cannot be null");
@@ -33,7 +33,7 @@ public class Poshtar implements IPoshtar {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TNotification extends INotification> void publish(TNotification notification) {
+    public <TNotification extends Notification> void publish(TNotification notification) {
         if(notification == null)
             throw new IllegalArgumentException("Request cannot be null");
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
@@ -46,7 +46,7 @@ public class Poshtar implements IPoshtar {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <TNotification extends INotification> void dispatchNotifications(TNotification notification, List<INotificationHandler> handlers, List<Throwable> collectedErrors) {
+    private static <TNotification extends Notification> void dispatchNotifications(TNotification notification, List<NotificationHandler> handlers, List<Throwable> collectedErrors) {
         for (var handler : handlers) {
             try {
                 handler.handle(notification);

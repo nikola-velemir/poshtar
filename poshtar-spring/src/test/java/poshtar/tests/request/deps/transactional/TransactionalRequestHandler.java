@@ -1,14 +1,13 @@
 package poshtar.tests.request.deps.transactional;
-
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RequestHandler
-public class TransactionalRequestHandler implements IRequestHandler<TransactionalRequest, String> {
+@Handler
+public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, String> {
 
     public TransactionalRequestHandler() {
     }

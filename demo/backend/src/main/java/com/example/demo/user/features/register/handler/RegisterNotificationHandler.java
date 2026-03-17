@@ -4,15 +4,16 @@ import com.example.demo.shared.logger.LoggingService;
 import com.example.demo.infra.service.EmailService;
 import com.example.demo.user.features.register.notification.RegisterNotification;
 import lombok.RequiredArgsConstructor;
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@NotificationHandler
-public class RegisterNotificationHandler implements INotificationHandler<RegisterNotification> {
+@Handler
+public class RegisterNotificationHandler implements NotificationHandler<RegisterNotification> {
 
     private final EmailService emailService;
     private final LoggingService loggingService;

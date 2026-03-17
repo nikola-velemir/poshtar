@@ -1,11 +1,11 @@
 package poshtar.tests.notification.deps.injection;
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@NotificationHandler
-public class InjectionNotificationSecondHandler implements INotificationHandler<InjectionNotification> {
+@Handler
+public class InjectionNotificationSecondHandler implements NotificationHandler<InjectionNotification> {
     @Autowired
     private final DummyIncrementService incrementService;
 

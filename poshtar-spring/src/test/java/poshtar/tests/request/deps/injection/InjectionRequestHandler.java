@@ -1,10 +1,10 @@
 package poshtar.tests.request.deps.injection;
 
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 
-@RequestHandler
-public class InjectionRequestHandler implements IRequestHandler<InjectionRequest, String> {
+@Handler
+public class InjectionRequestHandler implements RequestHandler<InjectionRequest, String> {
     private final poshtar.tests.request.deps.injection.DummyLoggingService loggingService;
 
     public InjectionRequestHandler(poshtar.tests.request.deps.injection.DummyLoggingService loggingService) {

@@ -1,15 +1,15 @@
 package poshtar.tests.pipeline.deps.transactional.mandatory.success;
 
-import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.core.types.Unit;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-@PipelineBehaviour
-public class SucceedForMandatoryPipeline implements IPipelineBehaviour<SucceedForMandatoryRequest, Unit> {
+@Behaviour
+public class SucceedForMandatoryPipeline implements PipelineBehaviour<SucceedForMandatoryRequest, Unit> {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)

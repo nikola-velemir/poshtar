@@ -1,9 +1,8 @@
-package nikola.velemir.poshtar.spring.adapter.registrar;
+package nikola.velemir.poshtar.spring.adapter.discovery.registrar;
 
-import nikola.velemir.poshtar.spring.adapter.EnablePoshtar;
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import nikola.velemir.poshtar.spring.adapter.configuration.EnablePoshtar;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -51,9 +50,8 @@ public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
     }
 
     private static void buildFilters(ClassPathScanningCandidateComponentProvider scanner) {
-        scanner.addIncludeFilter(new AnnotationTypeFilter(RequestHandler.class));
-        scanner.addIncludeFilter(new AnnotationTypeFilter(NotificationHandler.class));
-        scanner.addIncludeFilter(new AnnotationTypeFilter(PipelineBehaviour.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Handler.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Behaviour.class));
     }
 
 }

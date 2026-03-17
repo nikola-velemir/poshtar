@@ -3,23 +3,23 @@ package org.nikola.velemir.poshtar.core.request.registry;
 import jdk.jshell.spi.ExecutionControl;
 import org.nikola.velemir.poshtar.core.exceptions.AmbiguousHandlerException;
 import org.nikola.velemir.poshtar.core.exceptions.HandlerNotFoundException;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.builder.PipelineBuilder;
-import org.nikola.velemir.poshtar.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.RequestInvocationChain;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractRequestRegistry implements IRequestRegistry {
+public abstract class AbstractRequestRegistry implements RequestRegistry {
 
     protected final Map<Class<?>, RequestInvocationChain<?, ?>> handlerMappings = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
+    public <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
         RequestInvocationChain<TRequest, TResponse> requestChain = (RequestInvocationChain<TRequest, TResponse>) handlerMappings.get(requestType);
         if (requestChain == null)
             throw new HandlerNotFoundException(requestType);
@@ -28,7 +28,7 @@ public abstract class AbstractRequestRegistry implements IRequestRegistry {
 
 
     @Override
-    public <TRequest extends IRequest<TResponse>, TResponse> void register(Class<TRequest> requestType, IRequestHandler<TRequest, TResponse> handler, List<IPipelineBehaviour<?, ?>> rawBehaviours) {
+    public <TRequest extends Request<TResponse>, TResponse> void register(Class<TRequest> requestType, RequestHandler<TRequest, TResponse> handler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
         var builtPipeline = PipelineBuilder.build(handler, rawBehaviours);
         var putResult =
                 handlerMappings.putIfAbsent(requestType, builtPipeline);
@@ -36,8 +36,8 @@ public abstract class AbstractRequestRegistry implements IRequestRegistry {
             throw new AmbiguousHandlerException(requestType, List.of(handler.getClass()));
     }
 
-    protected List<IPipelineBehaviour<?, ?>> filterBehaviours(
-            List<IPipelineBehaviour<?, ?>> allBehaviours, Class<?> requestType) {
+    protected List<PipelineBehaviour<?, ?>> filterBehaviours(
+            List<PipelineBehaviour<?, ?>> allBehaviours, Class<?> requestType) {
 
         return allBehaviours.stream()
                 .filter(b -> {
@@ -50,7 +50,7 @@ public abstract class AbstractRequestRegistry implements IRequestRegistry {
                 .toList();
     }
 
-    protected boolean supportsRequest(IPipelineBehaviour<?, ?> ignoredBehaviour, Class<?> ignoredRequestType) throws ExecutionControl.NotImplementedException {
+    protected boolean supportsRequest(PipelineBehaviour<?, ?> ignoredBehaviour, Class<?> ignoredRequestType) throws ExecutionControl.NotImplementedException {
         throw new ExecutionControl.NotImplementedException("Inheriting class must override this method");
     }
 }

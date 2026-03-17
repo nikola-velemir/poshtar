@@ -1,10 +1,10 @@
 package poshtar.tests.notification.deps.infrastructure;
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 
-@NotificationHandler
-public class FailedExecutionNotificationFineHandler implements INotificationHandler<FailedExecutionNotification> {
+@Handler
+public class FailedExecutionNotificationFineHandler implements NotificationHandler<FailedExecutionNotification> {
     @Override
     public void handle(FailedExecutionNotification failedExecutionNotification) {
         failedExecutionNotification.payload += 1;

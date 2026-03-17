@@ -1,14 +1,14 @@
 package poshtar.tests.notification.deps.async;
 
 
-import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
-import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@NotificationHandler
-public class FailForAsyncThirdHandler implements INotificationHandler<FailForAsyncNotification> {
+@Handler
+public class FailForAsyncThirdHandler implements NotificationHandler<FailForAsyncNotification> {
     @Override
     @Async
     @Transactional(propagation = Propagation.MANDATORY)

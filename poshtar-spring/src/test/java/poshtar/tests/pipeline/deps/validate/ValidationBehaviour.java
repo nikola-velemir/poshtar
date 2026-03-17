@@ -1,12 +1,12 @@
 package poshtar.tests.pipeline.deps.validate;
 
 
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 
-@RequestHandler
-public class ValidationBehaviour implements IPipelineBehaviour<ValidationRequest, Integer> {
+@Handler
+public class ValidationBehaviour implements PipelineBehaviour<ValidationRequest, Integer> {
     @Override
     public Integer handle(ValidationRequest request, RequestDelegate<ValidationRequest, Integer> delegate) {
         System.out.println("Entered validation behaviour!");

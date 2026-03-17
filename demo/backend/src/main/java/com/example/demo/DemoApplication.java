@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import nikola.velemir.poshtar.spring.adapter.EnablePoshtar;
+import nikola.velemir.poshtar.spring.adapter.configuration.EnablePoshtar;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;

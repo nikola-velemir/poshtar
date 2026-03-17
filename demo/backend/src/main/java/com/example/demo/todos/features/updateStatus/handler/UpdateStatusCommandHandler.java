@@ -7,14 +7,14 @@ import com.example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
-import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
-import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.core.types.Unit;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@RequestHandler
-public class UpdateStatusCommandHandler implements IRequestHandler<UpdateStatusCommand, Unit> {
+@Handler
+public class UpdateStatusCommandHandler implements RequestHandler<UpdateStatusCommand, Unit> {
     private final UserRepository userRepository;
 
     @SneakyThrows

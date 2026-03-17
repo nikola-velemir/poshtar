@@ -1,7 +1,7 @@
 package poshtar.tests.request.deps.transactional;
 
 
-import org.nikola.velemir.poshtar.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.request.Request;
 
-public record MandatoryRequest(String payload) implements IRequest<String> {
+public record MandatoryRequest(String payload) implements Request<String> {
 }

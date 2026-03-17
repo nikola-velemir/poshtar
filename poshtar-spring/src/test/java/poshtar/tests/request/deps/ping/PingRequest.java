@@ -1,7 +1,6 @@
 package poshtar.tests.request.deps.ping;
 
+import org.nikola.velemir.poshtar.core.request.Request;
 
-import org.nikola.velemir.poshtar.core.request.IRequest;
-
-public record PingRequest (String message) implements IRequest<String> {
+public record PingRequest (String message) implements Request<String> {
 }

@@ -1,7 +1,7 @@
 package poshtar.tests.notification.deps.nullNotification;
 
 
-import org.nikola.velemir.poshtar.core.notification.INotification;
+import org.nikola.velemir.poshtar.core.notification.Notification;
 
-public class NullNotification implements INotification {
+public class NullNotification implements Notification {
 }
