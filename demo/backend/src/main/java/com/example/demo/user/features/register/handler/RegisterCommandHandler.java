@@ -5,10 +5,10 @@ import com.example.demo.user.features.register.notification.RegisterNotification
 import com.example.demo.user.service.PasswordService;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
-import org.example.core.annotations.RequestHandler;
-import org.example.core.mediator.IPoshtar;
-import org.example.core.request.handler.IRequestHandler;
-import org.example.core.types.Unit;
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.types.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

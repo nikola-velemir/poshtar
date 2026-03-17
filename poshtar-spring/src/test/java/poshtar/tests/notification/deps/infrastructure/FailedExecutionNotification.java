@@ -1,6 +1,6 @@
 package poshtar.tests.notification.deps.infrastructure;
 
-import org.example.core.notification.INotification;
+import org.nikola.velemir.poshtar.core.notification.INotification;
 
 public class FailedExecutionNotification implements INotification {
     public int payload = 0;

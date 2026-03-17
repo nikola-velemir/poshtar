@@ -6,7 +6,7 @@ import com.example.demo.todos.features.findByUser.query.FindTodosByUser;
 import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
 import com.example.demo.todos.features.updateStatus.command.UpdateStatusCommand;
 import lombok.RequiredArgsConstructor;
-import org.example.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

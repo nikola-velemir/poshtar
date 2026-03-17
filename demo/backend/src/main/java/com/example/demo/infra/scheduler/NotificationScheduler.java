@@ -1,7 +1,7 @@
 package com.example.demo.infra.scheduler;
 
 import com.example.demo.infra.scheduler.notification.ScheduledNotification;
-import org.example.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

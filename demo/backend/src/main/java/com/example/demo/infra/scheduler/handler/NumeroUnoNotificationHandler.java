@@ -1,9 +1,9 @@
 package com.example.demo.infra.scheduler.handler;
 
-import com.example.demo.infra.scheduler.logger.LoggingService;
+import com.example.demo.shared.logger.LoggingService;
 import com.example.demo.infra.scheduler.notification.ScheduledNotification;
-import org.example.core.annotations.NotificationHandler;
-import org.example.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
+import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 

@@ -1,9 +1,9 @@
 package com.example.demo.pipeline;
 
-import org.example.core.annotations.PipelineBehaviour;
-import org.example.core.pipeline.behaviour.IPipelineBehaviour;
-import org.example.core.pipeline.delegate.RequestDelegate;
-import org.example.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import org.nikola.velemir.poshtar.core.request.IRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;

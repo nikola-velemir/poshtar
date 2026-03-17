@@ -1,0 +1,41 @@
+package nikola.velemir.poshtar.spring.adapter.configuration;
+
+
+import nikola.velemir.poshtar.spring.adapter.registry.SpringRequestRegistry;
+import nikola.velemir.poshtar.spring.adapter.registry.SpringNotificationRegistry;
+
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.notification.registry.INotificationRegistry;
+import org.nikola.velemir.poshtar.core.request.registry.IRequestRegistry;
+import org.nikola.velemir.poshtar.impl.Poshtar;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class PoshtarSpringAutoConfiguration {
+    private final ApplicationContext context;
+
+    public PoshtarSpringAutoConfiguration(ApplicationContext context) {
+        this.context = context;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IRequestRegistry provideRequestRegistry(){
+        return new SpringRequestRegistry(context);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public INotificationRegistry provideNotificationRegistry(){
+        return new SpringNotificationRegistry(context);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IPoshtar configurePoshtar(IRequestRegistry handlerRegistry, INotificationRegistry notificationRegistry){
+        return new Poshtar(handlerRegistry, notificationRegistry);
+    }
+}

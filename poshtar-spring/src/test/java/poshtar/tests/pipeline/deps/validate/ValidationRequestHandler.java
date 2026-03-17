@@ -1,8 +1,8 @@
 package poshtar.tests.pipeline.deps.validate;
 
-import org.example.core.annotations.RequestHandler;
-import org.example.core.request.handler.IRequestHandler;
-import org.example.core.types.Unit;
+
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
 
 @RequestHandler
 public class ValidationRequestHandler implements IRequestHandler<ValidationRequest, Integer> {

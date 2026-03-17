@@ -6,7 +6,7 @@ import com.example.demo.user.features.login.response.LoginResponseDTO;
 import com.example.demo.user.features.register.command.RegisterCommand;
 import com.example.demo.user.features.getById.query.GetUserByIdQuery;
 import com.example.demo.user.features.getById.response.GetUserResponseDTO;
-import org.example.core.mediator.IPoshtar;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

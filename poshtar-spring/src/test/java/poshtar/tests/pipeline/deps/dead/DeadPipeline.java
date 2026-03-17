@@ -1,9 +1,9 @@
 package poshtar.tests.pipeline.deps.dead;
 
-import org.example.core.annotations.PipelineBehaviour;
-import org.example.core.pipeline.behaviour.IPipelineBehaviour;
-import org.example.core.pipeline.delegate.RequestDelegate;
-import org.example.core.types.Unit;
+import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import org.nikola.velemir.poshtar.core.types.Unit;
 
 @PipelineBehaviour
 public class DeadPipeline implements IPipelineBehaviour<DeadRequest, Unit> {

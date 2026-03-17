@@ -1,8 +1,9 @@
 package poshtar.tests.pipeline.deps.transactional.mandatory.fail;
 
-import org.example.core.annotations.RequestHandler;
-import org.example.core.request.handler.IRequestHandler;
-import org.example.core.types.Unit;
+
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
+import org.nikola.velemir.poshtar.core.types.Unit;
 
 @RequestHandler
 public class FailMandatoryRequestHandler implements IRequestHandler<FailMandatoryRequest, Unit> {

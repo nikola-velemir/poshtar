@@ -1,11 +1,11 @@
 package com.example.demo.user.features.register.handler;
 
-import com.example.demo.infra.scheduler.logger.LoggingService;
+import com.example.demo.shared.logger.LoggingService;
 import com.example.demo.infra.service.EmailService;
 import com.example.demo.user.features.register.notification.RegisterNotification;
 import lombok.RequiredArgsConstructor;
-import org.example.core.annotations.NotificationHandler;
-import org.example.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
+import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

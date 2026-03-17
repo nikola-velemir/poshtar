@@ -6,9 +6,9 @@ import com.example.demo.todos.model.TodoItem;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.example.core.annotations.RequestHandler;
-import org.example.core.request.handler.IRequestHandler;
 import org.jspecify.annotations.NonNull;
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
 
 import java.util.Comparator;
 import java.util.List;

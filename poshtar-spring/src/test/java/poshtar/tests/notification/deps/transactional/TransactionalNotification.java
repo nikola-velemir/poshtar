@@ -1,6 +1,7 @@
 package poshtar.tests.notification.deps.transactional;
 
-import org.example.core.notification.INotification;
+
+import org.nikola.velemir.poshtar.core.notification.INotification;
 
 public record TransactionalNotification() implements INotification {
 }

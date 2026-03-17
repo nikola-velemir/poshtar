@@ -1,7 +1,7 @@
 package poshtar.tests.notification.deps.ping;
 
-import org.example.core.annotations.NotificationHandler;
-import org.example.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
+import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
 
 @NotificationHandler
 public class PingSecondHandler implements INotificationHandler<PingNotification> {

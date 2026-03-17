@@ -1,9 +1,9 @@
 package poshtar.tests.pipeline.deps.validate;
 
-import org.example.core.annotations.RequestHandler;
-import org.example.core.pipeline.behaviour.IPipelineBehaviour;
-import org.example.core.pipeline.delegate.RequestDelegate;
-import org.example.core.types.Unit;
+
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 
 @RequestHandler
 public class ValidationBehaviour implements IPipelineBehaviour<ValidationRequest, Integer> {

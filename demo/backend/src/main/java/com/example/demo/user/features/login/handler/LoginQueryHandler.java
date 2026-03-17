@@ -7,9 +7,9 @@ import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.service.PasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.example.core.annotations.RequestHandler;
-import org.example.core.request.handler.IRequestHandler;
 import org.jspecify.annotations.NonNull;
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
 
 import java.nio.file.AccessDeniedException;
 

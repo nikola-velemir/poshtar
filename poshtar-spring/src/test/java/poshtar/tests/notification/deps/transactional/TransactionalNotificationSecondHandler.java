@@ -1,7 +1,7 @@
 package poshtar.tests.notification.deps.transactional;
 
-import org.example.core.annotations.NotificationHandler;
-import org.example.core.notification.handler.INotificationHandler;
+import org.nikola.velemir.poshtar.core.annotations.NotificationHandler;
+import org.nikola.velemir.poshtar.core.notification.handler.INotificationHandler;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 

@@ -1,8 +1,8 @@
 package poshtar.tests.notification;
 
-import org.example.core.exceptions.AggregateNotificationException;
-import org.example.core.mediator.IPoshtar;
 import org.junit.jupiter.api.Test;
+import org.nikola.velemir.poshtar.core.exceptions.AggregateNotificationException;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;

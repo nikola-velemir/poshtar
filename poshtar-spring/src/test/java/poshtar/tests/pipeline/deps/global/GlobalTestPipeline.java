@@ -1,10 +1,10 @@
 package poshtar.tests.pipeline.deps.global;
 
-import org.example.core.annotations.PipelineBehaviour;
-import org.example.core.pipeline.behaviour.IPipelineBehaviour;
-import org.example.core.pipeline.delegate.RequestDelegate;
-import org.example.core.request.IRequest;
 import org.junit.jupiter.api.Order;
+import org.nikola.velemir.poshtar.core.annotations.PipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.IPipelineBehaviour;
+import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import org.nikola.velemir.poshtar.core.request.IRequest;
 
 @Order(0)
 @PipelineBehaviour

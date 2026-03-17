@@ -1,7 +1,7 @@
 package poshtar.tests.pipeline;
 
-import org.example.core.mediator.IPoshtar;
 import org.junit.jupiter.api.Test;
+import org.nikola.velemir.poshtar.core.mediator.IPoshtar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -14,8 +14,8 @@ import poshtar.tests.pipeline.deps.global.GlobalPipelineTestRequest;
 import poshtar.tests.pipeline.deps.order.OrderRequest;
 import poshtar.tests.pipeline.deps.specific.NotSpecificRequest;
 import poshtar.tests.pipeline.deps.specific.SpecificRequest;
-import poshtar.tests.pipeline.deps.transactional.TransactionalPipeline;
-import poshtar.tests.pipeline.deps.transactional.TransactionalRequest;
+import poshtar.tests.pipeline.deps.transactional.basic.TransactionalPipeline;
+import poshtar.tests.pipeline.deps.transactional.basic.TransactionalRequest;
 import poshtar.tests.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
 import poshtar.tests.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequest;
 import poshtar.tests.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;

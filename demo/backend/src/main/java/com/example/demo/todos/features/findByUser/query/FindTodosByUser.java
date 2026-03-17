@@ -1,7 +1,7 @@
 package com.example.demo.todos.features.findByUser.query;
 
 import com.example.demo.todos.features.findByUser.response.FindTodoByUserResponseDTO;
-import org.example.core.request.IRequest;
+import org.nikola.velemir.poshtar.core.request.IRequest;
 
 import java.util.List;
 

@@ -1,7 +1,8 @@
 package poshtar.tests.request.deps.ping;
 
-import org.example.core.annotations.RequestHandler;
-import org.example.core.request.handler.IRequestHandler;
+
+import org.nikola.velemir.poshtar.core.annotations.RequestHandler;
+import org.nikola.velemir.poshtar.core.request.handler.IRequestHandler;
 
 @RequestHandler
 public class PingRequestHandler implements IRequestHandler<PingRequest,String> {
