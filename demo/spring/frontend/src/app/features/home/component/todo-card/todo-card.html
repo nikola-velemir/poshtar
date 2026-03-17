@@ -1,48 +1,61 @@
 <li *ngIf="todo"
-    class="group relative flex items-center gap-4 border-l-2 border-l-transparent border border-zinc-700/60 bg-zinc-800/40 px-5 py-4 hover:bg-zinc-900/80 hover:border-zinc-700 transition-all duration-200"
-    [class.border-l-yellow-400]="todo.status === 'COMPLETED'"
-    [class.border-l-zinc-800]="todo.status !== 'COMPLETED'"
-    [class.opacity-50]="todo.status === 'COMPLETED'">
+  class="group relative flex items-center gap-4 border-l-2 border-l-transparent border px-5 py-4 transition-all duration-200"
+  [ngClass]="{
+    'border-zinc-700/60 bg-zinc-800/40 hover:bg-zinc-900/80 hover:border-zinc-700': theme === 'spring',
+    'border-slate-700/60 bg-slate-800/40 hover:bg-slate-900/80 hover:border-slate-700': theme === 'guice',
+    'opacity-50': todo.status === 'COMPLETED'
+  }"
+  [class.border-l-green-400]="todo.status === 'COMPLETED' && theme === 'spring'"
+  [class.border-l-blue-500]="todo.status === 'COMPLETED' && theme === 'guice'"
+  [class.border-l-zinc-800]="todo.status !== 'COMPLETED' && theme === 'spring'"
+  [class.border-l-slate-800]="todo.status !== 'COMPLETED' && theme === 'guice'">
 
-    <!-- Checkbox -->
-    <button
-        (click)="changeStatus()"
-        class="shrink-0 w-5 h-5 border transition-all duration-150 flex items-center justify-center hover:scale-110"
-        [class.border-yellow-400]="todo.status === 'COMPLETED'"
-        [class.bg-yellow-400]="todo.status === 'COMPLETED'"
-        [class.border-zinc-600]="todo.status !== 'COMPLETED'"
-        [class.hover:border-yellow-400]="todo.status !== 'COMPLETED'">
-        <span *ngIf="todo.status === 'COMPLETED'"
-            class="text-zinc-900 text-[11px] font-black leading-none">✓</span>
-    </button>
-
-    <!-- Content -->
-    <div class="flex-1 min-w-0">
-        <div class="flex items-baseline gap-3">
-            <span
-                class="text-sm font-semibold tracking-wide leading-snug transition-all"
-                [class.line-through]="todo.status === 'COMPLETED'"
-                [class.text-zinc-500]="todo.status === 'COMPLETED'"
-                [class.text-white]="todo.status !== 'COMPLETED'">
-                {{ todo.title }}
-            </span>
-        </div>
-        <div *ngIf="todo.description"
-            class="text-[11px] text-zinc-500 mt-1 tracking-wide truncate">
-            {{ todo.description }}
-        </div>
-    </div>
-
-    <!-- Status badge -->
+  <!-- Checkbox -->
+  <button
+    (click)="changeStatus()"
+    class="shrink-0 w-5 h-5 border transition-all duration-150 flex items-center justify-center hover:scale-110"
+    [ngClass]="{
+      'border-green-400 bg-green-400': todo.status === 'COMPLETED' && theme === 'spring',
+      'border-blue-500 bg-blue-500': todo.status === 'COMPLETED' && theme === 'guice',
+      'border-zinc-600': todo.status !== 'COMPLETED' && theme === 'spring',
+      'border-slate-600': todo.status !== 'COMPLETED' && theme === 'guice'
+    }">
     <span *ngIf="todo.status === 'COMPLETED'"
-        class="shrink-0 text-[9px] tracking-widest uppercase text-yellow-400/70 border border-yellow-400/20 px-2 py-0.5">
-        done
-    </span>
+      class="text-[11px] font-black leading-none"
+      [ngClass]="theme === 'spring' ? 'text-zinc-900' : 'text-white'">✓</span>
+  </button>
 
-    <!-- Delete -->
-    <button
-        (click)="deleteTodo()"
-        class="shrink-0 w-6 h-6 flex items-center justify-center text-zinc-700 hover:text-red-400 border border-transparent hover:border-red-400/30 transition-all opacity-0 group-hover:opacity-100 text-xs">
-        ✕
-    </button>
+  <!-- Content -->
+  <div class="flex-1 min-w-0">
+    <div class="flex items-baseline gap-3">
+      <span
+        class="text-sm font-semibold tracking-wide leading-snug transition-all"
+        [ngClass]="{
+          'line-through text-zinc-500': todo.status === 'COMPLETED',
+          'text-white': todo.status !== 'COMPLETED'
+        }">
+        {{ todo.title }}
+      </span>
+    </div>
+    <div *ngIf="todo.description" class="text-[11px] text-zinc-500 mt-1 tracking-wide truncate">
+      {{ todo.description }}
+    </div>
+  </div>
+
+  <!-- Status badge -->
+  <span *ngIf="todo.status === 'COMPLETED'"
+    class="shrink-0 text-[9px] tracking-widest uppercase px-2 py-0.5 border"
+    [ngClass]="{
+      'text-green-400/70 border-green-400/20': theme === 'spring',
+      'text-blue-400/70 border-blue-500/20': theme === 'guice'
+    }">
+    done
+  </span>
+
+  <!-- Delete -->
+  <button
+    (click)="deleteTodo()"
+    class="shrink-0 w-6 h-6 flex items-center justify-center text-zinc-700 hover:text-red-400 border border-transparent hover:border-red-400/30 transition-all opacity-0 group-hover:opacity-100 text-xs">
+    ✕
+  </button>
 </li>

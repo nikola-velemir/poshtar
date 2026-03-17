@@ -1,17 +1,17 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Todo, TODO_STATUS } from "../../model/todo";
-import { NgIf } from "@angular/common";
+import { CommonModule, NgIf } from "@angular/common";
 
 @Component({
   selector: "app-todo-card",
-  imports: [NgIf],
+  imports: [CommonModule],
   templateUrl: "./todo-card.html",
   styleUrl: "./todo-card.css",
 })
 export class TodoCard {
 
   @Input() todo!: Todo;
-
+  @Input() theme!: string;
   @Output() emitDelete = new EventEmitter<number>();
 
   @Output() emitChangeStatus = new EventEmitter<{ id: number, status: TODO_STATUS }>();

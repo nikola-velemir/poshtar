@@ -134,7 +134,7 @@
 
         <!-- Todo list -->
         <ul class="space-y-2">
-          <app-todo-card *ngFor="let todo of todos; trackBy: trackById" [todo]="todo"
+          <app-todo-card *ngFor="let todo of todos; trackBy: trackById" [todo]="todo" [theme]="theme"
             (emitChangeStatus)="changeStatus($event)" (emitDelete)="deleteTodo($event)" />
         </ul>
 
