@@ -5,7 +5,7 @@ import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringRequestReg
 import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringNotificationRegistry;
 
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
-import org.nikola.velemir.poshtar.core.mediator.impl.PoshtarImpl;
+import org.nikola.velemir.poshtar.core.mediator.PoshtarImpl;
 import org.nikola.velemir.poshtar.core.notification.registry.NotificationRegistry;
 import org.nikola.velemir.poshtar.core.request.registry.RequestRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

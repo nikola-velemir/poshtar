@@ -292,7 +292,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="5121b8fb-1f45-11f1-9a3c-4bc18ecd847e">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 1272.490622862824, 78.67951193381523)</val>
+<val>(1.0, 0.0, 0.0, 1.0, 1457.8119717504378, 57.02387350709247)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.0)</val>
@@ -409,7 +409,7 @@ generalization {
 </UML:ClassItem>
 <UML:Property id="6694e3a9-1f44-11f1-a609-4bc18ecd847e">
 <name>
-<val># handlerMappings&lt;?,?&gt;: Map&lt;Class&lt;?&gt;, RequestInvocationChain&lt;?,?&gt;&gt;</val>
+<val># handlerMappings&lt;?&gt;: Map&lt;Class&lt;?&gt;, List&lt;INotifcationHandler&lt;?&gt;&gt;&gt;</val>
 </name>
 <structuredClassifier>
 <ref refid="6d39f247-1f42-11f1-b7d5-4bc18ecd847e"/>
@@ -433,6 +433,7 @@ generalization {
 <reflist>
 <ref refid="8d33a6dc-1f44-11f1-8364-4bc18ecd847e"/>
 <ref refid="e5ff7339-1f4e-11f1-9fcf-4bc18ecd847e"/>
+<ref refid="0b9238aa-22d7-11f1-a509-d57266f03bc3"/>
 </reflist>
 </ownedAttribute>
 <ownedOperation>
@@ -469,7 +470,7 @@ generalization {
 <val>688.0</val>
 </width>
 <height>
-<val>121.0</val>
+<val>138.0</val>
 </height>
 <diagram>
 <ref refid="90bc505d-1f38-11f1-908d-65773fd3aed6"/>
@@ -488,7 +489,7 @@ generalization {
 </UML:Operation>
 <UML:Property id="8d33a6dc-1f44-11f1-8364-4bc18ecd847e">
 <name>
-<val># handlerMappings&lt;?&gt;: Map&lt;Class&lt;?&gt;, List&lt;INotifcationHandler&lt;?&gt;&gt;&gt;</val>
+<val></val>
 </name>
 <structuredClassifier>
 <ref refid="1c686818-1f41-11f1-b6ba-4bc18ecd847e"/>
@@ -517,7 +518,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="d8d1aa0e-1f40-11f1-a507-4bc18ecd847e">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 534.7558645669895, 70.49832424674983)</val>
+<val>(1.0, 0.0, 0.0, 1.0, 716.4020367314986, 48.84268582002706)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.0)</val>
@@ -1134,7 +1135,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="fbad113d-1f39-11f1-88b7-65773fd3aed6">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 11.068453785555334, 26.67951193381523)</val>
+<val>(1.0, 0.0, 0.0, 1.0, -439.34403518486323, 158.99057109453045)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.0)</val>
@@ -1209,7 +1210,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="f116afc6-1f39-11f1-a1c0-65773fd3aed6">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 1042.4385064184926, 70.49832424674995)</val>
+<val>(1.0, 0.0, 0.0, 1.0, 1227.7598553061064, 48.842685820027164)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.0)</val>
@@ -1253,7 +1254,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="c8a4a343-1f39-11f1-a768-65773fd3aed6">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 656.9186706129998, 252.2725367330514)</val>
+<val>(1.0, 0.0, 0.0, 1.0, 842.2400195006138, 233.51567846847038)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.0)</val>
@@ -1340,7 +1341,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="be6d5081-1f39-11f1-9e3a-65773fd3aed6">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 0.06845378555533443, 233.0156784684704)</val>
+<val>(1.0, 0.0, 0.0, 1.0, -439.34403518486323, 361.95747171222587)</val>
 </matrix>
 <top-left>
 <val>(0.0, 0.5)</val>
@@ -1384,7 +1385,7 @@ generalization {
 </UML:Interface>
 <UML:InterfaceItem id="9f9bba95-1f39-11f1-893b-65773fd3aed6">
 <matrix>
-<val>(1.0, 0.0, 0.0, 1.0, 1234.933964892083, 305.9258423478651)</val>
+<val>(1.0, 0.0, 0.0, 1.0, 1420.255313779697, 284.2702039211424)</val>
 </matrix>
 <top-left>
 <val>(0.0, -12.675788879394531)</val>
@@ -2642,7 +2643,7 @@ generalization {
 <val>(1.0, 0.0, 0.0, 1.0, 1651.4341557256646, 876.8739229911057)</val>
 </matrix>
 <points>
-<val>[(82.96788100583399, 4.718997982928826), (537.357273244296, 13.181506755726218), (537.357273244296, -325.8438573316623), (-247.86570194010983, -325.8438573316623)]</val>
+<val>[(82.96788100583399, 12.030050469395292), (537.357273244296, 13.181506755726218), (537.357273244296, -325.8438573316623), (-247.86570194010983, -325.8438573316623)]</val>
 </points>
 <head-connection>
 <ref refid="1c689ee3-1f41-11f1-be67-4bc18ecd847e"/>
@@ -3024,5 +3025,13 @@ generalization {
 <ref refid="442a0006-1fce-11f1-8164-65c44cdbccf7"/>
 </subject>
 </UML:InteractionItem>
+<UML:Property id="0b9238aa-22d7-11f1-a509-d57266f03bc3">
+<name>
+<val># handlerMappings&lt;?,?&gt;: Map&lt;Class&lt;?&gt;, RequestInvocationChain&lt;?,?&gt;&gt;</val>
+</name>
+<structuredClassifier>
+<ref refid="1c686818-1f41-11f1-b6ba-4bc18ecd847e"/>
+</structuredClassifier>
+</UML:Property>
 </model>
 </gaphor>

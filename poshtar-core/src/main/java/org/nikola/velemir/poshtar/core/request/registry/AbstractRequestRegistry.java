@@ -4,7 +4,7 @@ import jdk.jshell.spi.ExecutionControl;
 import org.nikola.velemir.poshtar.core.exceptions.AmbiguousHandlerException;
 import org.nikola.velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import org.nikola.velemir.poshtar.core.pipeline.builder.PipelineBuilder;
+import org.nikola.velemir.poshtar.core.pipeline.factory.PipelineFactory;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.RequestInvocationChain;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
@@ -29,7 +29,7 @@ public abstract class AbstractRequestRegistry implements RequestRegistry {
 
     @Override
     public <TRequest extends Request<TResponse>, TResponse> void register(Class<TRequest> requestType, RequestHandler<TRequest, TResponse> handler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
-        var builtPipeline = PipelineBuilder.build(handler, rawBehaviours);
+        var builtPipeline = PipelineFactory.create(handler, rawBehaviours);
         var putResult =
                 handlerMappings.putIfAbsent(requestType, builtPipeline);
         if (putResult != null)

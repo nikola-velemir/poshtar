@@ -23,7 +23,7 @@ public class TodoItem {
     @Column(name = "description", nullable = false)
     private String description;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // This creates the foreign key column
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "status", nullable = false)
