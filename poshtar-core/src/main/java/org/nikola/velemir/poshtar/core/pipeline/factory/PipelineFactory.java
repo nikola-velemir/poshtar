@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.core.pipeline.builder;
+package org.nikola.velemir.poshtar.core.pipeline.factory;
 
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
@@ -8,9 +8,9 @@ import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 
 import java.util.List;
 
-public class PipelineBuilder {
+public class PipelineFactory {
     @SuppressWarnings("unchecked")
-    public static <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> build(RequestHandler<?, ?> rawHandler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
+    public static <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> create(RequestHandler<?, ?> rawHandler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
         RequestHandler<TRequest, TResponse> handler =
                 (RequestHandler<TRequest, TResponse>) rawHandler;
 
@@ -19,13 +19,13 @@ public class PipelineBuilder {
                 .toList();
         RequestDelegate<TRequest, TResponse> nextNode = (request) -> handler.handle(request);
         for (int i = behaviours.size() - 1; i >= 0; i--) {
-            nextNode = buildNextNode(nextNode, behaviours.get(i));
+            nextNode = createNextNode(nextNode, behaviours.get(i));
         }
         final RequestDelegate<TRequest, TResponse> head = nextNode;
         return (request) -> head.handle(request);
     }
 
-    public static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> buildNextNode(RequestDelegate<TRequest, TResponse> nextNode, PipelineBehaviour<TRequest, TResponse> behaviour) {
+    public static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> createNextNode(RequestDelegate<TRequest, TResponse> nextNode, PipelineBehaviour<TRequest, TResponse> behaviour) {
         return (request) -> behaviour.handle(request, nextNode);
     }
 }

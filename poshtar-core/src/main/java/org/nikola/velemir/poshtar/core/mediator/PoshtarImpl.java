@@ -1,7 +1,6 @@
-package org.nikola.velemir.poshtar.core.mediator.impl;
+package org.nikola.velemir.poshtar.core.mediator;
 
 import org.nikola.velemir.poshtar.core.exceptions.AggregateNotificationException;
-import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.request.registry.RequestRegistry;
 import org.nikola.velemir.poshtar.core.notification.registry.NotificationRegistry;
