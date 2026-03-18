@@ -27,8 +27,8 @@ public class PoshtarSpringAutoConfiguration {
     }
     @Bean
     @ConditionalOnMissingBean
-    public RequestRegistry provideRequestRegistry(){
-        return new SpringRequestRegistry(context);
+    public RequestRegistry provideRequestRegistry(PipelineConfigurer pipelineConfigurer){
+        return new SpringRequestRegistry(context, pipelineConfigurer);
     }
 
     @Bean

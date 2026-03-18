@@ -9,10 +9,10 @@ import org.nikola.velemir.poshtar.core.types.Unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Behaviour
-@Order(2)
 public class OrderSecondPipeline implements PipelineBehaviour<OrderRequest, Unit> {
     @Override
     public Unit handle(OrderRequest request, RequestDelegate<OrderRequest, Unit> requestDelegate) {
+        System.out.println("Called second pipeline");
         assertEquals(1, request.payload);
         request.payload += 1;
         return requestDelegate.handle(request);

@@ -8,12 +8,12 @@ import org.nikola.velemir.poshtar.core.types.Unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Order(1)
 @Behaviour
 public class OrderFirstPipeline implements PipelineBehaviour<OrderRequest, Unit> {
 
     @Override
     public Unit handle(OrderRequest request, RequestDelegate<OrderRequest, Unit> requestDelegate) {
+        System.out.println("Called first pipeline");
         assertEquals(0, request.payload);
         request.payload += 1;
         return requestDelegate.handle(request);

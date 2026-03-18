@@ -9,7 +9,10 @@ public class PipelineConfigurer {
     private final List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses =
             new ArrayList<>();
 
-    public PipelineConfigurer add(Class<? extends PipelineBehaviour<?,?>> behaviourClass){
+    public <T extends PipelineBehaviour<?, ?>> PipelineConfigurer add(Class<T> behaviourClass) {
+        if (behaviourClass == null) {
+            throw new IllegalArgumentException("Behaviour class cannot be null");
+        }
         this.behaviourClasses.add(behaviourClass);
         return this;
     }

@@ -25,12 +25,11 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
     @SuppressWarnings("unchecked")
     private void init(ApplicationContext context) {
         @SuppressWarnings("rawtypes") Map<String, RequestHandler> allHandlers = context.getBeansOfType(RequestHandler.class);
-        List<PipelineBehaviour<?, ?>> allBehaviours =
-                new ArrayList<>((Collection<PipelineBehaviour<?, ?>>) (Collection<?>)
-                        context.getBeansOfType(PipelineBehaviour.class).values()
-                );
-        AnnotationAwareOrderComparator.sort(allBehaviours);
-
+        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = pipelineConfigurer
+                .getBehaviourClasses()
+                .stream()
+                .map(context::getBean)
+                .toList();
         for (RequestHandler<?, ?> handler : allHandlers.values()) {
             Class<?> requestType = ResolvableType.forClass(handler.getClass())
                     .as(RequestHandler.class)
@@ -39,7 +38,7 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
                 continue;
             }
 
-            List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours(allBehaviours, requestType);
+            List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
 
             Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
             RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
