@@ -1,5 +1,6 @@
 package nikola.velemir.poshtar.spring.adapter.injection.registry;
 
+import nikola.velemir.poshtar.spring.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
@@ -15,9 +16,10 @@ import java.util.*;
 
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
-
-    public SpringRequestRegistry(ApplicationContext context) {
+    private final PipelineConfigurer pipelineConfigurer;
+    public SpringRequestRegistry(ApplicationContext context, PipelineConfigurer pipelineConfigurer) {
         this.context = context;
+        this.pipelineConfigurer = pipelineConfigurer;
     }
 
     @SuppressWarnings("unchecked")

@@ -20,7 +20,11 @@ public class PoshtarSpringAutoConfiguration {
     public PoshtarSpringAutoConfiguration(ApplicationContext context) {
         this.context = context;
     }
-
+    @Bean
+    @ConditionalOnMissingBean
+    public PipelineConfigurer defaultPipelineConfigurer() {
+        return new PipelineConfigurer();
+    }
     @Bean
     @ConditionalOnMissingBean
     public RequestRegistry provideRequestRegistry(){
