@@ -1,7 +1,6 @@
 package poshtar.tests;
 
 import nikola.velemir.poshtar.spring.adapter.configuration.PipelineConfigurer;
-import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import poshtar.tests.pipeline.deps.dead.DeadPipeline;
@@ -13,7 +12,6 @@ import poshtar.tests.pipeline.deps.transactional.basic.TransactionalPipeline;
 import poshtar.tests.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
 import poshtar.tests.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
 import poshtar.tests.pipeline.deps.validate.ValidationBehaviour;
-import poshtar.tests.pipeline.deps.validate.ValidationRequest;
 
 @Configuration
 public class PipelineConfiguration {
