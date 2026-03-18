@@ -37,27 +37,4 @@ public class LoggingBehaviour<TRequest extends Request<TResponse>, TResponse>
             throw e;
         }
 }
-
-//    @Override
-//    public TResponse handle(TRequest request, RequestDelegate<TResponse> next) {
-//        String requestName = request.getClass().getSimpleName();
-//
-//        logger.info("--- [PoshtaR] Pre-processing: {} ---", requestName);
-//        long startTime = System.currentTimeMillis();
-//
-//        try {
-//            TResponse response = next.handle();
-//
-//            long executionTime = System.currentTimeMillis() - startTime;
-//            logger.info("--- [PoshtaR] Post-processing: {} (Uspelo za {}ms) ---", requestName, executionTime);
-//
-//            return response;
-//
-//        } catch (Exception e) {
-//            long executionTime = System.currentTimeMillis() - startTime;
-//            logger.error("--- [PoshtaR] Error u {}: {} (Puklo nakon {}ms) ---",
-//                    requestName, e.getMessage(), executionTime);
-//            throw e;
-//        }
-//    }
 }

@@ -21,16 +21,13 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // You can provide a "strength" (log rounds) between 4 and 31.
-        // 10 is the default and usually sufficient.
         return new BCryptPasswordEncoder();
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Enable CORS and link it to our configuration bean
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()) // Often disabled for stateless APIs
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
