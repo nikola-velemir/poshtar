@@ -1,4 +1,4 @@
-package poshtar.tests.request.deps.transactional;
+package poshtar.tests.request.deps.transactional.mandatory;
 
 
 import org.nikola.velemir.poshtar.core.request.Request;

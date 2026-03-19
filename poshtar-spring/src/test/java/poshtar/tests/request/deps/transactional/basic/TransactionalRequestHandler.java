@@ -1,4 +1,4 @@
-package poshtar.tests.request.deps.transactional;
+package poshtar.tests.request.deps.transactional.basic;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.transaction.annotation.Transactional;

@@ -13,6 +13,7 @@
     <modules>
         <module>poshtar-core</module>
         <module>poshtar-spring</module>
+        <module>poshtar-guice</module>
     </modules>
 
     <properties>

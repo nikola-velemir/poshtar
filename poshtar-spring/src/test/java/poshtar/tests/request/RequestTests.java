@@ -16,9 +16,9 @@ import poshtar.tests.request.deps.injection.InjectionRequestHandler;
 import poshtar.tests.request.deps.nullRequest.NullRequest;
 import poshtar.tests.request.deps.ping.PingRequest;
 import poshtar.tests.request.deps.ping.PingRequestHandler;
-import poshtar.tests.request.deps.transactional.MandatoryRequest;
-import poshtar.tests.request.deps.transactional.TransactionalRequest;
-import poshtar.tests.request.deps.transactional.TransactionalRequestHandler;
+import poshtar.tests.request.deps.transactional.mandatory.MandatoryRequest;
+import poshtar.tests.request.deps.transactional.basic.TransactionalRequest;
+import poshtar.tests.request.deps.transactional.basic.TransactionalRequestHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,7 +89,7 @@ public class RequestTests {
 
         String response = poshtar.send(new PingRequest("Hello Poshtar"));
 
-        assert response.equals("Pong: Hello Poshtar") : "Odgovor nije ispravan!";
+        assert response.equals("Pong: Hello Poshtar") : "Wrong response!";
         System.out.println(">>> TEST PASSED: " + response);
     }
 
