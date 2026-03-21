@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshar.guice.adatper.injection.registry;
+package org.nikola.velemir.poshtar.guice.adatper.injection.registry;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;

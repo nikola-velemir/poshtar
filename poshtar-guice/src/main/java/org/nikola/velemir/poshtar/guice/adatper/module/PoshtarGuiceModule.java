@@ -1,14 +1,12 @@
-package org.nikola.velemir.poshar.guice.adatper.module;
+package org.nikola.velemir.poshtar.guice.adatper.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.checkerframework.checker.fenum.qual.PolyFenum;
-import org.nikola.velemir.poshar.guice.adatper.configuration.PipelineConfigurer;
-import org.nikola.velemir.poshar.guice.adatper.injection.registry.GuiceNotificationRegistry;
-import org.nikola.velemir.poshar.guice.adatper.injection.registry.GuiceRequestRegistry;
-import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.guice.adatper.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.guice.adatper.injection.registry.GuiceNotificationRegistry;
+import org.nikola.velemir.poshtar.guice.adatper.injection.registry.GuiceRequestRegistry;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.nikola.velemir.poshtar.core.mediator.PoshtarImpl;
@@ -17,7 +15,6 @@ import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.registry.RequestRegistry;
 import org.reflections.Reflections;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.util.List;
 
 

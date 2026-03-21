@@ -2,25 +2,33 @@ package org.nikola.velemir.poshtar.guice.adapter.pipeline;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.nikola.velemir.poshtar.guice.adapter.TestModule;
+import org.nikola.velemir.poshtar.guice.adapter.model.TestEntity;
 import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequest;
 import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequest;
 import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.specific.NotSpecificRequest;
 import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificRequest;
+import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
+import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
+import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
 import org.nikola.velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequest;
 
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PipelineTests {
     private static Poshtar poshtar;
+    private static Injector injector;
 
     @BeforeAll
     static void setUp() {
-        Injector injector = Guice.createInjector(new TestModule());
+        injector = Guice.createInjector(new TestModule());
 
         poshtar = injector.getInstance(Poshtar.class);
     }
@@ -72,5 +80,36 @@ public class PipelineTests {
         String actual = ex.getMessage();
         String expected = "Payload is wrong";
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void should_Pass_For_Transactional() {
+
+        var transactionalRequest = new TransactionalRequest();
+        assertDoesNotThrow(() -> {
+            poshtar.send(transactionalRequest);
+
+            EntityManager em = injector.getInstance(EntityManager.class);
+
+            em.getTransaction().begin();
+            List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'From transactional pipeline'", TestEntity.class).getResultList();
+            em.getTransaction().commit();
+            assertFalse(results.isEmpty(), "Transaction did not commit!.");
+        });
+        assertEquals(2, transactionalRequest.payload);
+    }
+    @Test
+    void should_Fail_For_Transactional(){
+        var failTransactionalRequest = new FailTransactionalRequest("Fail from transactional pipeline");
+        assertThrowsExactly(RuntimeException.class, ()->{
+           poshtar.send(failTransactionalRequest);
+
+        });
+        EntityManager em = injector.getInstance(EntityManager.class);
+
+        em.getTransaction().begin();
+        List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Fail from transactional pipeline'", TestEntity.class).getResultList();
+        em.getTransaction().commit();
+        assertTrue(results.isEmpty(), "Transaction did commit!.");
     }
 }

@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshar.guice.adatper.configuration;
+package org.nikola.velemir.poshtar.guice.adatper.configuration;
 
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 

@@ -1,10 +1,10 @@
-package org.nikola.velemir.poshar.guice.adatper.injection.registry;
+package org.nikola.velemir.poshtar.guice.adatper.injection.registry;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import jdk.jshell.spi.ExecutionControl;
-import org.nikola.velemir.poshar.guice.adatper.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.guice.adatper.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
@@ -12,7 +12,6 @@ import org.nikola.velemir.poshtar.core.request.registry.AbstractRequestRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class GuiceRequestRegistry extends AbstractRequestRegistry {
