@@ -1,6 +1,6 @@
 package org.nikola.velemir.poshtar.spring.adapter;
 
-import nikola.velemir.poshtar.spring.adapter.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipeline;

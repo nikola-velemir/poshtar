@@ -1,8 +1,9 @@
 package com.example.demo.config;
 
+import com.example.demo.pipeline.GetBehaviour;
 import com.example.demo.pipeline.LoggingBehaviour;
 import com.example.demo.pipeline.RegisterBehaviour;
-import nikola.velemir.poshtar.spring.adapter.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,6 @@ public class PipelineConfiguration {
         return new PipelineConfigurer()
                 .add(RegisterBehaviour.class)
                 .add(LoggingBehaviour.class)
-                .add(LoggingBehaviour.class);
+                .add(GetBehaviour.class);
     }
 }

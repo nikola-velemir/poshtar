@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.nikola.velemir.poshtar.guice.adatper.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.guice.adatper.injection.registry.GuiceNotificationRegistry;
 import org.nikola.velemir.poshtar.guice.adatper.injection.registry.GuiceRequestRegistry;
 import org.nikola.velemir.poshtar.core.annotations.Handler;

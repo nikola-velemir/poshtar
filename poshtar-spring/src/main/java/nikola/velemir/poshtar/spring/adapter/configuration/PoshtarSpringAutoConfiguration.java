@@ -4,6 +4,7 @@ package nikola.velemir.poshtar.spring.adapter.configuration;
 import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringRequestRegistry;
 import nikola.velemir.poshtar.spring.adapter.injection.registry.SpringNotificationRegistry;
 
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.nikola.velemir.poshtar.core.mediator.PoshtarImpl;
 import org.nikola.velemir.poshtar.core.notification.registry.NotificationRegistry;

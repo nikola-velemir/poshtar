@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import jdk.jshell.spi.ExecutionControl;
-import org.nikola.velemir.poshtar.guice.adatper.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;

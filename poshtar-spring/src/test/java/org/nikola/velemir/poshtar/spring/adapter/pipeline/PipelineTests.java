@@ -1,7 +1,9 @@
 package org.nikola.velemir.poshtar.spring.adapter.pipeline;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.spring.adapter.model.TestEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +26,8 @@ import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.man
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestApplication.class)
@@ -33,7 +37,8 @@ public class PipelineTests {
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
-
+    @Autowired
+    private EntityManager entityManager;
     @Test
     void should_Call_Global_Pipeline() {
         assertDoesNotThrow(() -> {
@@ -81,7 +86,11 @@ public class PipelineTests {
         var transactionalRequest = new TransactionalRequest();
         assertDoesNotThrow(() -> {
             poshtar.send(transactionalRequest);
+
         });
+//        List<TestEntity> results = entityManager.createQuery("SELECT d FROM TestEntity d where d.data = 'From transactional behaviour'", TestEntity.class).getResultList();
+//        System.out.println(entityManager.createQuery("SELECT d FROM TestEntity d").getResultList());
+//        assertFalse(results.isEmpty(), "Transaction did not commit!.");
         assertEquals(2, transactionalRequest.payload);
     }
 

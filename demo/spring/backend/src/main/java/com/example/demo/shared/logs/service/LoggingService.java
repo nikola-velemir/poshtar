@@ -1,4 +1,4 @@
-package com.example.demo.shared.logger;
+package com.example.demo.shared.logs.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

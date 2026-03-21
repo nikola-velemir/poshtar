@@ -1,4 +1,4 @@
-package nikola.velemir.poshtar.spring.adapter.configuration;
+package org.nikola.velemir.poshtar.adapter.configuration;
 
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 

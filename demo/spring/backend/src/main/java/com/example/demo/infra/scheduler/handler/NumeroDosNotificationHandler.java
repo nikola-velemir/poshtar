@@ -1,6 +1,6 @@
 package com.example.demo.infra.scheduler.handler;
 
-import com.example.demo.shared.logger.LoggingService;
+import com.example.demo.shared.logs.service.LoggingService;
 import com.example.demo.infra.scheduler.notification.ScheduledNotification;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
