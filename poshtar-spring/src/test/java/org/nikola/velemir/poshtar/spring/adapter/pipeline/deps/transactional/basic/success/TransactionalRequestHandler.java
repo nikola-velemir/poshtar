@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic;
+package org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success;
 
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;

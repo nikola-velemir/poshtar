@@ -1,23 +1,24 @@
 package org.nikola.velemir.poshtar.spring.adapter.pipeline;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
-import org.nikola.velemir.poshtar.spring.adapter.model.TestEntity;
+import org.nikola.velemir.poshtar.spring.adapter.MockTransactionConfig;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
+import org.nikola.velemir.poshtar.spring.adapter.repository.TestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.IllegalTransactionStateException;
-import org.nikola.velemir.poshtar.spring.adapter.MockTransactionConfig;
 import org.nikola.velemir.poshtar.spring.adapter.TestApplication;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.specific.NotSpecificRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.specific.SpecificRequest;
-import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.TransactionalPipeline;
-import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.TransactionalRequest;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequest;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
@@ -25,8 +26,6 @@ import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.man
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequestHandler;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequest;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,8 +36,10 @@ public class PipelineTests {
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
+
     @Autowired
-    private EntityManager entityManager;
+    private TestRepository repository;
+
     @Test
     void should_Call_Global_Pipeline() {
         assertDoesNotThrow(() -> {
@@ -78,6 +79,25 @@ public class PipelineTests {
     }
 
     @Test
+    void should_Fail_For_Transactional() {
+        boolean beanExists = context.containsBean(FailTransactionalPipeline.class.getName());
+        assert beanExists : "Pipeline bean has not been registered thru @Behaviour!";
+        Object bean = context.getBean(FailTransactionalPipeline.class);
+        System.out.println("Bean Class Name: " + bean.getClass().getName());
+        var transactionalRequest = new FailTransactionalRequest("Fail transactional");
+        Exception ex = assertThrowsExactly(RuntimeException.class, () -> {
+            poshtar.send(transactionalRequest);
+
+        });
+        String expected = "Failing on purpose";
+        String actual = ex.getMessage();
+        assertEquals(expected, actual);
+        System.out.println(repository.findAll());
+        var result = repository.findByData("Fail transactional");
+        assertNull(result);
+    }
+
+    @Test
     void should_Pass_For_Transactional() {
         boolean beanExists = context.containsBean(TransactionalPipeline.class.getName());
         assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
@@ -88,9 +108,9 @@ public class PipelineTests {
             poshtar.send(transactionalRequest);
 
         });
-//        List<TestEntity> results = entityManager.createQuery("SELECT d FROM TestEntity d where d.data = 'From transactional behaviour'", TestEntity.class).getResultList();
-//        System.out.println(entityManager.createQuery("SELECT d FROM TestEntity d").getResultList());
-//        assertFalse(results.isEmpty(), "Transaction did not commit!.");
+        System.out.println(repository.findAll());
+        var result = repository.findByData("From transactional behaviour");
+        assertNotNull(result);
         assertEquals(2, transactionalRequest.payload);
     }
 

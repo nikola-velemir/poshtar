@@ -1,6 +1,7 @@
 package org.nikola.velemir.poshtar.spring.adapter;
 
 import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipeline;
@@ -8,7 +9,7 @@ import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalTest
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.order.OrderFirstPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.order.OrderSecondPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.specific.SpecificPipeline;
-import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.TransactionalPipeline;
+import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
 import org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
@@ -26,7 +27,8 @@ public class PipelineConfiguration {
                 .add(DeadPipeline.class)
                 .add(TransactionalPipeline.class)
                 .add(SucceedForMandatoryPipeline.class)
-                .add(FailMandatoryPipeline.class);
+                .add(FailMandatoryPipeline.class)
+                .add(FailTransactionalPipeline.class);
 
     }
 }
