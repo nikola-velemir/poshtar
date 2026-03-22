@@ -1,6 +1,6 @@
 package nikola.velemir.poshtar.spring.adapter.injection.registry;
 
-import nikola.velemir.poshtar.spring.adapter.configuration.PipelineConfigurer;
+import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.*;
 
