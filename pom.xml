@@ -15,6 +15,7 @@
         <module>poshtar-adapter</module>
         <module>poshtar-spring</module>
         <module>poshtar-guice</module>
+        <module>poshtar-opt</module>
     </modules>
 
     <properties>
