@@ -1,0 +1,73 @@
+package org.nikola.velemir.poshtar.opt.rules;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class AmbiguityRule implements Rule {
+    // needs shared state across elements — inject a registry
+    private final Map<String, String> registry = new HashMap<>();
+
+
+    private AnnotationMirror getAnnotationMirror(Element element, String annotationName) {
+        for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
+            if (mirror.getAnnotationType().asElement()
+                    .getSimpleName().contentEquals("Handler")) {
+                return mirror;
+            }
+        }
+        return null;
+    }
+
+    private String extractRequestType(TypeElement handlerElement) {
+        for (TypeMirror interfaceMirror : handlerElement.getInterfaces()) {
+            if (interfaceMirror.getKind() != TypeKind.DECLARED) continue;
+
+            DeclaredType declaredInterface = (DeclaredType) interfaceMirror;
+            Element interfaceElement = declaredInterface.asElement();
+
+            if (!interfaceElement.getSimpleName().contentEquals("RequestHandler")) continue;
+
+            List<? extends TypeMirror> typeArgs = declaredInterface.getTypeArguments();
+            if (!typeArgs.isEmpty()) {
+                return typeArgs.getFirst().toString();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void validate(TypeElement element, RuleContext ctx) {
+        String handler = element.getQualifiedName().toString();
+        String request = extractRequestType(element);
+        if (request == null) return;
+
+        // Check against the GLOBAL persistent registry
+        String existing = ctx.getHandlerFor(request);
+
+        if (existing != null && !existing.equals(handler)) {
+            ctx.env.getMessager().printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "PoshtaR: Ambiguous handlers for '" + request + "' — " + existing + " vs " + handler,
+                    element,
+                    getAnnotationMirror(element, "org.nikola.velemir.poshtar.core.annotations.Handler")
+            );
+        } else {
+            // Update the GLOBAL registry
+            ctx.registerHandler(request, handler);
+        }
+    }
+
+    @Override
+    public void validateRound(RoundEnvironment roundEnv, RuleContext ctx) {
+
+    }
+}

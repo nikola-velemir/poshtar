@@ -29,7 +29,6 @@ public class RequestTests {
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
-
     @Test
     void handles_Null_Send() {
         NullRequest request = null;
