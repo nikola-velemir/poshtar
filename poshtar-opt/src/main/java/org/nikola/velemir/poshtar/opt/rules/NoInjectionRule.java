@@ -36,6 +36,14 @@ public class NoInjectionRule implements Rule {
             validateFieldInjection(forbidden, ctx, enclosed);
 
             validateConstructorInjection(forbidden, ctx, enclosed);
+            if (enclosed.getKind() == ElementKind.METHOD) {
+                ExecutableElement method = (ExecutableElement) enclosed;
+                for (VariableElement param : method.getParameters()) {
+                    if (isForbiddenType(param.asType(), forbidden, ctx)) {
+                        logViolation(param,  ctx);
+                    }
+                }
+            }
         }
     }
 
@@ -53,7 +61,7 @@ public class NoInjectionRule implements Rule {
     private void validateFieldInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
-            if (isInjectionAnnotated(field) && isForbiddenType(field.asType(), forbidden, ctx)) {
+            if (isForbiddenType(field.asType(), forbidden, ctx)) {
                 logViolation(field, ctx);
             }
         }
@@ -74,7 +82,7 @@ public class NoInjectionRule implements Rule {
     private void logViolation(Element target, RuleContext ctx) {
         ctx.env.getMessager().printMessage(
                 Diagnostic.Kind.ERROR,
-                "PoshtaR VIOLATION: Handlers cannot be injected or manually managed. " +
+                "PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. " +
                         "Use 'Poshtar.send(request)' to interact with this logic.",
                 target
         );
