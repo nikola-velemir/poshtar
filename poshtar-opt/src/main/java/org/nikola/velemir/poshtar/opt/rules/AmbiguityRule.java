@@ -56,7 +56,10 @@ public class AmbiguityRule implements Rule {
         if (existing != null && !existing.equals(handler)) {
             ctx.env.getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
-                    "PoshtaR: Ambiguous handlers for '" + request + "' — " + existing + " vs " + handler,
+                    "PoshtaR: Ambiguous handlers detected:\n" +
+                            "Ambiguity detected for request:'" + request + "'\n— " +
+                            existing + "\nvs" +
+                            "\n— " + handler,
                     element,
                     getAnnotationMirror(element, "org.nikola.velemir.poshtar.core.annotations.Handler")
             );

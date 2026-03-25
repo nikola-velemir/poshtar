@@ -12,6 +12,12 @@ public class RuleContext {
     public final Trees trees;
     private final Properties registry; // The persistent state
 
+    public RuleContext(ProcessingEnvironment env, Trees trees, Properties registry) {
+        this.env = env;
+        this.trees = trees;
+        this.registry = registry;
+    }
+
     public RuleContext(ProcessingEnvironment env, Properties registry) {
         this.env = env;
         this.trees = Trees.instance(env);

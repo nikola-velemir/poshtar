@@ -1,6 +1,7 @@
 package org.nikola.velemir.poshtar.opt.processor;
 
 import com.google.auto.service.AutoService;
+import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.opt.rules.AmbiguityRule;
 import org.nikola.velemir.poshtar.opt.rules.NoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
@@ -29,6 +30,7 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
     private final List<Rule> rules = List.of(new AmbiguityRule(), new NoInjectionRule());
     private Properties registry;
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
+    private Trees trees;
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -38,25 +40,52 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         }
 
         if (registry == null) registry = loadExistingRegistry();
-        RuleContext ctx = new RuleContext(processingEnv, registry);
+        RuleContext ctx = new RuleContext(processingEnv, trees,registry);
 
         TypeElement handlerAnnot = processingEnv.getElementUtils()
                 .getTypeElement("org.nikola.velemir.poshtar.core.annotations.Handler");
 
+        validatePerElement(roundEnv, handlerAnnot, ctx);
+        validatePerRound(roundEnv, ctx);
+
+        return false;
+    }
+
+    private void validatePerRound(RoundEnvironment roundEnv, RuleContext ctx) {
+        for (Rule rule : rules) {
+            rule.validateRound(roundEnv, ctx);
+        }
+    }
+
+    private void validatePerElement(RoundEnvironment roundEnv, TypeElement handlerAnnot, RuleContext ctx) {
         if (handlerAnnot != null) {
             roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
                     .filter(e -> e.getKind() == ElementKind.CLASS)
                     .map(e -> (TypeElement) e)
                     .forEach(handler -> rules.forEach(rule -> rule.validate(handler, ctx)));
         }
-
-        for (Rule rule : rules) {
-            rule.validateRound(roundEnv, ctx);
-        }
-
-        return false;
     }
 
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
+        ProcessingEnvironment unwrapped = jbUnwrap(ProcessingEnvironment.class, processingEnv);
+        this.trees = Trees.instance(unwrapped);
+    }
+
+    private static <T> T jbUnwrap(Class<? extends T> iface, T wrapper) {
+        T unwrapped = null;
+        try {
+            final Class<?> apiWrappers = wrapper.getClass().getClassLoader()
+                    .loadClass("org.jetbrains.jps.javac.APIWrappers");
+            final java.lang.reflect.Method unwrapMethod = apiWrappers
+                    .getDeclaredMethod("unwrap", Class.class, Object.class);
+            unwrapped = iface.cast(unwrapMethod.invoke(null, iface, wrapper));
+        } catch (Throwable ignored) {
+            // Fallback for command-line javac where no wrapper exists
+        }
+        return unwrapped != null ? unwrapped : wrapper;
+    }
     private Properties loadExistingRegistry() {
         Properties props = new Properties();
         try {
