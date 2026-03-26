@@ -15,7 +15,7 @@ public abstract class NoInjectionRule implements Rule {
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
-        Set<String> forbidden = ctx.getAllKnownHandlers();
+        Set<String> forbidden = ctx.getAll();
         if (forbidden.isEmpty()) return;
 
         for (Element root : roundEnv.getRootElements()) {
@@ -42,7 +42,7 @@ public abstract class NoInjectionRule implements Rule {
             ExecutableElement method = (ExecutableElement) enclosed;
             for (VariableElement param : method.getParameters()) {
                 if (isForbiddenType(param.asType(), forbidden, ctx)) {
-                    logViolation(param, ctx);
+                    logError(param, ctx);
                 }
             }
         }
@@ -53,23 +53,23 @@ public abstract class NoInjectionRule implements Rule {
             ExecutableElement constructor = (ExecutableElement) enclosed;
             for (VariableElement param : constructor.getParameters()) {
                 if (isForbiddenType(param.asType(), forbidden, ctx)) {
-                    logViolation(param, ctx);
+                    logError(param, ctx);
                 }
             }
         }
     }
-    protected void logViolation(Element target, RuleContext ctx) {
+    protected void logError(Element target, RuleContext ctx) {
     }
     protected void validateFieldInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
             if (isForbiddenType(field.asType(), forbidden, ctx)) {
-                logViolation(field, ctx);
+                logError(field, ctx);
             }
         }
     }
 
     protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, RuleContext ctx) {
-        return true;
+        return false;
     }
 }

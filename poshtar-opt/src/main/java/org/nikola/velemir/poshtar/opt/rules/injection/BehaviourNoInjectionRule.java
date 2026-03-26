@@ -19,20 +19,16 @@ public class BehaviourNoInjectionRule extends NoInjectionRule {
         var typeUtils = ctx.env.getTypeUtils();
         var elementUtils = ctx.env.getElementUtils();
 
-        String typeName = typeUtils.erasure(type).toString();
-        if (forbidden.contains(typeName)) return true;
-
         TypeMirror behaviour = elementUtils.getTypeElement(BEHAVIOUR_INTERFACE_FQN).asType();
 
         TypeMirror erasedType = typeUtils.erasure(type);
         TypeMirror erasedBehaviour = typeUtils.erasure(behaviour);
 
-        return
-                typeUtils.isAssignable(erasedType, erasedBehaviour);
+        return typeUtils.isAssignable(erasedType, erasedBehaviour);
     }
 
     @Override
-    protected void logViolation(Element target, RuleContext ctx) {
+    protected void logError(Element target, RuleContext ctx) {
         ctx.env.getMessager().printMessage(
                 Diagnostic.Kind.ERROR,
                 "PoshtaR VIOLATION: Behaviours cannot be injected, set thru methods or constructor, or manually managed. " +

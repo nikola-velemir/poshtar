@@ -23,9 +23,6 @@ public class HandlerNoInjectionRule extends NoInjectionRule {
         var typeUtils = ctx.env.getTypeUtils();
         var elementUtils = ctx.env.getElementUtils();
 
-        String typeName = typeUtils.erasure(type).toString();
-        if (forbidden.contains(typeName)) return true;
-
         TypeMirror reqHandler = elementUtils.getTypeElement(REQ_HANDLER_FQN).asType();
         TypeMirror notifHandler = elementUtils.getTypeElement(NOTIF_HANDLER_FQN).asType();
 
@@ -38,7 +35,7 @@ public class HandlerNoInjectionRule extends NoInjectionRule {
     }
 
     @Override
-    protected void logViolation(Element target, RuleContext ctx) {
+    protected void logError(Element target, RuleContext ctx) {
         ctx.env.getMessager().printMessage(
                 Diagnostic.Kind.ERROR,
                 "PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. " +

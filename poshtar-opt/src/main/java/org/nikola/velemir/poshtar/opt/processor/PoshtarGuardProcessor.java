@@ -4,6 +4,8 @@ import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.opt.rules.ambiguity.AmbiguityRule;
 import org.nikola.velemir.poshtar.opt.rules.deadPipeline.DeadPipelineRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.BehaviourNoInjectionRule;
@@ -15,6 +17,9 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -29,13 +34,15 @@ import java.util.Set;
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class PoshtarGuardProcessor extends AbstractProcessor {
-    public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
-    public static  final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
+    private static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
+    private static final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
+    private static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
+
     private final List<Rule> rules = List.of(
             new AmbiguityRule(),
             new HandlerNoInjectionRule(),
             new BehaviourNoInjectionRule(),
-            new DeadPipelineRule()
+           new DeadPipelineRule()
     );
     private Properties registry;
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
@@ -61,22 +68,35 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
     private void preprocessRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
         var elements = processingEnv.getElementUtils();
 
-        // Register Handlers
         TypeElement handlerAnnot = elements.getTypeElement(HANDLER_ANNOTATION_NAME);
         if (handlerAnnot != null) {
-            roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
-                    .filter(e -> e.getKind() == ElementKind.CLASS)
-                    .map(e -> (TypeElement) e)
-                    .forEach(h -> ctx.registerHandler(h.getQualifiedName().toString(), "HANDLER"));
+            preprocessHandlers(roundEnv, ctx, handlerAnnot);
         }
 
         TypeElement behaviourAnnot = elements.getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
         if (behaviourAnnot != null) {
-            roundEnv.getElementsAnnotatedWith(behaviourAnnot).stream()
-                    .filter(e -> e.getKind() == ElementKind.CLASS)
-                    .map(e -> (TypeElement) e)
-                    .forEach(b -> ctx.registerHandler(b.getQualifiedName().toString(), "BEHAVIOUR"));
+            processBehaviours(roundEnv, ctx, behaviourAnnot);
         }
+    }
+
+    private static void processBehaviours(RoundEnvironment roundEnv, RuleContext ctx, TypeElement behaviourAnnot) {
+        roundEnv.getElementsAnnotatedWith(behaviourAnnot).stream()
+                .filter(e -> e.getKind() == ElementKind.CLASS)
+                .map(e -> (TypeElement) e)
+                .forEach(b -> ctx.registerHandler(b.getQualifiedName().toString(), "BEHAVIOUR"));
+    }
+
+    private void preprocessHandlers(RoundEnvironment roundEnv, RuleContext ctx, TypeElement handlerAnnot) {
+        roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
+                .filter(e -> e.getKind() == ElementKind.CLASS)
+                .map(e -> (TypeElement) e)
+                .forEach(h -> {
+                    String requestType = this.extractRequestType(h, ctx);
+                    // The critical guard: Properties/Hashtable will crash on null values
+                    if (requestType != null) {
+                        ctx.registerHandler(h.getQualifiedName().toString(), requestType);
+                    }
+                });
     }
 
     private void validateRules(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -85,6 +105,38 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         }
     }
 
+    private String extractRequestType(TypeElement handler, RuleContext ctx) {
+        var typeUtils = ctx.env.getTypeUtils();
+        var elementUtils = ctx.env.getElementUtils();
+
+        TypeElement reqHandlerInterface = elementUtils.getTypeElement(REQUEST_HANDLER_INTERFACE_NAME);
+        if (reqHandlerInterface == null) return null;
+
+        TypeMirror erasedReqHandler = typeUtils.erasure(reqHandlerInterface.asType());
+
+        for (TypeMirror iface : handler.getInterfaces()) {
+            if (typeUtils.isAssignable(typeUtils.erasure(iface), erasedReqHandler)) {
+                if (iface instanceof DeclaredType declared) {
+                    List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
+                    if (typeArgs.isEmpty()) continue;
+
+                    TypeMirror requestType = typeArgs.getFirst();
+
+                    if (requestType.getKind() == TypeKind.ERROR) {
+                        ctx.env.getMessager().printMessage(
+                                Diagnostic.Kind.ERROR,
+                                "PoshtaR: Cannot resolve request type for handler " + handler.getSimpleName() +
+                                        ". Ensure the Request class is imported and compiles.",
+                                handler
+                        );
+                        return null;
+                    }
+                    return typeUtils.erasure(requestType).toString();
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

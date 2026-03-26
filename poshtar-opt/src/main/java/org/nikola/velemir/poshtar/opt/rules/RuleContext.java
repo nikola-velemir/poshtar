@@ -18,6 +18,10 @@ public class RuleContext {
         this.registry = registry;
     }
 
+    public Properties getRegistry() {
+        return registry;
+    }
+
     public RuleContext(ProcessingEnvironment env, Properties registry) {
         this.env = env;
         this.trees = Trees.instance(env);
@@ -27,12 +31,13 @@ public class RuleContext {
     public void registerHandler(String requestType, String handlerClass) {
         registry.setProperty(requestType, handlerClass);
     }
-
-    public Set<String> getAllKnownHandlers() {
-        return registry.values().stream().map(Object::toString).collect(Collectors.toSet());
+    public Set<String> getKnownBehaviours() {
+        return registry.entrySet().stream()
+                .filter(e -> "BEHAVIOUR".equals(e.getValue()))
+                .map(e -> e.getKey().toString())
+                .collect(Collectors.toSet());
     }
-
-    public String getHandlerFor(String requestType) {
-        return registry.getProperty(requestType);
+    public Set<String> getAll() {
+        return registry.values().stream().map(Object::toString).collect(Collectors.toSet());
     }
 }

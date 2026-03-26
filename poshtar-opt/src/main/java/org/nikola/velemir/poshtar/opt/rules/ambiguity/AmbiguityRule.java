@@ -19,86 +19,36 @@ import java.util.List;
 import java.util.Map;
 
 public class AmbiguityRule implements Rule {
-    public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
-    public static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
-        TypeElement handlerAnnot = ctx.env.getElementUtils().getTypeElement(HANDLER_ANNOTATION_NAME);
-        if (handlerAnnot == null) return;
+        Map<String, String> seenRequests = new HashMap<>();
 
-        // Pull all elements discovered in this round
-        for (Element e : roundEnv.getElementsAnnotatedWith(handlerAnnot)) {
-            if (e.getKind() != ElementKind.CLASS) continue;
+        for (var entry : ctx.getRegistry().entrySet()) {
+            String handlerFqn = (String) entry.getKey();
+            String requestFqn = (String) entry.getValue();
 
-            TypeElement handlerElement = (TypeElement) e;
-            validateMapping(handlerElement, ctx);
-        }
-    }
+            if ("BEHAVIOUR".equals(requestFqn)) continue;
 
-    private void validateMapping(TypeElement handler, RuleContext ctx) {
-        String handlerFqn = handler.getQualifiedName().toString();
-        String requestFqn = extractRequestType(handler, ctx);
-
-        if (requestFqn == null) return;
-
-        String existing = ctx.getHandlerFor(requestFqn);
-
-        if (existing != null && !existing.equals(handlerFqn)) {
-            ctx.env.getMessager().printMessage(
-                    Diagnostic.Kind.ERROR,
-                    String.format("PoshtaR: Ambiguity detected! Request '%s' is handled by both:%n - %s%n - %s",
-                            requestFqn, existing, handlerFqn),
-                    handler,
-                    getAnnotationMirror(handler)
-            );
-        } else {
-            // Mapping is safe: Request -> Handler
-            ctx.registerHandler(requestFqn, handlerFqn);
-        }
-    }
-
-    private String extractRequestType(TypeElement handler, RuleContext ctx) {
-        var typeUtils = ctx.env.getTypeUtils();
-        var elementUtils = ctx.env.getElementUtils();
-
-        TypeElement reqHandlerInterface = elementUtils.getTypeElement(REQUEST_HANDLER_INTERFACE_NAME);
-        if (reqHandlerInterface == null) return null;
-
-        TypeMirror erasedReqHandler = typeUtils.erasure(reqHandlerInterface.asType());
-
-        for (TypeMirror iface : handler.getInterfaces()) {
-            if (typeUtils.isAssignable(typeUtils.erasure(iface), erasedReqHandler)) {
-                if (iface instanceof DeclaredType declared) {
-                    List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
-                    if (typeArgs.isEmpty()) continue;
-
-                    TypeMirror requestType = typeArgs.getFirst();
-
-                    if (requestType.getKind() == TypeKind.ERROR) {
-                        ctx.env.getMessager().printMessage(
-                                Diagnostic.Kind.ERROR,
-                                "PoshtaR: Cannot resolve request type for handler " + handler.getSimpleName() +
-                                        ". Ensure the Request class is imported and compiles.",
-                                handler
-                        );
-                        return null;
-                    }
-                    return typeUtils.erasure(requestType).toString();
-                }
+            if (!seenRequests.containsKey(requestFqn)) {
+                seenRequests.put(requestFqn, handlerFqn);
+                continue;
             }
+
+            String existingHandler = seenRequests.get(requestFqn);
+            if (existingHandler.equals(handlerFqn)) continue;
+
+            logError(ctx, requestFqn, existingHandler, handlerFqn);
+
+
         }
-        return null;
     }
 
-    private AnnotationMirror getAnnotationMirror(Element element) {
-        for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
-            // Compare FQN to FQN
-            String mirrorFqn = ((TypeElement) mirror.getAnnotationType().asElement()).getQualifiedName().toString();
-            if (mirrorFqn.equals(HANDLER_ANNOTATION_NAME)) {
-                return mirror;
-            }
-        }
-        return null;
+    private static void logError(RuleContext ctx, String requestFqn, String existingHandler, String handlerFqn) {
+        ctx.env.getMessager().printMessage(
+                Diagnostic.Kind.ERROR,
+                String.format("PoshtaR: Ambiguity detected! Request '%s' is handled by both:%n - %s%n - %s",
+                        requestFqn, existingHandler, handlerFqn)
+        );
     }
 }
