@@ -3,16 +3,16 @@ package org.nikola.velemir.poshtar.spring.adapter.request.deps.infrastructure;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.core.types.Unit;
-import org.nikola.velemir.poshtar.spring.adapter.request.deps.injection.InjectionRequestHandler;
+import org.nikola.velemir.poshtar.spring.adapter.notification.deps.injection.InjectionNotificationSecondHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Handler
 public class AmbiguousRequestHandler2 implements RequestHandler<AmbiguousRequest, Unit> {
 //    @Autowired
-//    private final InjectionRequestHandler rq;
+//    private final InjectionNotificationSecondHandler rq;
 //
-//    public AmbiguousRequestHandler2(InjectionRequestHandler rq) {
+//    public AmbiguousRequestHandler2(InjectionNotificationSecondHandler rq) {
 //        this.rq = rq;
 //    }
 

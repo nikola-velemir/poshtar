@@ -2,14 +2,14 @@ package org.nikola.velemir.poshtar.opt.processor;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.rules.AmbiguityRule;
-import org.nikola.velemir.poshtar.opt.rules.NoInjectionRule;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.opt.rules.ambiguity.AmbiguityRule;
+import org.nikola.velemir.poshtar.opt.rules.injection.HandlerNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
@@ -21,13 +21,17 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class PoshtarGuardProcessor extends AbstractProcessor {
-    private final List<Rule> rules = List.of(new AmbiguityRule(), new NoInjectionRule());
+    public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
+
+    private final List<Rule> rules = List.of(
+            new AmbiguityRule(),
+            new HandlerNoInjectionRule()
+    );
     private Properties registry;
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
     private Trees trees;
@@ -40,10 +44,10 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         }
 
         if (registry == null) registry = loadExistingRegistry();
-        RuleContext ctx = new RuleContext(processingEnv, trees,registry);
+        RuleContext ctx = new RuleContext(processingEnv, trees, registry);
 
         TypeElement handlerAnnot = processingEnv.getElementUtils()
-                .getTypeElement("org.nikola.velemir.poshtar.core.annotations.Handler");
+                .getTypeElement(HANDLER_ANNOTATION_NAME);
 
         validatePerElement(roundEnv, handlerAnnot, ctx);
         validatePerRound(roundEnv, ctx);
@@ -76,6 +80,7 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
     private static <T> T jbUnwrap(Class<? extends T> iface, T wrapper) {
         T unwrapped = null;
         try {
+
             final Class<?> apiWrappers = wrapper.getClass().getClassLoader()
                     .loadClass("org.jetbrains.jps.javac.APIWrappers");
             final java.lang.reflect.Method unwrapMethod = apiWrappers
@@ -86,6 +91,7 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         }
         return unwrapped != null ? unwrapped : wrapper;
     }
+
     private Properties loadExistingRegistry() {
         Properties props = new Properties();
         try {

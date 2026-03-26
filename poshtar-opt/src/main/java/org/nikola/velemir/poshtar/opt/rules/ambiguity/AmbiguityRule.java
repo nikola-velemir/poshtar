@@ -1,4 +1,9 @@
-package org.nikola.velemir.poshtar.opt.rules;
+package org.nikola.velemir.poshtar.opt.rules.ambiguity;
+
+import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
+import org.nikola.velemir.poshtar.opt.rules.Rule;
+import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
@@ -13,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AmbiguityRule implements Rule {
+    public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
+    public static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getSimpleName();
     // needs shared state across elements — inject a registry
     private final Map<String, String> registry = new HashMap<>();
 
@@ -20,7 +27,7 @@ public class AmbiguityRule implements Rule {
     private AnnotationMirror getAnnotationMirror(Element element, String annotationName) {
         for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
             if (mirror.getAnnotationType().asElement()
-                    .getSimpleName().contentEquals("Handler")) {
+                    .getSimpleName().contentEquals(HANDLER_ANNOTATION_NAME)) {
                 return mirror;
             }
         }
@@ -34,7 +41,7 @@ public class AmbiguityRule implements Rule {
             DeclaredType declaredInterface = (DeclaredType) interfaceMirror;
             Element interfaceElement = declaredInterface.asElement();
 
-            if (!interfaceElement.getSimpleName().contentEquals("RequestHandler")) continue;
+            if (!interfaceElement.getSimpleName().contentEquals(REQUEST_HANDLER_INTERFACE_NAME)) continue;
 
             List<? extends TypeMirror> typeArgs = declaredInterface.getTypeArguments();
             if (!typeArgs.isEmpty()) {
@@ -50,7 +57,6 @@ public class AmbiguityRule implements Rule {
         String request = extractRequestType(element);
         if (request == null) return;
 
-        // Check against the GLOBAL persistent registry
         String existing = ctx.getHandlerFor(request);
 
         if (existing != null && !existing.equals(handler)) {
@@ -61,7 +67,7 @@ public class AmbiguityRule implements Rule {
                             existing + "\nvs" +
                             "\n— " + handler,
                     element,
-                    getAnnotationMirror(element, "org.nikola.velemir.poshtar.core.annotations.Handler")
+                    getAnnotationMirror(element, HANDLER_ANNOTATION_NAME)
             );
         } else {
             // Update the GLOBAL registry

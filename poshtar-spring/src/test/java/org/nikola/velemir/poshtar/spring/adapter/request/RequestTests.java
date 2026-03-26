@@ -3,6 +3,7 @@ package org.nikola.velemir.poshtar.spring.adapter.request;
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +32,7 @@ public class RequestTests {
     private ApplicationContext context;
     @Test
     void handles_Null_Send() {
+        System.out.println(RequestHandler.class.getSimpleName());
         NullRequest request = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
             poshtar.send(request);
