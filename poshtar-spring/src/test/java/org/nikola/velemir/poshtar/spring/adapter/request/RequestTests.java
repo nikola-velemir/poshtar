@@ -34,9 +34,7 @@ public class RequestTests {
     void handles_Null_Send() {
         System.out.println(RequestHandler.class.getSimpleName());
         NullRequest request = null;
-        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.send(request);
-        });
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(request));
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
@@ -46,9 +44,7 @@ public class RequestTests {
     @Test
     void should_fail_for_unregistered_handler() {
         NotFoundRequest request = new NotFoundRequest();
-        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> {
-            poshtar.send(request);
-        });
+        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> poshtar.send(request));
         assertInstanceOf(HandlerNotFoundException.class, ex);
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
         String actualMessage = ex.getMessage();
@@ -71,10 +67,7 @@ public class RequestTests {
     @Test
     void should_Fail_For_Mandatory_Propagation() {
         var request = new MandatoryRequest("Payload");
-        Exception ex = assertThrowsExactly(IllegalTransactionStateException.class, () -> {
-            poshtar.send(request);
-
-        });
+        Exception ex = assertThrowsExactly(IllegalTransactionStateException.class, () -> poshtar.send(request));
         assertInstanceOf(IllegalTransactionStateException.class, ex);
         String expectedMessage = "No existing transaction found for transaction marked with propagation 'mandatory'";
         String actualMessage = ex.getMessage();

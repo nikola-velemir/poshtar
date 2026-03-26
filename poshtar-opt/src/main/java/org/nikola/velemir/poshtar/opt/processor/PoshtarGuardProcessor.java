@@ -5,6 +5,7 @@ import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.opt.rules.ambiguity.AmbiguityRule;
+import org.nikola.velemir.poshtar.opt.rules.deadPipeline.DeadPipelineRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.BehaviourNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.HandlerNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
@@ -33,7 +34,8 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
     private final List<Rule> rules = List.of(
             new AmbiguityRule(),
             new HandlerNoInjectionRule(),
-            new BehaviourNoInjectionRule()
+            new BehaviourNoInjectionRule(),
+            new DeadPipelineRule()
     );
     private Properties registry;
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";

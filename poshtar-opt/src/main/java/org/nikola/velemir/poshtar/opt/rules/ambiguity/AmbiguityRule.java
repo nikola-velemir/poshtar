@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class AmbiguityRule implements Rule {
     public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
-    public static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getSimpleName();
+    public static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -62,15 +62,12 @@ public class AmbiguityRule implements Rule {
         var typeUtils = ctx.env.getTypeUtils();
         var elementUtils = ctx.env.getElementUtils();
 
-        // 1. Get the FQN of your interface safely
-        TypeElement reqHandlerInterface = elementUtils.getTypeElement("org.nikola.velemir.poshtar.core.request.handler.RequestHandler");
+        TypeElement reqHandlerInterface = elementUtils.getTypeElement(REQUEST_HANDLER_INTERFACE_NAME);
         if (reqHandlerInterface == null) return null;
 
         TypeMirror erasedReqHandler = typeUtils.erasure(reqHandlerInterface.asType());
 
-        // 2. Iterate through interfaces (including those on parent classes if needed)
         for (TypeMirror iface : handler.getInterfaces()) {
-            // Use isAssignable to handle the hierarchy correctly
             if (typeUtils.isAssignable(typeUtils.erasure(iface), erasedReqHandler)) {
                 if (iface instanceof DeclaredType declared) {
                     List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
@@ -78,8 +75,6 @@ public class AmbiguityRule implements Rule {
 
                     TypeMirror requestType = typeArgs.getFirst();
 
-                    // 3. CRITICAL: Handle unresolved symbols
-                    // If the user forgot an import or made a typo, the Kind will be ERROR.
                     if (requestType.getKind() == TypeKind.ERROR) {
                         ctx.env.getMessager().printMessage(
                                 Diagnostic.Kind.ERROR,
@@ -89,8 +84,6 @@ public class AmbiguityRule implements Rule {
                         );
                         return null;
                     }
-
-                    // 4. Use erasure to get the absolute FQN (e.g., com.app.MyRequest)
                     return typeUtils.erasure(requestType).toString();
                 }
             }
