@@ -100,6 +100,7 @@ public class DeadPipelineRule implements Rule {
             if (call.equals(delegateName + ".handle") || call.endsWith("." + delegateName + ".handle")) {
                 foundNextCall = true;
             }
+
             return super.visitMethodInvocation(node, unused);
         }
 
