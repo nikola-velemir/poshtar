@@ -2,8 +2,10 @@ package org.nikola.velemir.poshtar.opt.processor;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.opt.rules.ambiguity.AmbiguityRule;
+import org.nikola.velemir.poshtar.opt.rules.injection.BehaviourNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.HandlerNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
@@ -27,10 +29,11 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class PoshtarGuardProcessor extends AbstractProcessor {
     public static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
-
+    public static  final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
     private final List<Rule> rules = List.of(
             new AmbiguityRule(),
-            new HandlerNoInjectionRule()
+            new HandlerNoInjectionRule(),
+            new BehaviourNoInjectionRule()
     );
     private Properties registry;
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
@@ -46,29 +49,40 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         if (registry == null) registry = loadExistingRegistry();
         RuleContext ctx = new RuleContext(processingEnv, trees, registry);
 
-        TypeElement handlerAnnot = processingEnv.getElementUtils()
-                .getTypeElement(HANDLER_ANNOTATION_NAME);
+        preprocessRegistry(roundEnv, ctx);
 
-        validatePerElement(roundEnv, handlerAnnot, ctx);
-        validatePerRound(roundEnv, ctx);
+        validateRules(roundEnv, ctx);
 
         return false;
     }
 
-    private void validatePerRound(RoundEnvironment roundEnv, RuleContext ctx) {
-        for (Rule rule : rules) {
-            rule.validateRound(roundEnv, ctx);
-        }
-    }
+    private void preprocessRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
+        var elements = processingEnv.getElementUtils();
 
-    private void validatePerElement(RoundEnvironment roundEnv, TypeElement handlerAnnot, RuleContext ctx) {
+        // Register Handlers
+        TypeElement handlerAnnot = elements.getTypeElement(HANDLER_ANNOTATION_NAME);
         if (handlerAnnot != null) {
             roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
                     .filter(e -> e.getKind() == ElementKind.CLASS)
                     .map(e -> (TypeElement) e)
-                    .forEach(handler -> rules.forEach(rule -> rule.validate(handler, ctx)));
+                    .forEach(h -> ctx.registerHandler(h.getQualifiedName().toString(), "HANDLER"));
+        }
+
+        TypeElement behaviourAnnot = elements.getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
+        if (behaviourAnnot != null) {
+            roundEnv.getElementsAnnotatedWith(behaviourAnnot).stream()
+                    .filter(e -> e.getKind() == ElementKind.CLASS)
+                    .map(e -> (TypeElement) e)
+                    .forEach(b -> ctx.registerHandler(b.getQualifiedName().toString(), "BEHAVIOUR"));
         }
     }
+
+    private void validateRules(RoundEnvironment roundEnv, RuleContext ctx) {
+        for (Rule rule : rules) {
+            rule.validate(roundEnv, ctx);
+        }
+    }
+
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

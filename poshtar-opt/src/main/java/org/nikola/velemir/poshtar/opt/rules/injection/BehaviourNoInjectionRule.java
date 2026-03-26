@@ -1,12 +1,10 @@
 package org.nikola.velemir.poshtar.opt.rules.injection;
 
-import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
-import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.rules.Rule;
+import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
-import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
@@ -14,26 +12,7 @@ import java.util.Set;
 
 public class BehaviourNoInjectionRule extends NoInjectionRule {
 
-    private static final String REQ_HANDLER_FQN = RequestHandler.class.getName();
-    private static final String NOTIF_HANDLER_FQN = NotificationHandler.class.getName();
-
-
-    @Override
-    public void validateRound(RoundEnvironment roundEnv, RuleContext ctx) {
-        Set<String> forbiddenHandlers = ctx.getAllKnownHandlers();
-        if (forbiddenHandlers.isEmpty()) return;
-
-        for (Element root : roundEnv.getRootElements()) {
-            if (root.getKind() != ElementKind.CLASS) continue;
-
-            TypeElement clazz = (TypeElement) root;
-
-            if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
-
-            checkClassBody(clazz, forbiddenHandlers, ctx);
-        }
-    }
-
+    private static final String BEHAVIOUR_INTERFACE_FQN = PipelineBehaviour.class.getName();
 
     @Override
     protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, RuleContext ctx) {
@@ -43,15 +22,13 @@ public class BehaviourNoInjectionRule extends NoInjectionRule {
         String typeName = typeUtils.erasure(type).toString();
         if (forbidden.contains(typeName)) return true;
 
-        TypeMirror reqHandler = elementUtils.getTypeElement(REQ_HANDLER_FQN).asType();
-        TypeMirror notifHandler = elementUtils.getTypeElement(NOTIF_HANDLER_FQN).asType();
+        TypeMirror behaviour = elementUtils.getTypeElement(BEHAVIOUR_INTERFACE_FQN).asType();
 
         TypeMirror erasedType = typeUtils.erasure(type);
-        TypeMirror erasedReq = typeUtils.erasure(reqHandler);
-        TypeMirror erasedNotif = typeUtils.erasure(notifHandler);
+        TypeMirror erasedBehaviour = typeUtils.erasure(behaviour);
 
-        return typeUtils.isAssignable(erasedType, erasedReq) ||
-                typeUtils.isAssignable(erasedType, erasedNotif);
+        return
+                typeUtils.isAssignable(erasedType, erasedBehaviour);
     }
 
     @Override

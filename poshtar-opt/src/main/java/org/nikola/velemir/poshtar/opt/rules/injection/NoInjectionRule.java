@@ -12,14 +12,19 @@ import java.util.Set;
 public abstract class NoInjectionRule implements Rule {
     protected static final String MEDIATOR_FQN = Poshtar.class.getName();
 
-    @Override
-    public void validate(TypeElement element, RuleContext ctx) {
-
-    }
 
     @Override
-    public void validateRound(RoundEnvironment roundEnv, RuleContext ctx) {
+    public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
+        Set<String> forbidden = ctx.getAllKnownHandlers();
+        if (forbidden.isEmpty()) return;
 
+        for (Element root : roundEnv.getRootElements()) {
+            if (root.getKind() != ElementKind.CLASS) continue;
+            TypeElement clazz = (TypeElement) root;
+            if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
+
+            checkClassBody((TypeElement) root, forbidden, ctx);
+        }
     }
 
     protected void checkClassBody(TypeElement clazz, Set<String> forbidden, RuleContext ctx) {

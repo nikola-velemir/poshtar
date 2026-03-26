@@ -19,23 +19,6 @@ public class HandlerNoInjectionRule extends NoInjectionRule {
 
 
     @Override
-    public void validateRound(RoundEnvironment roundEnv, RuleContext ctx) {
-        Set<String> forbiddenHandlers = ctx.getAllKnownHandlers();
-        if (forbiddenHandlers.isEmpty()) return;
-
-        for (Element root : roundEnv.getRootElements()) {
-            if (root.getKind() != ElementKind.CLASS) continue;
-
-            TypeElement clazz = (TypeElement) root;
-
-            if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
-
-            checkClassBody(clazz, forbiddenHandlers, ctx);
-        }
-    }
-
-
-    @Override
     protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, RuleContext ctx) {
         var typeUtils = ctx.env.getTypeUtils();
         var elementUtils = ctx.env.getElementUtils();
