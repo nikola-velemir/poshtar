@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.annotations.suppression;
+package org.nikola.velemir.poshtar.opt.annotations.pipeline;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

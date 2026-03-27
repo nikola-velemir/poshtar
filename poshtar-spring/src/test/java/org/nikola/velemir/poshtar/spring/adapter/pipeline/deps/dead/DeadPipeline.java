@@ -4,7 +4,7 @@ import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.core.types.Unit;
-import org.nikola.velemir.poshtar.opt.annotations.suppression.SuppressDead;
+import org.nikola.velemir.poshtar.opt.annotations.pipeline.SuppressDead;
 
 @SuppressDead
 @Behaviour
