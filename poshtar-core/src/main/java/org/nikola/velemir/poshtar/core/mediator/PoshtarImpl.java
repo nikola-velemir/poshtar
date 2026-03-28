@@ -10,7 +10,7 @@ import org.nikola.velemir.poshtar.core.request.Request;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PoshtarImpl implements Poshtar {
+public final class PoshtarImpl implements Poshtar {
     private final RequestRegistry requestRegistry;
     private final NotificationRegistry notificationRegistry;
 
