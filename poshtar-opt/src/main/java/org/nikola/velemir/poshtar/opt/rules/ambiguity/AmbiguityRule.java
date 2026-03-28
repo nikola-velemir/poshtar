@@ -27,7 +27,6 @@ public class AmbiguityRule implements Rule {
         for (var entry : ctx.getRegistry().entrySet()) {
             String handlerFqn = (String) entry.getKey();
             String requestFqn = (String) entry.getValue();
-
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 
             if (!seenRequests.containsKey(requestFqn)) {

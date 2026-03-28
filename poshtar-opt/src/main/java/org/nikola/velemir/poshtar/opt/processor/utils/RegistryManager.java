@@ -91,7 +91,6 @@ public class RegistryManager {
                 .map(e -> (TypeElement) e)
                 .forEach(h -> {
                     String requestType = extractRequestType(h, ctx);
-                    // The critical guard: Properties/Hashtable will crash on null values
                     if (requestType != null) {
                         ctx.registerHandler(h.getQualifiedName().toString(), requestType);
                     }

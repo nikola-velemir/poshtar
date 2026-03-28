@@ -37,7 +37,7 @@ public abstract class NoInjectionRule implements Rule {
         }
     }
 
-    public void validateMethodInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
+    protected void validateMethodInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.METHOD) {
             ExecutableElement method = (ExecutableElement) enclosed;
             for (VariableElement param : method.getParameters()) {
