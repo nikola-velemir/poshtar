@@ -48,7 +48,7 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         if (registry == null) registry = RegistryManager.loadExistingRegistry(processingEnv);
         RuleContext ctx = new RuleContext(processingEnv, trees, registry);
 
-        RegistryManager.preprocessRegistry(processingEnv, roundEnv, ctx);
+        RegistryManager.preprocessRegistry(roundEnv, ctx);
 
         validator.validateRules(roundEnv, ctx);
 

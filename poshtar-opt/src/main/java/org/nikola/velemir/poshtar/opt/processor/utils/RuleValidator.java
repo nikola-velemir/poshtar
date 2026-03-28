@@ -7,12 +7,14 @@ import org.nikola.velemir.poshtar.opt.rules.deadPipeline.DeadPipelineRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.BehaviourNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.injection.HandlerNoInjectionRule;
 import org.nikola.velemir.poshtar.opt.rules.requestFinality.RequestFinalityRule;
+import org.nikola.velemir.poshtar.opt.rules.unregister.UnregisteredRequestRule;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.List;
 
 public class RuleValidator {
     private final List<Rule> rules = List.of(
+            new UnregisteredRequestRule(),
             new RequestFinalityRule(),
             new AmbiguityRule(),
             new HandlerNoInjectionRule(),

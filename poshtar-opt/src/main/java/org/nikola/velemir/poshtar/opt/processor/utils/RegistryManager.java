@@ -2,6 +2,7 @@ package org.nikola.velemir.poshtar.opt.processor.utils;
 
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
@@ -12,6 +13,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -27,20 +29,34 @@ public class RegistryManager {
     private static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
 
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
+    private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
 
 
-    public static void preprocessRegistry(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, RuleContext ctx) {
-        var elements = processingEnv.getElementUtils();
+    public static void preprocessRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
 
-        TypeElement handlerAnnot = elements.getTypeElement(HANDLER_ANNOTATION_NAME);
-        if (handlerAnnot != null) {
-            preprocessHandlers(roundEnv, ctx, handlerAnnot);
-        }
+        preprocessHandlers(roundEnv, ctx);
 
-        TypeElement behaviourAnnot = elements.getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
-        if (behaviourAnnot != null) {
-            processBehaviours(roundEnv, ctx, behaviourAnnot);
-        }
+        processBehaviours(roundEnv, ctx);
+
+        processRequests(roundEnv, ctx);
+    }
+
+    private static void processRequests(RoundEnvironment roundEnv, RuleContext ctx) {
+        TypeElement requestInterface = ctx.getElements()
+                .getTypeElement(REQUEST_INTERFACE_NAME);
+        if (requestInterface == null) return;
+
+        TypeMirror erasedRequest = ctx.env.getTypeUtils()
+                .erasure(requestInterface.asType());
+
+        roundEnv.getRootElements().stream()
+                .filter(e -> e.getKind() == ElementKind.CLASS || e.getKind() == ElementKind.RECORD)
+                .map(e -> (TypeElement) e)
+                .filter(e -> ctx.env.getTypeUtils().isAssignable(
+                        ctx.env.getTypeUtils().erasure(e.asType()),
+                        erasedRequest
+                ))
+                .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
     }
 
     public static Properties loadExistingRegistry(ProcessingEnvironment processingEnv) {
@@ -78,14 +94,19 @@ public class RegistryManager {
         }
     }
 
-    private static void processBehaviours(RoundEnvironment roundEnv, RuleContext ctx, TypeElement behaviourAnnot) {
+    private static void processBehaviours(RoundEnvironment roundEnv, RuleContext ctx) {
+        TypeElement behaviourAnnot = ctx.getElements().getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
+        if (behaviourAnnot == null) return;
+
         roundEnv.getElementsAnnotatedWith(behaviourAnnot).stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS)
                 .map(e -> (TypeElement) e)
                 .forEach(b -> ctx.registerHandler(b.getQualifiedName().toString(), "BEHAVIOUR"));
     }
 
-    private static void preprocessHandlers(RoundEnvironment roundEnv, RuleContext ctx, TypeElement handlerAnnot) {
+    private static void preprocessHandlers(RoundEnvironment roundEnv, RuleContext ctx) {
+        TypeElement handlerAnnot = ctx.getElements().getTypeElement(HANDLER_ANNOTATION_NAME);
+        if (handlerAnnot == null) return;
         roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS)
                 .map(e -> (TypeElement) e)
