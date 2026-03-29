@@ -135,12 +135,7 @@ public class RegistryManager {
                     TypeMirror requestType = typeArgs.getFirst();
 
                     if (requestType.getKind() == TypeKind.ERROR) {
-                        ctx.env.getMessager().printMessage(
-                                Diagnostic.Kind.ERROR,
-                                "PoshtaR: Cannot resolve request type for handler " + handler.getSimpleName() +
-                                        ". Ensure the Request class is imported and compiles.",
-                                handler
-                        );
+                        logError(handler, ctx);
                         return null;
                     }
                     return typeUtils.erasure(requestType).toString();
@@ -148,6 +143,15 @@ public class RegistryManager {
             }
         }
         return null;
+    }
+
+    private static void logError(TypeElement handler, RuleContext ctx) {
+        ctx.env.getMessager().printMessage(
+                Diagnostic.Kind.ERROR,
+                "PoshtaR: Cannot resolve request type for handler " + handler.getSimpleName() +
+                        ". Ensure the Request class is imported and compiles.",
+                handler
+        );
     }
 
 }
