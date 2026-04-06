@@ -1,6 +1,7 @@
-package nikola.velemir.poshtar.spring.adapter.configuration;
+package nikola.velemir.poshtar.spring.adapter;
 
-import nikola.velemir.poshtar.spring.adapter.discovery.registrar.PoshtarSpringRegistrar;
+import nikola.velemir.poshtar.spring.adapter.internal.configuration.PoshtarSpringAutoConfiguration;
+import nikola.velemir.poshtar.spring.adapter.internal.registrar.PoshtarSpringRegistrar;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

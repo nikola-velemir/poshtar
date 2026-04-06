@@ -1,4 +1,4 @@
-package nikola.velemir.poshtar.spring.adapter.injection.registry;
+package nikola.velemir.poshtar.spring.adapter.internal.registry;
 
 import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;

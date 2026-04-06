@@ -1,6 +1,6 @@
-package nikola.velemir.poshtar.spring.adapter.discovery.registrar;
+package nikola.velemir.poshtar.spring.adapter.internal.registrar;
 
-import nikola.velemir.poshtar.spring.adapter.configuration.EnablePoshtar;
+import nikola.velemir.poshtar.spring.adapter.EnablePoshtar;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.springframework.beans.factory.config.BeanDefinition;

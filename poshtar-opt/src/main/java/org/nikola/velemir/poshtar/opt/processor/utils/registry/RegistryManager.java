@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.processor.utils;
+package org.nikola.velemir.poshtar.opt.processor.utils.registry;
 
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;

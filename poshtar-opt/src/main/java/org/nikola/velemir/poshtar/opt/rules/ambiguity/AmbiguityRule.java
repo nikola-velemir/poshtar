@@ -1,12 +1,11 @@
 package org.nikola.velemir.poshtar.opt.rules.ambiguity;
 
-import org.nikola.velemir.poshtar.opt.RegistryEntry;
+import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryEntry;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
 import java.util.HashMap;
 import java.util.Map;
 

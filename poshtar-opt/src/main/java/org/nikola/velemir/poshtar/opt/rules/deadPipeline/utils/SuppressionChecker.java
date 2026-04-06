@@ -1,6 +1,5 @@
 package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
-
-import org.nikola.velemir.poshtar.opt.annotations.pipeline.SuppressDead;
+import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;

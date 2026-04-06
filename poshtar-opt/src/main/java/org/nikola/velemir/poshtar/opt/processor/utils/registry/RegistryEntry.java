@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt;
+package org.nikola.velemir.poshtar.opt.processor.utils.registry;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

@@ -2,7 +2,7 @@ package org.nikola.velemir.poshtar.opt.rules.deadPipeline;
 
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import org.nikola.velemir.poshtar.opt.annotations.pipeline.SuppressDead;
+import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;

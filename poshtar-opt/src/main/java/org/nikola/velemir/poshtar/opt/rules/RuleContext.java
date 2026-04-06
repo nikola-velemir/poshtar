@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.RegistryEntry;
+import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryEntry;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
