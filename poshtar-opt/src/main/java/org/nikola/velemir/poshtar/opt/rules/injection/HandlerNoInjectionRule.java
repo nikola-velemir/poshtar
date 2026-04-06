@@ -3,6 +3,7 @@ package org.nikola.velemir.poshtar.opt.rules.injection;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
+import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
@@ -36,11 +37,9 @@ public class HandlerNoInjectionRule extends NoInjectionRule {
 
     @Override
     protected void logError(Element target, RuleContext ctx) {
-        ctx.env.getMessager().printMessage(
-                Diagnostic.Kind.ERROR,
-                "PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. " +
-                        "Use 'Poshtar.send(request)' to interact with this logic.",
-                target
-        );
+        String errorMessage = "PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. " +
+                "Use 'Poshtar.send(request)' to interact with this logic.";
+        ErrorLogger.logError(ctx.env, errorMessage, target);
+
     }
 }

@@ -3,6 +3,7 @@ package org.nikola.velemir.poshtar.opt.rules.deadPipeline;
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.opt.annotations.pipeline.SuppressDead;
+import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 import org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils.FlowAnalyser;
@@ -51,12 +52,9 @@ public class DeadPipelineRule implements Rule {
     }
 
     private static void logError(ExecutableElement method, RuleContext ctx) {
-        ctx.env.getMessager().printMessage(
-                Diagnostic.Kind.ERROR,
-                "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception. " +
-                        "\n Logic found no exit path, which will break the pipeline. Use " + SUPPRESS_ANNOTATION_NAME + " if your logic is correct, but bypasses the chain",
-                method
-        );
+        String errorMessage = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception. " +
+                "\n Logic found no exit path, which will break the pipeline. Use " + SUPPRESS_ANNOTATION_NAME + " if your logic is correct, but bypasses the chain";
+        ErrorLogger.logError(ctx.env, errorMessage, method);
     }
 
     private static String extractDelegateName(ExecutableElement method) {

@@ -1,5 +1,6 @@
 package org.nikola.velemir.poshtar.opt.rules.requestFinality;
 
+import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
@@ -28,10 +29,9 @@ public class RequestFinalityRule implements Rule {
     }
 
     private static void logError(RuleContext ctx, String requestFqn) {
-        ctx.env.getMessager().printMessage(
-                Diagnostic.Kind.ERROR,
-                String.format("PoshtaR: Finality Violated! Request '%s' must be final or a record!",
-                        requestFqn)
-        );
+        String errorMessage = String.format("PoshtaR: Finality Violated! Request '%s' must be final or a record!",
+                requestFqn);
+        ErrorLogger.logError(ctx.env, errorMessage);
+
     }
 }

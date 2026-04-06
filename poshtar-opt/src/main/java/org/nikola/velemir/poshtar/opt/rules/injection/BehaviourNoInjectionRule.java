@@ -3,6 +3,7 @@ package org.nikola.velemir.poshtar.opt.rules.injection;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.lang.model.element.*;
@@ -29,11 +30,10 @@ public class BehaviourNoInjectionRule extends NoInjectionRule {
 
     @Override
     protected void logError(Element target, RuleContext ctx) {
-        ctx.env.getMessager().printMessage(
-                Diagnostic.Kind.ERROR,
+        String errorMessage =
                 "PoshtaR VIOLATION: Behaviours cannot be injected, set thru methods or constructor, or manually managed. " +
-                        "Use 'Poshtar.send(request)' to interact with this logic.",
-                target
-        );
+                        "Use 'Poshtar.send(request)' to interact with this logic.";
+        ErrorLogger.logError(ctx.env, errorMessage, target);
+
     }
 }
