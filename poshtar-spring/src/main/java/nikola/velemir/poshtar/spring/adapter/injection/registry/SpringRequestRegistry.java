@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ import java.util.*;
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final PipelineConfigurer pipelineConfigurer;
+
     public SpringRequestRegistry(ApplicationContext context, PipelineConfigurer pipelineConfigurer) {
         this.context = context;
         this.pipelineConfigurer = pipelineConfigurer;
@@ -24,18 +26,14 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
     @SuppressWarnings("unchecked")
     private void init(ApplicationContext context) {
         @SuppressWarnings("rawtypes") Map<String, RequestHandler> allHandlers = context.getBeansOfType(RequestHandler.class);
-        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = pipelineConfigurer
-                .getBehaviourClasses()
-                .stream()
-                .map(context::getBean)
-                .toList();
+        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(context);
+
         for (RequestHandler<?, ?> handler : allHandlers.values()) {
             Class<?> requestType = ResolvableType.forClass(handler.getClass())
                     .as(RequestHandler.class)
                     .getGeneric(0).resolve();
-            if (requestType == null || !Request.class.isAssignableFrom(requestType)) {
-                continue;
-            }
+
+            if (requestType == null || !Request.class.isAssignableFrom(requestType)) continue;
 
             List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
 
@@ -45,6 +43,15 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
             register(castedRequest, castedHandler, filteredBehaviours);
         }
 
+    }
+
+    @NonNull
+    private List<? extends PipelineBehaviour<?, ?>> provideBehaviours(ApplicationContext context) {
+        return pipelineConfigurer
+                .getBehaviourClasses()
+                .stream()
+                .map(context::getBean)
+                .toList();
     }
 
     @Override

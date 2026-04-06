@@ -70,7 +70,7 @@ public class RegistryManager {
                 props.load(in);
             }
         } catch (IOException e) {
-            // File doesn't exist yet — first pass, this is expected
+            // File doesn't exist yet
         }
         return props;
     }

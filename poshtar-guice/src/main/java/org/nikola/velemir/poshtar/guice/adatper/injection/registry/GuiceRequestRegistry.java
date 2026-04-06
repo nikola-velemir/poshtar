@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import jdk.jshell.spi.ExecutionControl;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.nikola.velemir.poshtar.adapter.configuration.PipelineConfigurer;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.Request;
@@ -25,12 +26,7 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
 
     private void init(Injector injector) {
 
-        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours =
-                pipelineConfigurer
-                        .getBehaviourClasses()
-                        .stream()
-                        .map(injector::getInstance)
-                        .toList();
+        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(injector);
         List<RequestHandler> allHandlers = provideHandlers(injector);
         for (RequestHandler<?, ?> handler : allHandlers) {
             TypeToken<?> typeToken = TypeToken.of(handler.getClass());
@@ -47,6 +43,14 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
 
             register(castedRequest, castedHandler, filteredBehaviours);
         }
+    }
+
+    private @NonNull List<? extends PipelineBehaviour<?, ?>> provideBehaviours(Injector injector) {
+        return pipelineConfigurer
+                .getBehaviourClasses()
+                .stream()
+                .map(injector::getInstance)
+                .toList();
     }
 
     private static List<RequestHandler> provideHandlers(Injector injector) {
