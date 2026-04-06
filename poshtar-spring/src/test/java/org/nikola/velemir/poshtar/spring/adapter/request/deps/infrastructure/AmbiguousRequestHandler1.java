@@ -5,7 +5,7 @@ import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.core.types.Unit;
 
-@Handler
+//@Handler
 public class AmbiguousRequestHandler1 implements RequestHandler<AmbiguousRequest, Unit> {
 
     @Override
