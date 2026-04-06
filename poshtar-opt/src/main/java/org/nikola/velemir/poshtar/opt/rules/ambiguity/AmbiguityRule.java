@@ -1,5 +1,6 @@
 package org.nikola.velemir.poshtar.opt.rules.ambiguity;
 
+import org.nikola.velemir.poshtar.opt.RegistryEntry;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.Rule;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
@@ -13,31 +14,36 @@ public class AmbiguityRule implements Rule {
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
-        Map<String, String> seenRequests = new HashMap<>();
+        Map<String, RegistryEntry> seenRequests = new HashMap<>();
 
-        for (var entry : ctx.getRegistry().entrySet()) {
-            String handlerFqn = (String) entry.getKey();
-            String requestFqn = (String) entry.getValue();
+        for (var entry : ctx.getRegistry().values()) {
+            String requestFqn = entry.requestFQN();
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 
-            if (!seenRequests.containsKey(requestFqn)) {
-                seenRequests.put(requestFqn, handlerFqn);
+            RegistryEntry existing = seenRequests.get(requestFqn);
+            if (existing == null) {
+                seenRequests.put(requestFqn, entry);
                 continue;
             }
 
-            String existingHandler = seenRequests.get(requestFqn);
-            if (existingHandler.equals(handlerFqn)) continue;
+            if (existing.handlerFQN().equals(entry.handlerFQN())) continue;
 
-            logError(ctx, requestFqn, existingHandler, handlerFqn);
-
+            logError(ctx, requestFqn, existing, entry);
 
         }
     }
 
-    private static void logError(RuleContext ctx, String requestFqn, String existingHandler, String handlerFqn) {
-        String errorMessage = String.format("PoshtaR: Ambiguity detected! Request '%s' is handled by both:%n - %s%n - %s",
-                requestFqn, existingHandler, handlerFqn);
-        Element target = ctx.env.getElementUtils().getTypeElement(handlerFqn);
-        ErrorLogger.logError(ctx.env, errorMessage, target);
+    private static void logError(RuleContext ctx, String requestFqn,
+                                 RegistryEntry existing, RegistryEntry conflict) {
+        String msgOnConflict = String.format(
+                "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'",
+                requestFqn, existing.handlerFQN());
+
+        String msgOnExisting = String.format(
+                "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'",
+                requestFqn, conflict.handlerFQN());
+
+        ErrorLogger.logError(ctx.env, msgOnConflict, conflict.handlerElement());
+        ErrorLogger.logError(ctx.env, msgOnExisting, existing.handlerElement());
     }
 }

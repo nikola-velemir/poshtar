@@ -15,7 +15,7 @@ public class RequestFinalityRule implements Rule {
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
 
         for (var entry : ctx.getRegistry().entrySet()) {
-            String requestFqn = (String) entry.getValue();
+            String requestFqn = entry.getValue().requestFQN();
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 
             TypeElement element = ctx.env.getElementUtils().getTypeElement(requestFqn);

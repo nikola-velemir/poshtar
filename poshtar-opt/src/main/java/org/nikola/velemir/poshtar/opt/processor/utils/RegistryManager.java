@@ -8,6 +8,7 @@ import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
@@ -93,6 +94,13 @@ public class RegistryManager {
         }
     }
 
+    public static AnnotationMirror getAnnotationMirror(TypeElement element, String annotation) {
+        return element.getAnnotationMirrors().stream()
+                .filter(m -> m.getAnnotationType().toString().equals(annotation))
+                .findFirst()
+                .orElse(null);
+    }
+
     private static void processBehaviours(RoundEnvironment roundEnv, RuleContext ctx) {
         TypeElement behaviourAnnot = ctx.getElements().getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
         if (behaviourAnnot == null) return;
@@ -100,7 +108,10 @@ public class RegistryManager {
         roundEnv.getElementsAnnotatedWith(behaviourAnnot).stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS)
                 .map(e -> (TypeElement) e)
-                .forEach(b -> ctx.registerHandler(b.getQualifiedName().toString(), "BEHAVIOUR"));
+                .forEach(b -> {
+                    AnnotationMirror mirror = getAnnotationMirror(b, BEHAVIOUR_ANNOTATION_NAME);
+                    ctx.registerBehaviour(b.getQualifiedName().toString(), b, mirror);
+                });
     }
 
     private static void preprocessHandlers(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -112,7 +123,8 @@ public class RegistryManager {
                 .forEach(h -> {
                     String requestType = extractRequestType(h, ctx);
                     if (requestType != null) {
-                        ctx.registerHandler(h.getQualifiedName().toString(), requestType);
+                        var mirror = getAnnotationMirror(h, HANDLER_ANNOTATION_NAME);
+                        ctx.registerHandler(h.getQualifiedName().toString(), requestType, h, mirror);
                     }
                 });
     }
