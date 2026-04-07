@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
+package org.nikola.velemir.poshtar.opt.rules.utils;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
@@ -8,7 +8,7 @@ import com.sun.source.util.TreeScanner;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlowScanner extends TreeScanner<Void, Void> {
+ class FlowScanner extends TreeScanner<Void, Void> {
     private final String delegateName;
 
     private boolean directCallFound = false;

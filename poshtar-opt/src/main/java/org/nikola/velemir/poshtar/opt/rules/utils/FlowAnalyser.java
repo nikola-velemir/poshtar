@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
+package org.nikola.velemir.poshtar.opt.rules.utils;
 
 import com.sun.source.tree.MethodTree;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
@@ -7,7 +7,7 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FlowAnalyser {
+ public class FlowAnalyser {
     private final RuleContext ctx;
     private final CalleeResolver resolver;
     private final Set<ExecutableElement> visited = new HashSet<>();

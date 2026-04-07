@@ -1,8 +1,8 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
+package org.nikola.velemir.poshtar.opt.rules.utils;
 
 import java.util.List;
 
-public record ScanResult(boolean directCallFound, boolean throwFound, List<ForwardedCall> forwardedCalls) {
+ record ScanResult(boolean directCallFound, boolean throwFound, List<ForwardedCall> forwardedCalls) {
 
     public boolean hasExitPath() {
         return directCallFound || throwFound;

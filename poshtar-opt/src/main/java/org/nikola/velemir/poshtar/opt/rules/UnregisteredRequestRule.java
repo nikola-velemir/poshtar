@@ -1,16 +1,14 @@
-package org.nikola.velemir.poshtar.opt.rules.unregister;
+package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.opt.api.annotations.request.SuppressUnregistered;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.rules.Rule;
-import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
-public class UnregisteredRequestRule implements Rule {
+ class UnregisteredRequestRule implements Rule {
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
         Set<String> handledTypes = ctx.getHandledRequestTypes();

@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
+package org.nikola.velemir.poshtar.opt.rules.utils;
 
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
@@ -10,7 +10,7 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CalleeResolver {
+ class CalleeResolver {
     private final RuleContext ctx;
     private final ExecutableElement rootMethod;
 

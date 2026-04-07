@@ -1,13 +1,11 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline;
+package org.nikola.velemir.poshtar.opt.rules;
 
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.rules.Rule;
-import org.nikola.velemir.poshtar.opt.rules.RuleContext;
-import org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils.FlowAnalyser;
-import org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils.SuppressionChecker;
+import org.nikola.velemir.poshtar.opt.rules.utils.FlowAnalyser;
+import org.nikola.velemir.poshtar.opt.rules.utils.SuppressionChecker;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -17,7 +15,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 
-public class DeadPipelineRule implements Rule {
+class DeadPipelineRule implements Rule {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
     public static final String DELEGATE_SIMPLE_NAME = RequestDelegate.class.getSimpleName();
 

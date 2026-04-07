@@ -1,15 +1,13 @@
-package org.nikola.velemir.poshtar.opt.rules.ambiguity;
+package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryEntry;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.rules.Rule;
-import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AmbiguityRule implements Rule {
+ class AmbiguityRule implements Rule {
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {

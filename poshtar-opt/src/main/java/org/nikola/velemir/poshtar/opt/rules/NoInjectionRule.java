@@ -1,15 +1,13 @@
-package org.nikola.velemir.poshtar.opt.rules.injection;
+package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
-import org.nikola.velemir.poshtar.opt.rules.Rule;
-import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
 
-public abstract class NoInjectionRule implements Rule {
+ abstract class NoInjectionRule implements Rule {
     protected static final String MEDIATOR_FQN = Poshtar.class.getName();
 
 

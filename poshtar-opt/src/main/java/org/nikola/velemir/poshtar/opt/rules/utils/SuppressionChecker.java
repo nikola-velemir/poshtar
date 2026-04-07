@@ -1,10 +1,10 @@
-package org.nikola.velemir.poshtar.opt.rules.deadPipeline.utils;
+package org.nikola.velemir.poshtar.opt.rules.utils;
 import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 
-public class SuppressionChecker {
+ public class SuppressionChecker {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
 
     public static boolean hasSuppression(ExecutableElement method) {

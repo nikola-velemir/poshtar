@@ -1,17 +1,13 @@
-package org.nikola.velemir.poshtar.opt.rules.injection;
+package org.nikola.velemir.poshtar.opt.rules;
 
-import org.nikola.velemir.poshtar.core.annotations.Behaviour;
-import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 import java.util.Set;
 
-public class BehaviourNoInjectionRule extends NoInjectionRule {
+ class BehaviourNoInjectionRule extends NoInjectionRule {
 
     private static final String BEHAVIOUR_INTERFACE_FQN = PipelineBehaviour.class.getName();
 
