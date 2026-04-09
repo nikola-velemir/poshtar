@@ -7,7 +7,7 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
 
- abstract class NoInjectionRule implements Rule {
+abstract class NoInjectionRule implements Rule {
     protected static final String MEDIATOR_FQN = Poshtar.class.getName();
 
 
@@ -56,8 +56,10 @@ import java.util.Set;
             }
         }
     }
+
     protected void logError(Element target, RuleContext ctx) {
     }
+
     protected void validateFieldInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;

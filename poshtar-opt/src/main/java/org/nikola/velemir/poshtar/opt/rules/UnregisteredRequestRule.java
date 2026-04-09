@@ -1,14 +1,14 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.opt.api.annotations.request.SuppressUnregistered;
-import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
- class UnregisteredRequestRule implements Rule {
+class UnregisteredRequestRule implements Rule {
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
         Set<String> handledTypes = ctx.getHandledRequestTypes();
@@ -33,6 +33,6 @@ import java.util.Set;
         String errorMessage = "PoshtaR VIOLATION: No handler registered for request '" + requestFqn + "'\n"
                 + "You may use " + SuppressUnregistered.class.getName() + " to bypass this rule!";
         Element target = ctx.env.getElementUtils().getTypeElement(requestFqn);
-        ErrorLogger.logError(ctx.env, errorMessage, target);
+        ErrorLogger.log(ctx.env, errorMessage, target);
     }
 }

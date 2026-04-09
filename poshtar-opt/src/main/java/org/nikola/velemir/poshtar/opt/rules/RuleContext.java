@@ -7,6 +7,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,9 @@ public class RuleContext {
     public Elements getElements() {
         return env.getElementUtils();
     }
-
+    public Types getTypes(){
+        return env.getTypeUtils();
+    }
     public RuleContext(ProcessingEnvironment env) {
         this.env = env;
         this.trees = Trees.instance(env);

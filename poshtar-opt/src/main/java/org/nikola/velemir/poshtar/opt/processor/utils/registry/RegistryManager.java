@@ -4,12 +4,14 @@ import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
+import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -30,6 +32,7 @@ public class RegistryManager {
 
     private static final String REGISTRY_RESOURCE = "META-INF/poshtar-handlers.properties";
     private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
+    public static final String RESOLUTION_ERROR_MESSAGE = "PoshtaR: Cannot resolve request type for handle %s. Ensure the Request class is imported and compiles.";
 
 
     public static void preprocessRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -158,12 +161,10 @@ public class RegistryManager {
     }
 
     private static void logError(TypeElement handler, RuleContext ctx) {
-        ctx.env.getMessager().printMessage(
-                Diagnostic.Kind.ERROR,
-                "PoshtaR: Cannot resolve request type for handler " + handler.getSimpleName() +
-                        ". Ensure the Request class is imported and compiles.",
-                handler
-        );
+        Name handlerName = handler.getSimpleName();
+        String errorMessage = String.format(RESOLUTION_ERROR_MESSAGE, handlerName);
+
+        ErrorLogger.log(ctx.env, errorMessage, handler);
     }
 
 }

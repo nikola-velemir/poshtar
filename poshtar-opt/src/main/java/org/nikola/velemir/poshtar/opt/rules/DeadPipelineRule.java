@@ -3,7 +3,7 @@ package org.nikola.velemir.poshtar.opt.rules;
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
-import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.rules.utils.FlowAnalyser;
 import org.nikola.velemir.poshtar.opt.rules.utils.SuppressionChecker;
 
@@ -18,6 +18,7 @@ import java.util.Set;
 class DeadPipelineRule implements Rule {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
     public static final String DELEGATE_SIMPLE_NAME = RequestDelegate.class.getSimpleName();
+    public static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.\n Logic found no exit path, which will break the pipeline. Use %s if your logic is correct, but bypasses the chain";
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -49,9 +50,8 @@ class DeadPipelineRule implements Rule {
     }
 
     private static void logError(ExecutableElement method, RuleContext ctx) {
-        String errorMessage = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception. " +
-                "\n Logic found no exit path, which will break the pipeline. Use " + SUPPRESS_ANNOTATION_NAME + " if your logic is correct, but bypasses the chain";
-        ErrorLogger.logError(ctx.env, errorMessage, method);
+        String errorMessage = String.format(VIOLATION_MESSAGE, SUPPRESS_ANNOTATION_NAME);
+        ErrorLogger.log(ctx.env, errorMessage, method);
     }
 
     private static String extractDelegateName(ExecutableElement method) {

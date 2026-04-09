@@ -1,13 +1,16 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryEntry;
-import org.nikola.velemir.poshtar.opt.processor.utils.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 
- class AmbiguityRule implements Rule {
+class AmbiguityRule implements Rule {
+
+    public static final String ALREADY_HANDLED_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'";
+    public static final String AMBIGUITY_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'";
 
     @Override
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
@@ -33,14 +36,14 @@ import java.util.Map;
     private static void logError(RuleContext ctx, String requestFqn,
                                  RegistryEntry existing, RegistryEntry conflict) {
         String msgOnConflict = String.format(
-                "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'",
+                ALREADY_HANDLED_MESSAGE,
                 requestFqn, existing.handlerFQN());
 
         String msgOnExisting = String.format(
-                "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'",
+                AMBIGUITY_MESSAGE,
                 requestFqn, conflict.handlerFQN());
 
-        ErrorLogger.logError(ctx.env, msgOnConflict, conflict.handlerElement());
-        ErrorLogger.logError(ctx.env, msgOnExisting, existing.handlerElement());
+        ErrorLogger.log(ctx.env, msgOnConflict, conflict.handlerElement());
+        ErrorLogger.log(ctx.env, msgOnExisting, existing.handlerElement());
     }
 }
