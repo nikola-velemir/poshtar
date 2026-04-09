@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
-import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryEntry;
-import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.utils.registry.RegistryEntry;
+import org.nikola.velemir.poshtar.opt.utils.logger.ErrorLogger;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ class AmbiguityRule implements Rule {
     public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
         Map<String, RegistryEntry> seenRequests = new HashMap<>();
 
-        for (var entry : ctx.getRegistry().values()) {
+        for (var entry : ctx.getHandlerRegistry().values()) {
             String requestFqn = entry.requestFQN();
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 

@@ -2,9 +2,10 @@ package org.nikola.velemir.poshtar.opt.processor;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.processor.utils.unwrapper.IdeUnwrapper;
-import org.nikola.velemir.poshtar.opt.processor.utils.registry.RegistryManager;
-import org.nikola.velemir.poshtar.opt.processor.utils.RuleValidator;
+import org.nikola.velemir.poshtar.opt.utils.registry.RegistryStore;
+import org.nikola.velemir.poshtar.opt.utils.unwrapper.IdeUnwrapper;
+import org.nikola.velemir.poshtar.opt.utils.registry.RegistryManager;
+import org.nikola.velemir.poshtar.opt.rules.RuleValidator;
 import org.nikola.velemir.poshtar.opt.rules.RuleContext;
 
 import javax.annotation.processing.*;
@@ -26,11 +27,11 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
-            if (this.registry != null) RegistryManager.writeRegistry(processingEnv, this.registry);
+            if (this.registry != null) RegistryStore.writeRegistry(processingEnv, this.registry);
             return false;
         }
 
-        if (registry == null) registry = RegistryManager.loadExistingRegistry(processingEnv);
+        if (registry == null) registry = RegistryStore.loadExistingRegistry(processingEnv);
         RuleContext ctx = new RuleContext(processingEnv, trees);
 
         RegistryManager.preprocessRegistry(roundEnv, ctx);

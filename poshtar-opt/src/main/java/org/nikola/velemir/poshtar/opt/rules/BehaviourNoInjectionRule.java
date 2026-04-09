@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.utils.logger.ErrorLogger;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;

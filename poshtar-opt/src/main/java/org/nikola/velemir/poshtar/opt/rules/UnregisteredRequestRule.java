@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.opt.api.annotations.request.SuppressUnregistered;
-import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.utils.logger.ErrorLogger;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;

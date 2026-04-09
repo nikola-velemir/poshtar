@@ -3,9 +3,9 @@ package org.nikola.velemir.poshtar.opt.rules;
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
-import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.rules.utils.FlowAnalyser;
-import org.nikola.velemir.poshtar.opt.rules.utils.SuppressionChecker;
+import org.nikola.velemir.poshtar.opt.utils.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.rules.deadPipeline.FlowAnalyser;
+import org.nikola.velemir.poshtar.opt.rules.deadPipeline.SuppressionChecker;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;

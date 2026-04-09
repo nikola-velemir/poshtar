@@ -2,7 +2,7 @@ package org.nikola.velemir.poshtar.opt.rules;
 
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.processor.utils.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.utils.logger.ErrorLogger;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;

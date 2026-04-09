@@ -5,7 +5,8 @@ import java.util.List;
 
 public class RuleProvider {
     private static final List<Rule> rules = List.of(
-            new ReturnTypeNonPrimitiveRule(),
+            new SingleResponsibilityHandlerRule(),
+            new NoPrimitiveReturnTypesRule(),
             new UnregisteredRequestRule(),
             new RequestFinalityRule(),
             new AmbiguityRule(),
