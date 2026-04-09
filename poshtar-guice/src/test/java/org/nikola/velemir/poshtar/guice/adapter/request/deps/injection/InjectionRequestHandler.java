@@ -6,7 +6,7 @@ import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 
 
 @Handler
-public class InjectionRequestHandler implements RequestHandler<InjectionRequest, String> {
+public class InjectionRequestHandler implements RequestHandler<InjectionRequest, InjectionResponse> {
     private final DummyLoggingService loggingService;
 
     @Inject
@@ -16,8 +16,8 @@ public class InjectionRequestHandler implements RequestHandler<InjectionRequest,
 
 
     @Override
-    public String handle(InjectionRequest injectionRequest) {
-        String logResult = loggingService.log(injectionRequest.payload());
-        return "Request with " + logResult;
+    public InjectionResponse handle(InjectionRequest injectionRequest) {
+        String logResult = loggingService.log(injectionRequest.payload);
+        return  new InjectionResponse("Request with " + logResult);
     }
 }

@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>org.example</groupId>
-            <artifactId>poshtar-opt</artifactId>
+            <artifactId>poshtar-opt-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

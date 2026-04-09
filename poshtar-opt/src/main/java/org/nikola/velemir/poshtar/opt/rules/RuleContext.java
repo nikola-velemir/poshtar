@@ -1,68 +1,83 @@
 package org.nikola.velemir.poshtar.opt.rules;
 
 import com.sun.source.util.Trees;
+import org.nikola.velemir.poshtar.opt.utils.registry.RegistryEntry;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import javax.lang.model.util.Types;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RuleContext {
     public final ProcessingEnvironment env;
     public final Trees trees;
-    private final Properties registry;
+    private final Map<String, RegistryEntry> handlerRegistry = new LinkedHashMap<>();
     private final Set<String> knownRequests = new HashSet<>();
 
-    public RuleContext(ProcessingEnvironment env, Trees trees, Properties registry) {
+    public RuleContext(ProcessingEnvironment env, Trees trees) {
         this.env = env;
         this.trees = trees;
-        this.registry = registry;
     }
 
     public void registerRequest(String requestFqn) {
         knownRequests.add(requestFqn);
     }
 
-    public Properties getRegistry() {
-        return registry;
+    public Map<String, RegistryEntry> getHandlerRegistry() {
+        return Collections.unmodifiableMap(handlerRegistry);
     }
 
     public Elements getElements() {
         return env.getElementUtils();
     }
-
-    public RuleContext(ProcessingEnvironment env, Properties registry) {
+    public Types getTypes(){
+        return env.getTypeUtils();
+    }
+    public RuleContext(ProcessingEnvironment env) {
         this.env = env;
         this.trees = Trees.instance(env);
-        this.registry = registry;
     }
 
-    public void registerHandler(String requestType, String handlerClass) {
-        registry.setProperty(requestType, handlerClass);
+    public void registerHandler(String handlerFqn, String requestFqn,
+                                Element handlerElement, AnnotationMirror mirror) {
+        handlerRegistry.put(handlerFqn, new RegistryEntry(requestFqn, handlerFqn, handlerElement, mirror));
+    }
+
+    public void registerBehaviour(String behaviourFqn, Element behaviourElement, AnnotationMirror mirror) {
+        handlerRegistry.put(behaviourFqn, new RegistryEntry("BEHAVIOUR", behaviourFqn, behaviourElement, mirror));
+
     }
 
     public Set<String> getHandledRequestTypes() {
-        return registry.entrySet().stream()
-                .filter(e -> !"BEHAVIOUR".equals(e.getValue()))
-                .map(e -> e.getValue().toString())
+        return handlerRegistry.values().stream()
+                .filter(e -> !e.isBehaviour())
+                .map(RegistryEntry::requestFQN)
                 .collect(Collectors.toSet());
     }
 
     public Set<String> getKnownBehaviours() {
-        return registry.entrySet().stream()
-                .filter(e -> "BEHAVIOUR".equals(e.getValue()))
-                .map(e -> e.getKey().toString())
+        return handlerRegistry.values().stream()
+                .filter(RegistryEntry::isBehaviour)
+                .map(RegistryEntry::handlerFQN)
                 .collect(Collectors.toSet());
     }
 
     public Set<String> getAll() {
-        return registry.values().stream().map(Object::toString).collect(Collectors.toSet());
+        return handlerRegistry.values().stream()
+                .map(RegistryEntry::handlerFQN)
+                .collect(Collectors.toSet());
     }
 
     public Set<String> getKnownRequests() {
         return Collections.unmodifiableSet(knownRequests);
+    }
+
+    public Properties toProperties() {
+        Properties props = new Properties();
+        handlerRegistry.values().forEach(e -> props.setProperty(e.handlerFQN(), e.requestFQN()));
+        return props;
     }
 }

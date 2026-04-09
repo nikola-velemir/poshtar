@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.IllegalTransactionStateException;
 import org.nikola.velemir.poshtar.spring.adapter.MockTransactionConfig;
 import org.nikola.velemir.poshtar.spring.adapter.TestApplication;
-import org.nikola.velemir.poshtar.spring.adapter.request.deps.infrastructure.NotFoundRequest;
+import org.nikola.velemir.poshtar.spring.adapter.request.deps.infrastructure.notfound.NotFoundRequest;
 import org.nikola.velemir.poshtar.spring.adapter.request.deps.injection.InjectionRequest;
 import org.nikola.velemir.poshtar.spring.adapter.request.deps.injection.InjectionRequestHandler;
 import org.nikola.velemir.poshtar.spring.adapter.request.deps.nullRequest.NullRequest;

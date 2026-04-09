@@ -7,6 +7,8 @@
     <groupId>org.example</groupId>
     <artifactId>poshtar-opt</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -26,7 +28,11 @@
             <artifactId>poshtar-adapter</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>poshtar-opt-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service-annotations</artifactId>

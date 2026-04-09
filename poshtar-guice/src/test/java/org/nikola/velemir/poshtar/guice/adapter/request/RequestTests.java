@@ -2,11 +2,8 @@ package org.nikola.velemir.poshtar.guice.adapter.request;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.persist.PersistService;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nikola.velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
@@ -14,6 +11,7 @@ import org.nikola.velemir.poshtar.guice.adapter.TestModule;
 import org.nikola.velemir.poshtar.guice.adapter.model.TestEntity;
 import org.nikola.velemir.poshtar.guice.adapter.request.deps.infrastructure.NotFoundRequest;
 import org.nikola.velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequest;
+import org.nikola.velemir.poshtar.guice.adapter.request.deps.injection.InjectionResponse;
 import org.nikola.velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequest;
 import org.nikola.velemir.poshtar.guice.adapter.request.deps.ping.PingRequest;
 import org.nikola.velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequest;
@@ -48,9 +46,7 @@ public class RequestTests {
     @Test
     void handles_Null_Send() {
         NullRequest request = null;
-        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.send(request);
-        });
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(request));
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
@@ -60,9 +56,7 @@ public class RequestTests {
     @Test
     void should_fail_for_unregistered_handler() {
         NotFoundRequest request = new NotFoundRequest();
-        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> {
-            poshtar.send(request);
-        });
+        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> poshtar.send(request));
         assertInstanceOf(HandlerNotFoundException.class, ex);
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
         String actualMessage = ex.getMessage();
@@ -71,9 +65,9 @@ public class RequestTests {
 
     @Test
     void should_Register_And_Inject_Service() {
-        String response = poshtar.send(new InjectionRequest("Hello Poshtar"));
+        InjectionResponse response = poshtar.send(new InjectionRequest("Hello Poshtar"));
 
-        assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
+        assert response.payload().equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
         System.out.println(">>> TEST PROŠAO: " + response);
     }
 
