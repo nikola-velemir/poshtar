@@ -2,11 +2,13 @@ package org.nikola.velemir.poshtar.opt.processor;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.internal.registry.RegistryStore;
-import org.nikola.velemir.poshtar.opt.internal.unwrapper.IdeUnwrapper;
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
+import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryProcessor;
-import org.nikola.velemir.poshtar.opt.internal.rules.RuleValidator;
+import org.nikola.velemir.poshtar.opt.internal.registry.RegistryStore;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
+import org.nikola.velemir.poshtar.opt.internal.rules.RuleValidator;
+import org.nikola.velemir.poshtar.opt.internal.unwrapper.IdeUnwrapper;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -14,12 +16,16 @@ import javax.lang.model.element.TypeElement;
 import java.util.Properties;
 import java.util.Set;
 
+
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class PoshtarGuardProcessor extends AbstractProcessor {
+    public static final String[] ANNOTATIONS = {
+            Handler.class.getName(),
+            Behaviour.class.getName()
+    };
 
-
+    private final String t = Handler.class.getName();
     private Properties registry;
     private Trees trees;
     private final RuleValidator validator = new RuleValidator();
@@ -41,6 +47,10 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         return false;
     }
 
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        return Set.of(ANNOTATIONS);
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
