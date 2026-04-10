@@ -23,7 +23,7 @@ public class PoshtarSpringAutoConfiguration {
     }
     @Bean
     @ConditionalOnMissingBean
-    public PipelineConfigurer defaultPipelineConfigurer() {
+    public PipelineConfigurer provideDefaultPipelineConfigurer() {
         return new PipelineConfigurer();
     }
     @Bean

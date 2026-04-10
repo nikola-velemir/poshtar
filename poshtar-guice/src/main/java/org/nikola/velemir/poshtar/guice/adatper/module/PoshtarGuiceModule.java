@@ -36,20 +36,22 @@ public class PoshtarGuiceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public RequestRegistry provideRequestRegistry(Injector injector){
+    public RequestRegistry provideRequestRegistry(Injector injector) {
         return new GuiceRequestRegistry(pipelineConfigurer, injector);
     }
+
     @Provides
     @Singleton
-    public NotificationRegistry provideNotificatioNRegistry(Injector injector){
+    public NotificationRegistry provideNotificationRegistry(Injector injector) {
         return new GuiceNotificationRegistry(injector);
     }
 
     @Provides
     @Singleton
-    public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry){
+    public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
         return new PoshtarImpl(handlerRegistry, notificationRegistry);
     }
+
     private void bindBehaviours() {
         if (pipelineConfigurer == null) return;
 
