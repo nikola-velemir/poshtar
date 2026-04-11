@@ -14,7 +14,9 @@ public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
     }
 
     private void init(Injector injector) {
+
         for (Binding<?> binding : injector.getAllBindings().values()) {
+
             Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
             if (NotificationHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
                 NotificationHandler handler = (NotificationHandler) injector.getInstance(binding.getKey());

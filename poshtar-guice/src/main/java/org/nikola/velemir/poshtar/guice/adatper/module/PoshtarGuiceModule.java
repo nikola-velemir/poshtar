@@ -27,6 +27,11 @@ public class PoshtarGuiceModule extends AbstractModule {
         this.basePackages = basePackages.length > 0 ? basePackages : new String[]{""};
     }
 
+    public PoshtarGuiceModule(String... basePackages) {
+        pipelineConfigurer = new PipelineConfigurer();
+        this.basePackages = basePackages.length > 0 ? basePackages : new String[]{""};
+    }
+
     @Override
     protected void configure() {
         Reflections reflections = new Reflections((Object[]) basePackages);
@@ -48,7 +53,7 @@ public class PoshtarGuiceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
+    public Poshtar providePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
         return new PoshtarImpl(handlerRegistry, notificationRegistry);
     }
 
