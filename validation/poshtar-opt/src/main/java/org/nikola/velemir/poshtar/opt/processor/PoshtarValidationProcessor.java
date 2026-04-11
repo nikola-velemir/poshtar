@@ -4,7 +4,7 @@ import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
-import org.nikola.velemir.poshtar.opt.internal.registry.RegistryProcessor;
+import org.nikola.velemir.poshtar.opt.internal.registry.RegistryScanner;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryStore;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleValidator;
@@ -19,13 +19,12 @@ import java.util.Set;
 
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
-public class PoshtarGuardProcessor extends AbstractProcessor {
-    public static final String[] ANNOTATIONS = {
+public class PoshtarValidationProcessor extends AbstractProcessor {
+    private static final String[] ANNOTATIONS = {
             Handler.class.getName(),
             Behaviour.class.getName()
     };
 
-    private final String t = Handler.class.getName();
     private Properties registry;
     private Trees trees;
     private final RuleValidator validator = new RuleValidator();
@@ -40,7 +39,7 @@ public class PoshtarGuardProcessor extends AbstractProcessor {
         if (registry == null) registry = RegistryStore.loadExistingRegistry(processingEnv);
         RuleContext ctx = new RuleContext(processingEnv, trees);
 
-        RegistryProcessor.preprocessRegistry(roundEnv, ctx);
+        RegistryScanner.scanRegistry(roundEnv, ctx);
 
         validator.validateRules(roundEnv, ctx);
 

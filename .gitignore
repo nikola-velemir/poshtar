@@ -34,3 +34,5 @@ node_modules/
 **/src/environments/environment.prod.ts
 **/.env
 **/.env.*
+
+diagrams/**/*.bak*

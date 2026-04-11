@@ -12,23 +12,23 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-public class RegistryProcessor {
+public class RegistryScanner {
     private static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
     private static final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
 
     private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
 
 
-    public static void preprocessRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
+    public static void scanRegistry(RoundEnvironment roundEnv, RuleContext ctx) {
 
-        preprocessHandlers(roundEnv, ctx);
+        scanForHandlers(roundEnv, ctx);
 
-        processBehaviours(roundEnv, ctx);
+        scanForBehaviours(roundEnv, ctx);
 
-        processRequests(roundEnv, ctx);
+        scanForRequests(roundEnv, ctx);
     }
 
-    private static void processRequests(RoundEnvironment roundEnv, RuleContext ctx) {
+    private static void scanForRequests(RoundEnvironment roundEnv, RuleContext ctx) {
         TypeElement requestInterface = ctx.getElements()
                 .getTypeElement(REQUEST_INTERFACE_NAME);
         if (requestInterface == null) return;
@@ -47,7 +47,7 @@ public class RegistryProcessor {
     }
 
 
-    private static void processBehaviours(RoundEnvironment roundEnv, RuleContext ctx) {
+    private static void scanForBehaviours(RoundEnvironment roundEnv, RuleContext ctx) {
         TypeElement behaviourAnnot = ctx.getElements().getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
         if (behaviourAnnot == null) return;
 
@@ -60,7 +60,7 @@ public class RegistryProcessor {
                 });
     }
 
-    private static void preprocessHandlers(RoundEnvironment roundEnv, RuleContext ctx) {
+    private static void scanForHandlers(RoundEnvironment roundEnv, RuleContext ctx) {
         TypeElement handlerAnnot = ctx.getElements().getTypeElement(HANDLER_ANNOTATION_NAME);
         if (handlerAnnot == null) return;
         roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
