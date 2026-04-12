@@ -75,9 +75,4 @@ public class RuleContext {
         return Collections.unmodifiableSet(knownRequests);
     }
 
-    public Properties toProperties() {
-        Properties props = new Properties();
-        handlerRegistry.values().forEach(e -> props.setProperty(e.handlerFQN(), e.requestFQN()));
-        return props;
-    }
 }
