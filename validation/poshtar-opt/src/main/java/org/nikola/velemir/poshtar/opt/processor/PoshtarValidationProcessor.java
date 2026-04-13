@@ -5,7 +5,6 @@ import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryScanner;
-import org.nikola.velemir.poshtar.opt.internal.registry.RegistryStore;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleValidator;
 import org.nikola.velemir.poshtar.opt.internal.unwrapper.IdeUnwrapper;
@@ -13,7 +12,6 @@ import org.nikola.velemir.poshtar.opt.internal.unwrapper.IdeUnwrapper;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -25,18 +23,15 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
             Behaviour.class.getName()
     };
 
-    private Properties registry;
     private Trees trees;
     private final RuleValidator validator = new RuleValidator();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
-            if (this.registry != null) RegistryStore.writeRegistry(processingEnv, this.registry);
             return false;
         }
 
-        if (registry == null) registry = RegistryStore.loadExistingRegistry(processingEnv);
         RuleContext ctx = new RuleContext(processingEnv, trees);
 
         RegistryScanner.scanRegistry(roundEnv, ctx);
