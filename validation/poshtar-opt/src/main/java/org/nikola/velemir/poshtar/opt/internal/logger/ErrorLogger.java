@@ -1,13 +1,24 @@
 package org.nikola.velemir.poshtar.opt.internal.logger;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
-public class ErrorLogger {
-    private static final Diagnostic.Kind errorKind = Diagnostic.Kind.ERROR;
+public class ErrorLogger extends CoreLogger {
 
-    public static void log(ProcessingEnvironment env, String errorMessage, Element element) {
-        CoreLogger.log(errorKind,env, errorMessage, element);
+    private static ErrorLogger instance;
+
+    private ErrorLogger() {
     }
+
+    public static ErrorLogger getInstance() {
+        if (instance == null) {
+            instance = new ErrorLogger();
+        }
+        return instance;
+    }
+
+    @Override
+    protected Diagnostic.Kind getKind() {
+        return Diagnostic.Kind.ERROR;
+    }
+
 }

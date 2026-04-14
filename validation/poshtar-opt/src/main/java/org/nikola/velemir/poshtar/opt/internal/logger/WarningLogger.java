@@ -1,13 +1,23 @@
 package org.nikola.velemir.poshtar.opt.internal.logger;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
-public class WarningLogger {
-    private static final Diagnostic.Kind errorKind = Diagnostic.Kind.MANDATORY_WARNING;
+public class WarningLogger extends CoreLogger {
+    private static WarningLogger instance;
 
-    public static void log(ProcessingEnvironment env, String errorMessage, Element element) {
-        CoreLogger.log(errorKind,env, errorMessage, element);
+    private WarningLogger() {
     }
+
+    public static WarningLogger getInstance() {
+        if (instance == null) {
+            instance = new WarningLogger();
+        }
+        return instance;
+    }
+
+    @Override
+    protected Diagnostic.Kind getKind() {
+        return Diagnostic.Kind.MANDATORY_WARNING;
+    }
+
 }

@@ -3,7 +3,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 class CalleeResolver {
-    private final RuleContext ctx;
+    private final ProcessorContext ctx;
     private final ExecutableElement rootMethod;
 
-    public CalleeResolver(RuleContext ctx, ExecutableElement method) {
+    public CalleeResolver(ProcessorContext ctx, ExecutableElement method) {
         this.ctx = ctx;
         rootMethod = method;
     }

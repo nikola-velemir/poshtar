@@ -3,6 +3,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
@@ -10,10 +11,11 @@ import javax.lang.model.type.TypeMirror;
 
 class SingleResponsibilityHandlerRule implements Rule {
 
-    public static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s may only implement one of given interfaces.";
+    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s may only implement one of given interfaces.";
+    private static final ErrorLogger logger = ErrorLogger.getInstance();
 
     @Override
-    public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
+    public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         var entries = ctx.getHandlerRegistry();
         for (var entry : entries.values()) {
             var handlerElement = (TypeElement) entry.handlerElement();
@@ -28,7 +30,7 @@ class SingleResponsibilityHandlerRule implements Rule {
         }
     }
 
-    private static void logError(RuleContext ctx, TypeElement handlerElement) {
+    private static void logError(ProcessorContext ctx, TypeElement handlerElement) {
 
         String errorMessage = String.format(
                 VIOLATION_MESSAGE,
@@ -36,24 +38,24 @@ class SingleResponsibilityHandlerRule implements Rule {
                 PipelineBehaviour.class.getName()
         );
 
-        ErrorLogger.log(ctx.env, errorMessage, handlerElement);
+        logger.log(ctx.env, errorMessage, handlerElement);
     }
 
-    private static boolean checkIfImplementsHandler(RuleContext ctx, TypeElement handlerElement) {
+    private static boolean checkIfImplementsHandler(ProcessorContext ctx, TypeElement handlerElement) {
         return handlerElement
                 .getInterfaces()
                 .stream()
                 .anyMatch(t -> checkIfType(ctx, t, RequestHandler.class.getName()));
     }
 
-    private static boolean checkIfImplementsBehaviour(RuleContext ctx, TypeElement handlerElement) {
+    private static boolean checkIfImplementsBehaviour(ProcessorContext ctx, TypeElement handlerElement) {
         return handlerElement
                 .getInterfaces()
                 .stream()
                 .anyMatch(t -> checkIfType(ctx, t, PipelineBehaviour.class.getName()));
     }
 
-    private static boolean checkIfType(RuleContext ctx, TypeMirror iface, String interfaceFqn) {
+    private static boolean checkIfType(ProcessorContext ctx, TypeMirror iface, String interfaceFqn) {
         TypeElement targetElement = ctx.getElements().getTypeElement(interfaceFqn);
         if (targetElement == null) return false;
         TypeMirror targetType = ctx.getTypes().erasure(targetElement.asType());

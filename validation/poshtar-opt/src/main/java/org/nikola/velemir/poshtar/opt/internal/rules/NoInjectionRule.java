@@ -1,6 +1,7 @@
 package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.core.mediator.Poshtar;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
@@ -12,7 +13,7 @@ abstract class NoInjectionRule implements Rule {
 
 
     @Override
-    public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
+    public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         Set<String> forbidden = ctx.getAll();
         if (forbidden.isEmpty()) return;
 
@@ -25,7 +26,7 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected void checkClassBody(TypeElement clazz, Set<String> forbidden, RuleContext ctx) {
+    protected void checkClassBody(TypeElement clazz, Set<String> forbidden, ProcessorContext ctx) {
         for (Element enclosed : clazz.getEnclosedElements()) {
 
             validateFieldInjection(forbidden, ctx, enclosed);
@@ -35,7 +36,7 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected void validateMethodInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
+    protected void validateMethodInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.METHOD) {
             ExecutableElement method = (ExecutableElement) enclosed;
             for (VariableElement param : method.getParameters()) {
@@ -46,7 +47,7 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected void validateConstructorInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
+    protected void validateConstructorInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.CONSTRUCTOR) {
             ExecutableElement constructor = (ExecutableElement) enclosed;
             for (VariableElement param : constructor.getParameters()) {
@@ -57,10 +58,10 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected void logError(Element target, RuleContext ctx) {
+    protected void logError(Element target, ProcessorContext ctx) {
     }
 
-    protected void validateFieldInjection(Set<String> forbidden, RuleContext ctx, Element enclosed) {
+    protected void validateFieldInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
             if (isForbiddenType(field.asType(), forbidden, ctx)) {
@@ -69,7 +70,7 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, RuleContext ctx) {
+    protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx) {
         return false;
     }
 }

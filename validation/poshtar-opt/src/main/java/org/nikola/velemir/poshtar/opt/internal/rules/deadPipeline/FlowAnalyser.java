@@ -1,18 +1,18 @@
 package org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline;
 
 import com.sun.source.tree.MethodTree;
-import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FlowAnalyser {
-    private final RuleContext ctx;
+    private final ProcessorContext ctx;
     private final CalleeResolver resolver;
     private final Set<ExecutableElement> visited = new HashSet<>();
 
-    public FlowAnalyser(RuleContext ctx, ExecutableElement rootMethod) {
+    public FlowAnalyser(ProcessorContext ctx, ExecutableElement rootMethod) {
         this.ctx = ctx;
         this.resolver = new CalleeResolver(ctx, rootMethod);
     }

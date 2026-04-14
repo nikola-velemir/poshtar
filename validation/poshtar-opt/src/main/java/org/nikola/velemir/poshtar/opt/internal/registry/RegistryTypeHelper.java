@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.internal.registry;
 
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Name;
@@ -22,7 +22,7 @@ class RegistryTypeHelper {
                 .orElse(null);
     }
 
-    public static String extractRequestType(TypeElement handler, RuleContext ctx) throws ResolutionException {
+    public static String extractRequestType(TypeElement handler, ProcessorContext ctx) throws ResolutionException {
         var typeUtils = ctx.env.getTypeUtils();
         var elementUtils = ctx.env.getElementUtils();
 

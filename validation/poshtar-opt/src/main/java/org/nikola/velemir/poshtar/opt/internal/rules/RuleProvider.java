@@ -3,7 +3,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import java.util.List;
 
-public class RuleProvider {
+class RuleProvider {
     private static final List<Rule> rules = List.of(
             new SingleResponsibilityHandlerRule(),
             new NoPrimitiveReturnTypesRule(),
