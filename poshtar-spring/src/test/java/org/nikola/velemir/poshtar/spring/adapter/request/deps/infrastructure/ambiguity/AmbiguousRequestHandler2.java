@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Handler
 public class AmbiguousRequestHandler2 implements RequestHandler<AmbiguousRequest, Unit> {
-    @Autowired
-    private final TransactionalPipeline rq;
-
-    public AmbiguousRequestHandler2(TransactionalPipeline rq) {
-        this.rq = rq;
-    }
+//    @Autowired
+//    private final TransactionalPipeline rq;
+//
+//    public AmbiguousRequestHandler2(TransactionalPipeline rq) {
+//        this.rq = rq;
+//    }
 
     @Override
     public Unit handle(AmbiguousRequest ambiguousRequest) {
