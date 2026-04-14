@@ -6,7 +6,6 @@ import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryScanner;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryStore;
-import org.nikola.velemir.poshtar.opt.internal.rules.RuleContext;
 import org.nikola.velemir.poshtar.opt.internal.rules.RuleValidator;
 import org.nikola.velemir.poshtar.opt.internal.unwrapper.IdeUnwrapper;
 
@@ -27,7 +26,7 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
 
     private Properties registry;
     private Trees trees;
-    private final RuleValidator validator = new RuleValidator();
+    private final RuleValidator validator = RuleValidator.provideImpl();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -37,7 +36,7 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
         }
 
         if (registry == null) registry = RegistryStore.loadExistingRegistry(processingEnv);
-        RuleContext ctx = new RuleContext(processingEnv, trees);
+        ProcessorContext ctx = new ProcessorContext(processingEnv, trees);
 
         RegistryScanner.scanRegistry(roundEnv, ctx);
 

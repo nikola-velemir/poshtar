@@ -4,11 +4,13 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
-public class CoreLogger {
+abstract class CoreLogger {
 
-    public static void log(Diagnostic.Kind errorKind, ProcessingEnvironment env, String errorMessage, Element element) {
+    protected abstract Diagnostic.Kind getKind();
+
+    public void log(ProcessingEnvironment env, String errorMessage, Element element) {
         env.getMessager().printMessage(
-                errorKind,
+                getKind(),
                 errorMessage,
                 element);
     }

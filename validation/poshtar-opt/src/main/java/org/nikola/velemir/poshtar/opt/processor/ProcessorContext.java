@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.internal.rules;
+package org.nikola.velemir.poshtar.opt.processor;
 
 import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryEntry;
@@ -11,13 +11,13 @@ import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RuleContext {
+public class ProcessorContext {
     public final ProcessingEnvironment env;
     public final Trees trees;
     private final Map<String, RegistryEntry> handlerRegistry = new LinkedHashMap<>();
     private final Set<String> knownRequests = new HashSet<>();
 
-    public RuleContext(ProcessingEnvironment env, Trees trees) {
+    public ProcessorContext(ProcessingEnvironment env, Trees trees) {
         this.env = env;
         this.trees = trees;
     }
@@ -36,7 +36,7 @@ public class RuleContext {
     public Types getTypes(){
         return env.getTypeUtils();
     }
-    public RuleContext(ProcessingEnvironment env) {
+    public ProcessorContext(ProcessingEnvironment env) {
         this.env = env;
         this.trees = Trees.instance(env);
     }

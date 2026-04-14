@@ -1,6 +1,7 @@
 package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
@@ -10,9 +11,10 @@ import javax.lang.model.element.TypeElement;
 class RequestFinalityRule implements Rule {
 
     public static final String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Request '%s' must be final or a record!";
+    private static final ErrorLogger logger = ErrorLogger.getInstance();
 
     @Override
-    public void validate(RoundEnvironment roundEnv, RuleContext ctx) {
+    public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
 
         for (var requestFqn : ctx.getKnownRequests()) {
             if ("BEHAVIOUR".equals(requestFqn)) continue;
@@ -24,15 +26,17 @@ class RequestFinalityRule implements Rule {
 
         }
     }
-    private static boolean checkIfFinalOrRecord(TypeElement element){
+
+    private static boolean checkIfFinalOrRecord(TypeElement element) {
         boolean isRecord = element.getKind() == ElementKind.RECORD;
         boolean isFinal = element.getModifiers().contains(Modifier.FINAL);
         return isRecord || isFinal;
 
     }
-    private static void logError(RuleContext ctx, String requestFqn, TypeElement targetClass) {
+
+    private static void logError(ProcessorContext ctx, String requestFqn, TypeElement targetClass) {
         String errorMessage = String.format(FINALITY_VIOLATED_MESSAGE, requestFqn);
-        ErrorLogger.log(ctx.env, errorMessage, targetClass);
+        logger.log(ctx.env, errorMessage, targetClass);
 
     }
 }
