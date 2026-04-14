@@ -1,11 +1,12 @@
 package org.nikola.velemir.poshtar.spring.adapter.pipeline.deps.validate;
 
 
+import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 
-@Handler
+@Behaviour
 public class ValidationBehaviour implements PipelineBehaviour<ValidationRequest, Integer> {
     @Override
     public Integer handle(ValidationRequest request, RequestDelegate<ValidationRequest, Integer> delegate) {

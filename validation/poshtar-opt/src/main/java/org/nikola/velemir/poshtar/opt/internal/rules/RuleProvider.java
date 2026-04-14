@@ -5,9 +5,11 @@ import java.util.List;
 
 class RuleProvider {
     private static final List<Rule> rules = List.of(
+            new BehaviourWiringRule(),
+            new HandlerWiringRule(),
             new SingleResponsibilityHandlerRule(),
             new NoPrimitiveReturnTypesRule(),
-            new UnregisteredRequestRule(),
+            new OrphanRequestRule(),
             new RequestFinalityRule(),
             new AmbiguityRule(),
             new HandlerNoInjectionRule(),

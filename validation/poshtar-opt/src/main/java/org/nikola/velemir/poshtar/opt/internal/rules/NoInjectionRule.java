@@ -58,8 +58,7 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected void logError(Element target, ProcessorContext ctx) {
-    }
+    protected abstract void logError(Element target, ProcessorContext ctx);
 
     protected void validateFieldInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
@@ -70,7 +69,5 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
-    protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx) {
-        return false;
-    }
+    protected abstract boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx);
 }
