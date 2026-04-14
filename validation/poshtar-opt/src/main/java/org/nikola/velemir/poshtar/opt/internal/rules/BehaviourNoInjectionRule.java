@@ -11,7 +11,7 @@ import java.util.Set;
 class BehaviourNoInjectionRule extends NoInjectionRule {
 
     private static final String BEHAVIOUR_INTERFACE_FQN = PipelineBehaviour.class.getName();
-    public static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviours cannot be injected, set thru methods or constructor, or manually managed. " +
+    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviours cannot be injected, set thru methods or constructor, or manually managed. " +
             "Use 'Poshtar.send(request)' to interact with this logic.";
     private static final ErrorLogger logger = ErrorLogger.getInstance();
 

@@ -10,7 +10,7 @@ import javax.lang.model.element.TypeElement;
 
 class RequestFinalityRule implements Rule {
 
-    public static final String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Request '%s' must be final or a record!";
+    private static final String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Request '%s' must be final or a record!";
     private static final ErrorLogger logger = ErrorLogger.getInstance();
 
     @Override
