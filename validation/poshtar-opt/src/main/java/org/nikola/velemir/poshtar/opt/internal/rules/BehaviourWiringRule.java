@@ -2,7 +2,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

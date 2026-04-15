@@ -3,7 +3,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
 import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;

@@ -4,7 +4,7 @@ import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
 import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
 import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;

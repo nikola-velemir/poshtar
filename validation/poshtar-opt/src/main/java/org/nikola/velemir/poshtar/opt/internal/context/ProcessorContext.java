@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.processor;
+package org.nikola.velemir.poshtar.opt.internal.context;
 
 import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryEntry;

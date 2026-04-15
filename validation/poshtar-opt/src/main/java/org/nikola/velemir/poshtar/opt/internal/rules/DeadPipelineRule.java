@@ -7,7 +7,7 @@ import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
 import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline.FlowAnalyser;
 import org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline.SuppressionChecker;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;

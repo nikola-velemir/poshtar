@@ -6,7 +6,7 @@ import org.nikola.velemir.poshtar.core.request.Request;
 import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
 import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.internal.registry.exception.ResolutionException;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;

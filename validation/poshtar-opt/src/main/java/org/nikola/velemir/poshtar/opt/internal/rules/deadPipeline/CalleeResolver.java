@@ -3,7 +3,7 @@ package org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;

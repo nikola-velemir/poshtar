@@ -1,7 +1,7 @@
 package org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline;
 
 import com.sun.source.tree.MethodTree;
-import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;

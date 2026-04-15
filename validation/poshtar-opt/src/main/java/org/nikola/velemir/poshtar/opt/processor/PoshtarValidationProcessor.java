@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
+import org.nikola.velemir.poshtar.opt.internal.context.ProcessorContext;
 import org.nikola.velemir.poshtar.opt.internal.registry.scanner.RegistryScanner;
 
 import org.nikola.velemir.poshtar.opt.internal.registry.scanner.RegistryScannerProvider;
