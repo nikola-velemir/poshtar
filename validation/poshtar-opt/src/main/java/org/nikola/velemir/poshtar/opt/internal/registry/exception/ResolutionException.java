@@ -1,4 +1,4 @@
-package org.nikola.velemir.poshtar.opt.internal.registry;
+package org.nikola.velemir.poshtar.opt.internal.registry.exception;
 
 public class ResolutionException extends RuntimeException {
 

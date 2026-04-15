@@ -3,8 +3,8 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 import com.sun.source.tree.*;
 import org.nikola.velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import org.nikola.velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
-import org.nikola.velemir.poshtar.opt.internal.logger.WarningLogger;
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline.FlowAnalyser;
 import org.nikola.velemir.poshtar.opt.internal.rules.deadPipeline.SuppressionChecker;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
@@ -21,7 +21,7 @@ class DeadPipelineRule implements Rule {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
     private static final String DELEGATE_SIMPLE_NAME = RequestDelegate.class.getSimpleName();
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.\n Logic found no exit path, which will break the pipeline. Use %s if your logic is correct, but bypasses the chain";
-    private static final WarningLogger logger = WarningLogger.getInstance();
+    private static final Logger logger = LoggerProvider.provideWarningLogger();
 
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {

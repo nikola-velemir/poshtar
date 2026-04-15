@@ -1,6 +1,7 @@
-package org.nikola.velemir.poshtar.opt.internal.registry;
+package org.nikola.velemir.poshtar.opt.internal.registry.scanner;
 
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
+import org.nikola.velemir.poshtar.opt.internal.registry.exception.ResolutionException;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.lang.model.element.AnnotationMirror;

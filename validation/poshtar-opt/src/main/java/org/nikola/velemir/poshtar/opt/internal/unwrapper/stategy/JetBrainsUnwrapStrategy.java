@@ -1,6 +1,6 @@
 package org.nikola.velemir.poshtar.opt.internal.unwrapper.stategy;
 
-public class JetBrainsUnwrapStrategy implements UnwrapStrategy {
+class JetBrainsUnwrapStrategy implements UnwrapStrategy {
     private static final String API_WRAPPERS = "org.jetbrains.jps.javac.APIWrappers";
 
     @Override

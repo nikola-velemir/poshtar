@@ -2,7 +2,8 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -12,7 +13,7 @@ import javax.lang.model.type.TypeMirror;
 class SingleResponsibilityHandlerRule implements Rule {
 
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s may only implement one of given interfaces.";
-    private static final ErrorLogger logger = ErrorLogger.getInstance();
+    private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {

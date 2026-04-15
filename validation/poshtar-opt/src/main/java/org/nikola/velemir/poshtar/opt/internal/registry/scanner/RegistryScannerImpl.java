@@ -1,9 +1,11 @@
-package org.nikola.velemir.poshtar.opt.internal.registry;
+package org.nikola.velemir.poshtar.opt.internal.registry.scanner;
 
 import org.nikola.velemir.poshtar.core.annotations.Behaviour;
 import org.nikola.velemir.poshtar.core.annotations.Handler;
 import org.nikola.velemir.poshtar.core.request.Request;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
+import org.nikola.velemir.poshtar.opt.internal.registry.exception.ResolutionException;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -12,14 +14,14 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-public class RegistryScanner {
+class RegistryScannerImpl implements RegistryScanner {
     private static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
     private static final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
 
     private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
-    private static final ErrorLogger logger = ErrorLogger.getInstance();
+    private final Logger logger = LoggerProvider.provideErrorLogger();
 
-    public static void scanRegistry(RoundEnvironment roundEnv, ProcessorContext ctx) {
+    public void scanRegistry(RoundEnvironment roundEnv, ProcessorContext ctx) {
 
         scanForHandlers(roundEnv, ctx);
 
@@ -28,7 +30,7 @@ public class RegistryScanner {
         scanForRequests(roundEnv, ctx);
     }
 
-    private static void scanForRequests(RoundEnvironment roundEnv, ProcessorContext ctx) {
+    private void scanForRequests(RoundEnvironment roundEnv, ProcessorContext ctx) {
         TypeElement requestInterface = ctx.getElements()
                 .getTypeElement(REQUEST_INTERFACE_NAME);
         if (requestInterface == null) return;
@@ -47,7 +49,7 @@ public class RegistryScanner {
     }
 
 
-    private static void scanForBehaviours(RoundEnvironment roundEnv, ProcessorContext ctx) {
+    private void scanForBehaviours(RoundEnvironment roundEnv, ProcessorContext ctx) {
         TypeElement behaviourAnnot = ctx.getElements().getTypeElement(BEHAVIOUR_ANNOTATION_NAME);
         if (behaviourAnnot == null) return;
 
@@ -60,7 +62,7 @@ public class RegistryScanner {
                 });
     }
 
-    private static void scanForHandlers(RoundEnvironment roundEnv, ProcessorContext ctx) {
+    private void scanForHandlers(RoundEnvironment roundEnv, ProcessorContext ctx) {
         TypeElement handlerAnnot = ctx.getElements().getTypeElement(HANDLER_ANNOTATION_NAME);
         if (handlerAnnot == null) return;
         roundEnv.getElementsAnnotatedWith(handlerAnnot).stream()
@@ -75,7 +77,7 @@ public class RegistryScanner {
                 });
     }
 
-    private static void registerHandler(ProcessorContext ctx, TypeElement h) {
+    private void registerHandler(ProcessorContext ctx, TypeElement h) {
         String requestType = RegistryTypeHelper.extractRequestType(h, ctx);
         if (requestType != null) {
             var mirror = RegistryTypeHelper.getAnnotationMirror(h, HANDLER_ANNOTATION_NAME);
@@ -84,7 +86,7 @@ public class RegistryScanner {
     }
 
 
-    private static void logError(TypeElement handler, ProcessorContext ctx, ResolutionException ex) {
+    private void logError(TypeElement handler, ProcessorContext ctx, ResolutionException ex) {
         logger.log(ctx.env, ex.getMessage(), handler);
     }
 

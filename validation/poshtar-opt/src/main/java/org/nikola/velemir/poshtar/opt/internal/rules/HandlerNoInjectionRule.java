@@ -2,7 +2,8 @@ package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
 import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.lang.model.element.*;
@@ -16,7 +17,7 @@ class HandlerNoInjectionRule extends NoInjectionRule {
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. " +
             "Use 'Poshtar.send(request)' to interact with this logic.";
 
-    private static final ErrorLogger logger = ErrorLogger.getInstance();
+    private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     @Override
     protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx) {

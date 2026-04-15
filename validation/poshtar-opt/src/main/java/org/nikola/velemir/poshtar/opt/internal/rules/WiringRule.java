@@ -1,8 +1,8 @@
 package org.nikola.velemir.poshtar.opt.internal.rules;
 
-import org.nikola.velemir.poshtar.core.notification.handler.NotificationHandler;
-import org.nikola.velemir.poshtar.core.request.handler.RequestHandler;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
+
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -12,7 +12,7 @@ import javax.lang.model.element.TypeElement;
 @SuppressWarnings({"rawtypes", "unchecked"})
 abstract class WiringRule implements Rule {
     protected final Class annotation;
-    protected final ErrorLogger logger = ErrorLogger.getInstance();
+    protected final Logger logger = LoggerProvider.provideErrorLogger();
 
     public WiringRule(Class annotation) {
         this.annotation = annotation;

@@ -1,7 +1,8 @@
 package org.nikola.velemir.poshtar.opt.internal.rules;
 
 import org.nikola.velemir.poshtar.core.request.Request;
-import org.nikola.velemir.poshtar.opt.internal.logger.WarningLogger;
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -20,7 +21,7 @@ class NoPrimitiveReturnTypesRule implements Rule {
 
     private static final String PRIMITIVE_RETURN_TYPE_MESSAGE = "Request return type should not be a primitive.";
     private static final String BUILT_IN_RETURN_TYPE_MESSAGE = "Request return type '%s' is a built-in Java type. " + "It is advisable to use a custom DTO or Unit for better versioning safety.";
-    private static final WarningLogger logger = WarningLogger.getInstance();
+    private static final Logger logger = LoggerProvider.provideWarningLogger();
 
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
@@ -35,8 +36,6 @@ class NoPrimitiveReturnTypesRule implements Rule {
 
             if (typeElement == null) continue;
 
-//            TypeMirror responseType = findGenericArgument(typeElement, typeUtils, elementUtils);
-//            if (responseType == null) continue;
             TypeMirror responseType = resolveResponseType(typeElement, ctx);
             if (responseType == null || responseType.getKind() == TypeKind.VOID) continue;
 

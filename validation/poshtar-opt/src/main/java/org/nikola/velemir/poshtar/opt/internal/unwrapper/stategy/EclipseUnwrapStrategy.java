@@ -1,6 +1,6 @@
 package org.nikola.velemir.poshtar.opt.internal.unwrapper.stategy;
 
-public class EclipseUnwrapStrategy implements UnwrapStrategy {
+class EclipseUnwrapStrategy implements UnwrapStrategy {
     @Override
     public boolean supports(Object wrapper) {
         String name = wrapper.getClass().getName();

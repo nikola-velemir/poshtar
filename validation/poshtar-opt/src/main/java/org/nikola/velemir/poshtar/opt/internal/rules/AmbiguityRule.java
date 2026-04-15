@@ -1,7 +1,8 @@
 package org.nikola.velemir.poshtar.opt.internal.rules;
 
+import org.nikola.velemir.poshtar.opt.internal.logger.Logger;
+import org.nikola.velemir.poshtar.opt.internal.logger.LoggerProvider;
 import org.nikola.velemir.poshtar.opt.internal.registry.RegistryEntry;
-import org.nikola.velemir.poshtar.opt.internal.logger.ErrorLogger;
 import org.nikola.velemir.poshtar.opt.processor.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -12,7 +13,7 @@ class AmbiguityRule implements Rule {
 
     public static final String ALREADY_HANDLED_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'";
     public static final String AMBIGUITY_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'";
-    private static final ErrorLogger logger = ErrorLogger.getInstance();
+    private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
@@ -22,7 +23,7 @@ class AmbiguityRule implements Rule {
             String requestFqn = entry.requestFQN();
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 
-            RegistryEntry existing = seenRequests.get(requestFqn);
+            var existing = seenRequests.get(requestFqn);
             if (existing == null) {
                 seenRequests.put(requestFqn, entry);
                 continue;
