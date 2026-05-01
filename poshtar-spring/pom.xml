@@ -84,7 +84,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.nikola_velemir</groupId>
+            <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-opt-api</artifactId>
             <version>0.0.1</version>
         </dependency>
