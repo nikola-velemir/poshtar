@@ -10,8 +10,22 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of {@link Poshtar} interface. Class is the core logic to dispatching requests and notifications, routing them to designated handlers or behaviors.
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public final class PoshtarImpl implements Poshtar {
+
+    /**
+     * Request registry that is accessed to retrieve a pipeline chain for a given request type.
+     */
     private final RequestRegistry requestRegistry;
+    /**
+     * Notificatio registry that is accessed to retrieve a set of handlers that will handle a notification type.
+     */
     private final NotificationRegistry notificationRegistry;
 
     public PoshtarImpl(RequestRegistry registry, NotificationRegistry notificationRegistry) {
@@ -19,21 +33,37 @@ public final class PoshtarImpl implements Poshtar {
         this.notificationRegistry = notificationRegistry;
     }
 
+    /**
+     * Receives a request, dispatching to the corresponding handler through the request pipeline.
+     *
+     * @param request The request object to be processed.
+     * @param <TReq>  Type of the request to be handled.
+     * @param <TRes>  Type of the response that will be returned.
+     * @return Object of {@param <TRes>}, once the request has been handled.
+     * @throws IllegalArgumentException if passed request is null.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <TReq extends Request<TRes>, TRes> TRes send(TReq request) {
 
-        if(request == null)
+        if (request == null)
             throw new IllegalArgumentException("Request cannot be null");
         var requestChain = requestRegistry.resolve((Class<TReq>) request.getClass());
         return requestChain.execute(request);
 
     }
 
+    /**
+     * Receives a notification, dispatching it to the corresponding handlers.
+     * @param notification    The notification object to be broadcasted.
+     * @param <TNotification> Type of the notification to be handled.
+     * @throws IllegalArgumentException if passed notification is null.
+     * @throws AggregateNotificationException if any notification handlers failed during their execution, dumping all aggregated exceptions.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <TNotification extends Notification> void publish(TNotification notification) {
-        if(notification == null)
+        if (notification == null)
             throw new IllegalArgumentException("Request cannot be null");
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
         List<Throwable> collectedErrors = new ArrayList<>();

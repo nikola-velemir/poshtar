@@ -14,7 +14,14 @@ import org.springframework.lang.NonNull;
 
 import java.util.*;
 
-
+/**
+ * Class maps specific request type to its chain of behaviors supported by generic constraint, ending with a handler.
+ * Note that behavior and handler classes can be Spring proxies.
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final PipelineConfigurer pipelineConfigurer;

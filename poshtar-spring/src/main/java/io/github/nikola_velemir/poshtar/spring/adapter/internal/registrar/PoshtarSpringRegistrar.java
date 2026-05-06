@@ -15,12 +15,19 @@ import org.springframework.util.ClassUtils;
 
 import java.util.Map;
 import java.util.Objects;
-
+/**
+ * Class used for component scanning and their instantiation as spring beans. Searches through packages provided by {@link EnablePoshtar}.
+ * Classes annotated with {@link Handler} and {@link Behaviour} are introduced into Spring context as singleton spring beans.
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {
 
 
     @Override
-    public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata, @NonNull BeanDefinitionRegistry registry) {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 
         buildFilters(scanner);

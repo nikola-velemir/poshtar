@@ -9,7 +9,13 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
 
 import java.util.Map;
-
+/**
+ * Class maps specific notification type to its designated handler class, including Spring proxies.
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public class SpringNotificationRegistry extends AbstractNotificationRegistry implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ApplicationContext context;
@@ -39,7 +45,11 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
         }
     }
 
-
+    /**
+     * Method is called upon context refresh to initialize the registry mappings.
+     *
+     * @param event Spring context refresh event.
+     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext() == context) {

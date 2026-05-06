@@ -2,7 +2,20 @@ package io.github.nikola_velemir.poshtar.core.exceptions;
 
 import java.io.PrintStream;
 import java.util.List;
-
+/**
+ * Exception that collects and wraps failures occurring during a
+ * notification broadcast.
+ * <p>
+ * When a {@link io.github.nikola_velemir.poshtar.core.notification.Notification}
+ * is published, multiple subscribers may attempt to process it. If one or more
+ * subscribers throw an exception, all of them are collected into this
+ * aggregate container rather than stopping at the first failure.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public class AggregateNotificationException extends PoshtarException {
     private final List<Throwable> errors;
     public AggregateNotificationException(List<Throwable> errors) {
@@ -13,7 +26,13 @@ public class AggregateNotificationException extends PoshtarException {
     public List<Throwable> getErrors() {
         return errors;
     }
-
+    /**
+     * Formats a summary message including the count and brief description
+     * of each failure.
+     *
+     * @param errors The list of errors to format.
+     * @return A formatted string summary.
+     */
     private static String formatMessage(List<Throwable> errors) {
         StringBuilder sb = new StringBuilder();
         sb.append(errors.size()).append(" failures occurred during notification dispatch:\n");
@@ -24,7 +43,12 @@ public class AggregateNotificationException extends PoshtarException {
         }
         return sb.toString();
     }
-
+    /**
+     * Prints the stack trace of the aggregate exception, followed by the
+     * detailed stack traces of all suppressed sub-exceptions.
+     *
+     * @param s The {@link PrintStream} to use for output.
+     */
     @Override
     public void printStackTrace(PrintStream s) {
         super.printStackTrace(s);
