@@ -1,6 +1,6 @@
 package io.github.nikola_velemir.poshtar.spring.adapter;
 
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfigurer;
+import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +15,10 @@ import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transaction
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
 
 @Configuration
-public class PipelineConfiguration {
+public class PipelineConfig {
     @Bean
-    public PipelineConfigurer poshtarPipeline() {
-        return new PipelineConfigurer()
+    public PipelineConfiguration poshtarPipeline() {
+        return new PipelineConfiguration()
                 .add(GlobalTestPipeline.class)
                 .add(ValidationBehaviour.class)
                 .add(OrderFirstPipeline.class)

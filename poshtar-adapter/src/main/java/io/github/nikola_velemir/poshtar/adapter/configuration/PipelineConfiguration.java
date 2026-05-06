@@ -25,7 +25,7 @@ import java.util.List;
  * @version ${project.version}
  * @since 1.0.0
  */
-public class PipelineConfigurer {
+public class PipelineConfiguration {
     /**
      * Internal list of behavior classes, maintaining the order of registration.
      */
@@ -43,7 +43,7 @@ public class PipelineConfigurer {
      * @return This configurer instance for method chaining.
      * @throws IllegalArgumentException if the provided class is null.
      */
-    public <T extends PipelineBehaviour<?, ?>> PipelineConfigurer add(Class<T> behaviourClass) {
+    public <T extends PipelineBehaviour<?, ?>> PipelineConfiguration add(Class<T> behaviourClass) {
         if (behaviourClass == null) {
             throw new IllegalArgumentException("Behaviour class cannot be null");
         }
