@@ -10,6 +10,20 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Internal utility responsible for resolving method calls to their underlying source elements.
+ * <p>
+ * When the flow analyzer
+ * encounters a method invocation, the {@code CalleeResolver}
+ * attempts to locate the {@link ExecutableElement} of that method. This allows the
+ * analyzer to "jump" into helper methods and verify if the pipeline is continued
+ * elsewhere in the class.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 class CalleeResolver {
     private final ProcessorContext ctx;
     private final ExecutableElement rootMethod;
@@ -19,6 +33,18 @@ class CalleeResolver {
         rootMethod = method;
     }
 
+    /**
+     * Attempts to resolve a method invocation to its corresponding executable element.
+     * <p>
+     * This method searches within the compilation unit paths of the current class.
+     * To prevent infinite loops during recursion, it utilizes a set of already visited
+     * elements.
+     * </p>
+     *
+     * @param node    The method invocation node found in the AST.
+     * @param visited A set of methods already processed in the current call stack.
+     * @return The resolved {@link ExecutableElement}, or {@code null} if resolution failed.
+     */
     public ExecutableElement resolveCallee(MethodInvocationTree node, Set<ExecutableElement> visited) {
         try {
             Trees trees = ctx.trees;

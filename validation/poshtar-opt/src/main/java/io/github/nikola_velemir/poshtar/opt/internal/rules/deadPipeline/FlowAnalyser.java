@@ -7,6 +7,18 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Depth-first flow analysis within a {@code Behaviour} implementation.
+ * <p>
+ * This class determines if a pipeline's execution path is "safe" by verifying that
+ * every logical branch eventually leads to a terminal operation: either a call to
+ * {@code handle()} on the next delegate or an explicit exception.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public class FlowAnalyser {
     private final ProcessorContext ctx;
     private final CalleeResolver resolver;
@@ -16,7 +28,13 @@ public class FlowAnalyser {
         this.ctx = ctx;
         this.resolver = new CalleeResolver(ctx, rootMethod);
     }
-
+    /**
+     * Performs a recursive analysis of the provided method body.
+     *
+     * @param methodTree   The AST representation of the method to scan.
+     * @param delegateName The current identifier name of the {@code RequestDelegate}.
+     * @return {@code true} if a valid exit path is found; {@code false} otherwise.
+     */
     public boolean analyse(MethodTree methodTree, String delegateName) {
         FlowScanner scanner = new FlowScanner(delegateName);
         scanner.scan(methodTree.getBody(), null);
