@@ -25,7 +25,11 @@ import java.util.*;
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final PipelineConfiguration pipelineConfiguration;
-
+    /**
+     * Instantiates the registry, with the provided Spring context.
+     * @param context Spring context, used for Posthar component discovery.
+     * @param pipelineConfiguration Provided order of behavior execution.
+     */
     public SpringRequestRegistry(ApplicationContext context, PipelineConfiguration pipelineConfiguration) {
         this.context = context;
         this.pipelineConfiguration = pipelineConfiguration;

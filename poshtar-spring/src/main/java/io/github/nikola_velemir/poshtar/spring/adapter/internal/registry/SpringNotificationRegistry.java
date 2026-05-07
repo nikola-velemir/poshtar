@@ -19,7 +19,10 @@ import java.util.Map;
 public class SpringNotificationRegistry extends AbstractNotificationRegistry implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ApplicationContext context;
-
+    /**
+     * Instantiates the registry, with the provided Spring context.
+     * @param context Spring context, used for Posthar component discovery.
+     */
     public SpringNotificationRegistry(ApplicationContext context) {
         this.context = context;
     }

@@ -23,5 +23,10 @@ package io.github.nikola_velemir.poshtar.core.request;
  */
 @FunctionalInterface
 public interface RequestInvocationChain<TRequest extends Request<TResponse>, TResponse> {
+    /**
+     * Executes the full request processing chain. Calls behaviors in specified order, ending with a handler.
+     * @param request Request to be processed.
+     * @return Response object, which represents the result of request processing.
+     */
     TResponse execute(TRequest request);
 }

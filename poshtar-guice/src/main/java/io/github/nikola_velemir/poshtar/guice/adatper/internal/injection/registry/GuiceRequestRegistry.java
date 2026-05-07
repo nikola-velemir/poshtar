@@ -23,12 +23,18 @@ import java.util.List;
  * @version ${project.version}
  * @since 1.0.0
  */
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class GuiceRequestRegistry extends AbstractRequestRegistry {
     private final PipelineConfiguration pipelineConfiguration;
 
-    public GuiceRequestRegistry(PipelineConfiguration configurer, Injector injector) {
-        this.pipelineConfiguration = configurer;
+    /**
+     * Instantiates the registry, with the provided Guice injector.
+     *
+     * @param injector      Guice injector, used to discover classes thru bindings.
+     * @param configuration Provided order of behavior execution.
+     */
+    public GuiceRequestRegistry(PipelineConfiguration configuration, Injector injector) {
+        this.pipelineConfiguration = configuration;
         init(injector);
 
     }
@@ -43,9 +49,9 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
             TypeToken<?> superType = typeToken.getSupertype((Class) RequestHandler.class);
 
             Class<?> requestType = superType.resolveType(RequestHandler.class.getTypeParameters()[0]).getRawType();
-            if(!Request.class.isAssignableFrom(requestType)) continue;
+            if (!Request.class.isAssignableFrom(requestType)) continue;
 
-            List<PipelineBehaviour<?,?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours,requestType);
+            List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
 
             Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
             RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
@@ -74,7 +80,7 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
     }
 
     @Override
-    protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) throws ExecutionControl.NotImplementedException {
+    protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
         TypeToken<?> typeToken = TypeToken.of(behaviour.getClass());
         TypeToken<?> superType = typeToken.getSupertype((Class) PipelineBehaviour.class);
         Class<?> genericRequestType = superType.resolveType(PipelineBehaviour.class.getTypeParameters()[0]).getRawType();

@@ -70,6 +70,8 @@ public class ProcessorContext {
     }
 
     /**
+     * Provides {@link Elements} utility to the client class.
+     *
      * @return The standard Element utility for inspecting Java structures.
      */
     public Elements getElements() {
@@ -77,6 +79,8 @@ public class ProcessorContext {
     }
 
     /**
+     * Provides {@link Types} utility to the client class.
+     *
      * @return The standard Type utility for type-system comparisons.
      */
     public Types getTypes() {
@@ -133,6 +137,8 @@ public class ProcessorContext {
     }
 
     /**
+     * Provides a set of all registered handler FQNs to the client class.
+     *
      * @return A set containing all registered handler and behavior class names.
      */
     public Set<String> getAll() {
@@ -142,6 +148,8 @@ public class ProcessorContext {
     }
 
     /**
+     * Provides a set of found request FQNs to the client class.
+     *
      * @return An unmodifiable view of all discovered request types.
      */
     public Set<String> getKnownRequests() {

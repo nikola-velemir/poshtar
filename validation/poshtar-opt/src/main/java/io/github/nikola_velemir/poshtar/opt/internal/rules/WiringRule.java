@@ -32,9 +32,20 @@ import javax.lang.model.element.TypeElement;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 abstract class WiringRule implements Rule {
+    /**
+     * Annotation that will be checked for wiring violations.
+     */
     protected final Class annotation;
+    /**
+     * Provided logger that will dispatch errors to the compiler, if wiring violations are found.
+     */
     protected final Logger logger = LoggerProvider.provideErrorLogger();
 
+    /**
+     * Instantiates a wiring rule, with a provided annotation.
+     *
+     * @param annotation Annotation that will be inspected for wiring violations.
+     */
     public WiringRule(Class annotation) {
         this.annotation = annotation;
     }
@@ -72,6 +83,12 @@ abstract class WiringRule implements Rule {
      */
     protected abstract void initErasures(ProcessorContext ctx);
 
+    /**
+     * Check if provided element is annotated with designated annotation.
+     *
+     * @param typeElement Element which will be checked for annotation's presence.
+     * @return {@code true} if element is annotated with the annotation, otherwise {@code false}.
+     */
     protected boolean hasAnnotation(TypeElement typeElement) {
         return typeElement.getAnnotation(annotation) != null;
     }

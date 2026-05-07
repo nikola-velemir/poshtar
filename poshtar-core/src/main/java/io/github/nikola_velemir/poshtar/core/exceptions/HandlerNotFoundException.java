@@ -12,6 +12,10 @@ package io.github.nikola_velemir.poshtar.core.exceptions;
  * @since 1.0.0
  */
 public class HandlerNotFoundException extends PoshtarException {
+    /**
+     * Instantiates a new instance of the exception, with the provided class of the orphaned request.
+     * @param requestClass Class literal of the orphaned request.
+     */
     public HandlerNotFoundException(Class<?> requestClass) {
         super(
                 String.format(

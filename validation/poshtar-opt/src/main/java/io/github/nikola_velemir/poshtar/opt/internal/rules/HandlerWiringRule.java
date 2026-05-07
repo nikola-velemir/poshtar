@@ -28,7 +28,7 @@ import javax.lang.model.type.TypeMirror;
  * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
  * @since 1.0.0
  */
-public class HandlerWiringRule extends WiringRule {
+class HandlerWiringRule extends WiringRule {
     private TypeMirror requestHandlerInterfaceErasure;
     private TypeMirror notificationHandlerInterfaceErasure;
 

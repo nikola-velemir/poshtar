@@ -18,6 +18,10 @@ import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotif
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
+    /**
+     * Instantiates the registry, with the provided Guice injector.
+     * @param injector Guice injector, used to discover classes thru bindings.
+     */
     public GuiceNotificationRegistry(Injector injector) {
         init(injector);
     }

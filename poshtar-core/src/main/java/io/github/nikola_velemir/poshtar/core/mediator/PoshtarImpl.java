@@ -28,8 +28,14 @@ public final class PoshtarImpl implements Poshtar {
      */
     private final NotificationRegistry notificationRegistry;
 
-    public PoshtarImpl(RequestRegistry registry, NotificationRegistry notificationRegistry) {
-        this.requestRegistry = registry;
+    /**
+     * Instantiates a new {@link PoshtarImpl} object, with provided {@link RequestRegistry} and {@link NotificationRegistry}.
+     *
+     * @param requestRegistry      provided request registry, holding all request to behavior-handler mappings.
+     * @param notificationRegistry provided request registry, holding all notification to handler set mappings.
+     */
+    public PoshtarImpl(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
+        this.requestRegistry = requestRegistry;
         this.notificationRegistry = notificationRegistry;
     }
 
@@ -55,9 +61,10 @@ public final class PoshtarImpl implements Poshtar {
 
     /**
      * Receives a notification, dispatching it to the corresponding handlers.
+     *
      * @param notification    The notification object to be broadcasted.
      * @param <TNotification> Type of the notification to be handled.
-     * @throws IllegalArgumentException if passed notification is null.
+     * @throws IllegalArgumentException       if passed notification is null.
      * @throws AggregateNotificationException if any notification handlers failed during their execution, dumping all aggregated exceptions.
      */
     @SuppressWarnings("unchecked")

@@ -27,8 +27,9 @@ import java.util.List;
  */
 public interface NotificationRegistry {
     /**
+     *  Registers a handler to the specific notification type.
      *
-     * @param notificationClass Class literal of the notification to register
+     * @param notificationClass Class literal of the notification to register.
      * @param handler           Handler that will handler a notification.
      * @param <TNotification>   The type of the notification.
      */

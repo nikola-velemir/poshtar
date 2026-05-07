@@ -77,17 +77,16 @@ public abstract class AbstractRequestRegistry implements RequestRegistry {
             List<PipelineBehaviour<?, ?>> allBehaviours, Class<?> requestType) {
 
         return allBehaviours.stream()
-                .filter(b -> {
-                    try {
-                        return supportsRequest(b, requestType);
-                    } catch (ExecutionControl.NotImplementedException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .filter(b -> supportsRequest(b, requestType))
                 .toList();
     }
 
-    protected boolean supportsRequest(PipelineBehaviour<?, ?> ignoredBehaviour, Class<?> ignoredRequestType) throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Inheriting class must override this method");
-    }
+    /**
+     * Method overrides are to check if the provided behavior supports the request type thru generic constraints.
+     *
+     * @param behaviour   Behavior that is being tested whether it supports the {@param requestType}
+     * @param requestType Class literal of the request type.
+     * @return {@code true} if the behavior supports the request type, otherwise {@code false}
+     */
+    protected abstract boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType);
 }

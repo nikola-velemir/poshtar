@@ -14,10 +14,18 @@ package io.github.nikola_velemir.poshtar.core.exceptions;
  */
 public class PoshtarException extends RuntimeException {
 
+    /**
+     * Creates an exception instance, with the leading tag of the library name.
+     * @param message Custom excpetion message.
+     */
     public PoshtarException(String message) {
         super("[PoshtaR] " + message);
     }
-
+    /**
+     * Creates an exception instance, with the leading tag of the library name.
+     * @param message Custom exception message.
+     * @param cause Throwable that represents a cause of the error.
+     */
     public PoshtarException(String message, Throwable cause) {
         super("[PoshtaR] " + message, cause);
     }

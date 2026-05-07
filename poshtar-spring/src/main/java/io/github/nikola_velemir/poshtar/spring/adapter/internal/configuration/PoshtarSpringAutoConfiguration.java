@@ -32,6 +32,10 @@ import org.springframework.context.annotation.Configuration;
 public class PoshtarSpringAutoConfiguration {
     private final ApplicationContext context;
 
+    /**
+     * Instantiates the autoconfiguration, with the provided Spring context.
+     * @param context Spring context, used for bean wiring.
+     */
     public PoshtarSpringAutoConfiguration(ApplicationContext context) {
         this.context = context;
     }

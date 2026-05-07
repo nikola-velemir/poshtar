@@ -10,6 +10,11 @@ package io.github.nikola_velemir.poshtar.opt.internal.registry.exception;
 public class ResolutionException extends RuntimeException {
 
 
+    /**
+     * Instantiates a new exception, with custom resolution error message.
+     *
+     * @param message Text of a custom message.
+     */
     public ResolutionException(String message) {
         super(message);
     }

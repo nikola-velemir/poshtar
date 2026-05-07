@@ -24,10 +24,18 @@ public class FlowAnalyser {
     private final CalleeResolver resolver;
     private final Set<ExecutableElement> visited = new HashSet<>();
 
+    /**
+     * Instantiates a new {@link FlowAnalyser},
+     * with the current processor context and root method to begin analysis.
+     *
+     * @param ctx        Processor context, containing all found FQNs of requests, handlers and behaviors.
+     * @param rootMethod Method where the flow analysis begins.
+     */
     public FlowAnalyser(ProcessorContext ctx, ExecutableElement rootMethod) {
         this.ctx = ctx;
         this.resolver = new CalleeResolver(ctx, rootMethod);
     }
+
     /**
      * Performs a recursive analysis of the provided method body.
      *

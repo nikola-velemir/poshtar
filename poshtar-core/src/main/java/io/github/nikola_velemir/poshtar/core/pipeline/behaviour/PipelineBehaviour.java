@@ -22,6 +22,17 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
  * @since 1.0.0
  */
 public interface PipelineBehaviour<TRequest extends Request<TResponse>, TResponse> {
-
+    /**
+     * Handles the given request, passes it down the pipeline and produces a response.
+     *
+     * <p>
+     * Behaviors should invoke {@code next.handle(request)}, to pass the request down the pipeline.
+     * If method does not call {@code handle} on the delegate, pipeline is effectively stopped.
+     * </p>
+     *
+     * @param request The request object containing the input data.
+     * @param next    Next node in pipeline execution.
+     * @return The result of the request processing.
+     */
     TResponse handle(TRequest request, RequestDelegate<TRequest, TResponse> next);
 }

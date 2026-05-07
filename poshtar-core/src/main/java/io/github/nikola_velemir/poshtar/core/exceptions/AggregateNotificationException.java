@@ -2,6 +2,7 @@ package io.github.nikola_velemir.poshtar.core.exceptions;
 
 import java.io.PrintStream;
 import java.util.List;
+
 /**
  * Exception that collects and wraps failures occurring during a
  * notification broadcast.
@@ -17,15 +18,30 @@ import java.util.List;
  * @since 1.0.0
  */
 public class AggregateNotificationException extends PoshtarException {
+    /**
+     * List of wrapped errors.
+     */
     private final List<Throwable> errors;
+
+    /**
+     * Instantiates a new instance of this exception, wrapping the list of provided errors.
+     *
+     * @param errors List of errors to be wrapped.
+     */
     public AggregateNotificationException(List<Throwable> errors) {
         super(formatMessage(errors));
         this.errors = List.copyOf(errors);
     }
 
+    /**
+     * Provides the list of wrapped errors.
+     *
+     * @return List of wrapped errors.
+     */
     public List<Throwable> getErrors() {
         return errors;
     }
+
     /**
      * Formats a summary message including the count and brief description
      * of each failure.
@@ -43,6 +59,7 @@ public class AggregateNotificationException extends PoshtarException {
         }
         return sb.toString();
     }
+
     /**
      * Prints the stack trace of the aggregate exception, followed by the
      * detailed stack traces of all suppressed sub-exceptions.
