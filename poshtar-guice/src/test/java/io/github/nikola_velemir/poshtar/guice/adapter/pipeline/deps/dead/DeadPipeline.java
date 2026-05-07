@@ -1,0 +1,22 @@
+package io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead;
+
+import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
+import io.github.nikola_velemir.poshtar.opt.api.annotations.pipeline.SuppressDead;
+
+@SuppressDead
+@Behaviour
+public class DeadPipeline implements PipelineBehaviour<DeadRequest, Unit> {
+    @Override
+    public Unit handle(DeadRequest request, RequestDelegate<DeadRequest, Unit> requestDelegate) {
+        //handleDead(request, requestDelegate);
+        return null;
+    }
+
+    private static Unit handleDead(DeadRequest request, RequestDelegate<DeadRequest, Unit> requestDelegate) {
+        System.out.println("Called dead pipeline!");
+        return requestDelegate.handle(request);
+    }
+}
