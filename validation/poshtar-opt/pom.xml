@@ -23,12 +23,12 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-adapter</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-opt-api</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.google.auto.service</groupId>

@@ -15,6 +15,22 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
+/**
+ * Implementation of {@link RegistryScanner} that performs classpath
+ * discovery during an annotation processing round.
+ * <p>
+ * This scanner identifies three primary categories of components:
+ * <ul>
+ *     <li><b>Handlers:</b> Classes annotated with {@code @Handler} that process specific requests.</li>
+ *     <li><b>Behaviors:</b> Classes annotated with {@code @Behaviour} that act as pipeline middleware.</li>
+ *     <li><b>Requests:</b> Any class or record implementing the {@code Request} interface.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 class RegistryScannerImpl implements RegistryScanner {
     private static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
     private static final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
@@ -22,6 +38,13 @@ class RegistryScannerImpl implements RegistryScanner {
     private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
     private final Logger logger = LoggerProvider.provideErrorLogger();
 
+    /**
+     * Controls the scanning process for the current processing round.
+     *
+     * @param roundEnv The environment representing the current round of annotation processing.
+     * @param ctx      The shared context where discovered components are stored.
+     * @throws ResolutionException is thrown if component resolution fails.
+     */
     public void scanRegistry(RoundEnvironment roundEnv, ProcessorContext ctx) {
 
         scanForHandlers(roundEnv, ctx);

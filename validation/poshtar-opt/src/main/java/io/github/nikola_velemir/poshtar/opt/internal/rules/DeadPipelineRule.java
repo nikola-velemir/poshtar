@@ -16,13 +16,39 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
-
+/**
+ * Validation rule that ensures pipeline continuity by detecting "Dead Pipelines."
+ * <p>
+ * In a Chain of Responsibility pattern, a {@code Behaviour} must either:
+ * <ol>
+ *     <li>Forward the request to the next component using {@code next.handle(request)}.</li>
+ *     <li>Terminate the flow intentionally by throwing a {@link RuntimeException}.</li>
+ * </ol>
+ * </p>
+ * <p>
+ * If a behavior finishes execution without doing either, the request is effectively
+ * dropped, leading to silent failures at runtime. This rule uses the Abstract Syntax
+ * Tree (AST) to verify that all logical branches in the {@code handle} method provide
+ * an exit path that maintains pipeline integrity.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ * @see io.github.nikola_velemir.poshtar.opt.api.annotations.pipeline.SuppressDead
+ */
 class DeadPipelineRule implements Rule {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
     private static final String DELEGATE_SIMPLE_NAME = RequestDelegate.class.getSimpleName();
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.\n Logic found no exit path, which will break the pipeline. Use %s if your logic is correct, but bypasses the chain";
     private static final Logger logger = LoggerProvider.provideWarningLogger();
 
+    /**
+     * Iterates through all registered behaviors and validates their 'handle' methods.
+     *
+     * @param roundEnv The current processing round environment.
+     * @param ctx      The shared context containing discovered behaviors and AST utilities.
+     */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         Set<String> behaviourFqns = ctx.getKnownBehaviours();
