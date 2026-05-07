@@ -23,7 +23,7 @@ public interface Rule {
      * If a violation is found, logic should dispatch an error or a warning message to a compiler, depending on its severity.
      *
      * @param roundEnv The environment providing access to elements in the current processing round.
-     * @param ctx      Instance of context containing all.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
      */
     void validate(RoundEnvironment roundEnv, ProcessorContext ctx);
 

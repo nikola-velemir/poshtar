@@ -32,7 +32,10 @@ class BehaviourWiringRule extends WiringRule {
             logger.log(ctx.env, "Class annotated with @Behaviour must implement PipelineBehaviour.", typeElement);
         }
     }
-
+    /**
+     * Initializes the behavior interface type erasure, used to validate if wiring is correct.
+     * @param ctx Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     protected void initErasures(ProcessorContext ctx) {
         var types = ctx.getTypes();

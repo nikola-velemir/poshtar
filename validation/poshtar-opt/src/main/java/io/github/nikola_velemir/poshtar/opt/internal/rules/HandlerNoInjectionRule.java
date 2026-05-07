@@ -10,6 +10,18 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
 
+/**
+ * Rule that validates handler no-injection logic.
+ * <p>
+ * Developer should not be allowed to inject, instantiate, or provide handlers to their classes at will.
+ * Rule prevents a developer from bypassing mediator and pipeline logic entirely.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
+ * @since 1.0.0
+ */
 class HandlerNoInjectionRule extends NoInjectionRule {
 
     private static final String REQ_HANDLER_FQN = RequestHandler.class.getName();
@@ -19,6 +31,14 @@ class HandlerNoInjectionRule extends NoInjectionRule {
 
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
+    /**
+     * Validation logic to check if provided type is a request or notification handler.
+     *
+     * @param type      Type of the component that is being inspected.
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     * @return boolean value if provided type is forbidden.
+     */
     @Override
     protected boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx) {
         var typeUtils = ctx.getTypes();
@@ -35,6 +55,12 @@ class HandlerNoInjectionRule extends NoInjectionRule {
                 typeUtils.isAssignable(erasedType, erasedNotif);
     }
 
+    /**
+     * Error logging logic.
+     *
+     * @param target Element that is bound to the error.
+     * @param ctx    Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     protected void logError(Element target, ProcessorContext ctx) {
         logger.log(ctx.env, VIOLATION_MESSAGE, target);

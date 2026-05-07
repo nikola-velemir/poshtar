@@ -3,7 +3,7 @@ package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.regist
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfigurer;
+import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
@@ -15,12 +15,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class maps specific request type to its chain of behaviors supported by generic constraint, ending with a handler.
+ * Note that behavior and handler classes can be proxies.
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 @SuppressWarnings({"rawtypes","unchecked"})
 public class GuiceRequestRegistry extends AbstractRequestRegistry {
-    private final PipelineConfigurer pipelineConfigurer;
+    private final PipelineConfiguration pipelineConfiguration;
 
-    public GuiceRequestRegistry(PipelineConfigurer configurer, Injector injector) {
-        this.pipelineConfigurer = configurer;
+    public GuiceRequestRegistry(PipelineConfiguration configurer, Injector injector) {
+        this.pipelineConfiguration = configurer;
         init(injector);
 
     }
@@ -47,7 +55,7 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
     }
 
     private @NonNull List<? extends PipelineBehaviour<?, ?>> provideBehaviours(Injector injector) {
-        return pipelineConfigurer
+        return pipelineConfiguration
                 .getBehaviourClasses()
                 .stream()
                 .map(injector::getInstance)

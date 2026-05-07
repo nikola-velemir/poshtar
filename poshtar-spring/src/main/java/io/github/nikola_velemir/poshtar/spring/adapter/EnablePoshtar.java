@@ -11,7 +11,12 @@ import java.lang.annotation.*;
  * <p>
  * This annotation allows discovery of Poshtar components and registers them.
  * </p>
- *
+ * <p><b>Example Usage:</b></p>
+ * <pre>
+ * &#64;EnablePoshtar
+ * public class MyApplication {
+ * }
+ * </pre>
  * @author Nikola Velemir
  * @version ${project.version}
  * @since 1.0.0

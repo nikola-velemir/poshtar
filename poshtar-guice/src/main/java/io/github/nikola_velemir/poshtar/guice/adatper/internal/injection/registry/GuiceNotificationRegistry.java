@@ -7,6 +7,15 @@ import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
 
+/**
+ * Class maps specific notification type to its designated handler class, including proxies.
+ *
+ * <p>Registry checks injector bindings to resolve type mappings</p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
     public GuiceNotificationRegistry(Injector injector) {

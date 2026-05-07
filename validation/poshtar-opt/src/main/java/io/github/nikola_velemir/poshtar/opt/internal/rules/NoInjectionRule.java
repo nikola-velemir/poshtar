@@ -8,10 +8,27 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
 
+/**
+ * Template rule for no-injection logic.
+ * <p>
+ * Developer should not be allowed to inject, instantiate, or provide components to their classes at will.
+ * Rule prevents a developer from bypassing mediator and pipeline logic entirely.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
+ * @since 1.0.0
+ */
 abstract class NoInjectionRule implements Rule {
     protected static final String MEDIATOR_FQN = Poshtar.class.getName();
 
-
+    /**
+     * Checks if the class used is forbidden to be injected. Logs the error if forbidden class is found.
+     *
+     * @param roundEnv The environment providing access to elements in the current processing round.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         Set<String> forbidden = ctx.getAll();
@@ -26,6 +43,13 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Checks the body of a class in search for forbidden components that should not be injected or instantiated.
+     *
+     * @param clazz     Class that is under inspection for forbidden components.
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     */
     protected void checkClassBody(TypeElement clazz, Set<String> forbidden, ProcessorContext ctx) {
         for (Element enclosed : clazz.getEnclosedElements()) {
 
@@ -36,6 +60,13 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Checks if forbidden classes are provided thru methods.
+     *
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     * @param enclosed  Class that is under inspection for forbidden components.
+     */
     protected void validateMethodInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.METHOD) {
             ExecutableElement method = (ExecutableElement) enclosed;
@@ -47,6 +78,13 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Checks if forbidden classes are provided thru a constructor.
+     *
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     * @param enclosed  Class that is under inspection for forbidden components.
+     */
     protected void validateConstructorInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.CONSTRUCTOR) {
             ExecutableElement constructor = (ExecutableElement) enclosed;
@@ -58,8 +96,21 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Error logging logic.
+     *
+     * @param target Element that is bound to the error.
+     * @param ctx  Instance of context containing all related request, handler and behavior FQNs.
+     */
     protected abstract void logError(Element target, ProcessorContext ctx);
 
+    /**
+     * Checks if forbidden classes are provided thru fields.
+     *
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     * @param enclosed  Class that is under inspection for forbidden components.
+     */
     protected void validateFieldInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
@@ -69,5 +120,14 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Method checks if provided type is forbidden.
+     * <p>Overrides of this method are to check if specific type provided is the forbidden list.</p>
+     *
+     * @param type      Type of the component that is being inspected.
+     * @param forbidden Set of forbidden FQNs.
+     * @param ctx       Instance of context containing all related request, handler and behavior FQNs.
+     * @return boolean value if provided type is forbidden.
+     */
     protected abstract boolean isForbiddenType(TypeMirror type, Set<String> forbidden, ProcessorContext ctx);
 }

@@ -7,7 +7,27 @@ import io.github.nikola_velemir.poshtar.opt.internal.context.ProcessorContext;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-
+/**
+ * Template rule for validating wiring logic.
+ * <p>
+ * Rule extending this template should prevent wiring violations, where developer should not be allowed to:
+ * </p>
+ * <ul>
+ *     <li>Annotate a class implements {@link io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler}
+ *     with {@link io.github.nikola_velemir.poshtar.core.annotations.Behaviour}.</li>
+ *     <li>Annotate a class implements {@link io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour}
+ *     with {@link io.github.nikola_velemir.poshtar.core.annotations.Handler}.</li>
+ *
+ * </ul>
+ * <p>
+ * Rule prevents from creating ambiguities between behavior and handler classes.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
+ * @since 1.0.0
+ */
 public class HandlerWiringRule extends WiringRule {
     private TypeMirror requestHandlerInterfaceErasure;
     private TypeMirror notificationHandlerInterfaceErasure;
@@ -16,6 +36,10 @@ public class HandlerWiringRule extends WiringRule {
         super(Handler.class);
     }
 
+    /**
+     * Initializes the request handler interface type erasures, used to validate if wiring is correct.
+     * @param ctx Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     protected void initErasures(ProcessorContext ctx) {
         var types = ctx.getTypes();

@@ -17,12 +17,32 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Rule that warns the developers that return type is a primitive or a built-in wrapper class.
+ *
+ * <p>
+ * Developer is to be discouraged from returning simple types like {@code int} or {@link String}.
+ * It is advisable for a return type to be a custom, user defined object instead ofa primitive type.
+ * Rule will warn the developer about the issue in question, instead of preventing compilation.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 class NoPrimitiveReturnTypesRule implements Rule {
 
     private static final String PRIMITIVE_RETURN_TYPE_MESSAGE = "Request return type should not be a primitive.";
     private static final String BUILT_IN_RETURN_TYPE_MESSAGE = "Request return type '%s' is a built-in Java type. " + "It is advisable to use a custom DTO or Unit for better versioning safety.";
     private static final Logger logger = LoggerProvider.provideWarningLogger();
 
+    /**
+     * Validates the request's response type,
+     * giving a warning if response type is a primitive or a built-in class.
+     *
+     * @param roundEnv The environment providing access to elements in the current processing round.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         var elementUtils = ctx.getElements();

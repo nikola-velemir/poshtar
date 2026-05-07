@@ -1,14 +1,11 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.internal.configuration;
 
 
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfigurer;
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarImpl;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.spring.adapter.EnablePoshtar;
 import io.github.nikola_velemir.poshtar.spring.adapter.internal.registry.SpringRequestRegistry;
 import io.github.nikola_velemir.poshtar.spring.adapter.internal.registry.SpringNotificationRegistry;
 
@@ -40,28 +37,28 @@ public class PoshtarSpringAutoConfiguration {
     }
 
     /**
-     * Provides the default {@link PipelineConfigurer} which defines the
+     * Provides the default {@link PipelineConfiguration} which defines the
      * execution order of behaviors within the request pipeline.
      *
-     * @return A default instance of {@link PipelineConfigurer}.
+     * @return A default instance of {@link PipelineConfiguration}.
      */
     @Bean
     @ConditionalOnMissingBean
-    public PipelineConfigurer provideDefaultPipelineConfigurer() {
-        return new PipelineConfigurer();
+    public PipelineConfiguration provideDefaultPipelineConfiguration() {
+        return new PipelineConfiguration();
     }
 
     /**
      * Creates a {@link RequestRegistry} for the Spring environment.
      * For more details, visit {@link SpringRequestRegistry}
      *
-     * @param pipelineConfigurer The pipeline order configuration, either user defined or default.
+     * @param pipelineConfiguration The pipeline order configuration, either user defined or default.
      * @return A {@link SpringRequestRegistry} implementation linked to the Spring context.
      */
     @Bean
     @ConditionalOnMissingBean
-    public RequestRegistry provideRequestRegistry(PipelineConfigurer pipelineConfigurer) {
-        return new SpringRequestRegistry(context, pipelineConfigurer);
+    public RequestRegistry provideRequestRegistry(PipelineConfiguration pipelineConfiguration) {
+        return new SpringRequestRegistry(context, pipelineConfiguration);
     }
 
     /**

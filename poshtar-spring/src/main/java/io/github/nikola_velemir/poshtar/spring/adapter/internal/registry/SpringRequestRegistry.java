@@ -1,7 +1,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.internal.registry;
 
 
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfigurer;
+import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
@@ -24,11 +24,11 @@ import java.util.*;
  */
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
-    private final PipelineConfigurer pipelineConfigurer;
+    private final PipelineConfiguration pipelineConfiguration;
 
-    public SpringRequestRegistry(ApplicationContext context, PipelineConfigurer pipelineConfigurer) {
+    public SpringRequestRegistry(ApplicationContext context, PipelineConfiguration pipelineConfiguration) {
         this.context = context;
-        this.pipelineConfigurer = pipelineConfigurer;
+        this.pipelineConfiguration = pipelineConfiguration;
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +55,7 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
 
     @NonNull
     private List<? extends PipelineBehaviour<?, ?>> provideBehaviours(ApplicationContext context) {
-        return pipelineConfigurer
+        return pipelineConfiguration
                 .getBehaviourClasses()
                 .stream()
                 .map(context::getBean)

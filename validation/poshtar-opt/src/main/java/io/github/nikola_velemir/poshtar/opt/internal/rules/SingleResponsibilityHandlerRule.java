@@ -10,11 +10,30 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
+/**
+ * Rule that prevents the developer from declaring a class both as a handler and a behavior.
+ *
+ * <p>
+ * Class can have only on responsibility. In context of this library,
+ * class that is to handle a request may only be either a handler or a behavior.
+ * Rule prevents from implementing both {@link RequestHandler} and {@link PipelineBehaviour}.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 class SingleResponsibilityHandlerRule implements Rule {
 
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s may only implement one of given interfaces.";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
+    /**
+     * Checks if class in question implements both {@link RequestHandler} and {@link PipelineBehaviour}
+     *
+     * @param roundEnv The environment providing access to elements in the current processing round.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
+     */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
         var entries = ctx.getHandlerRegistry();

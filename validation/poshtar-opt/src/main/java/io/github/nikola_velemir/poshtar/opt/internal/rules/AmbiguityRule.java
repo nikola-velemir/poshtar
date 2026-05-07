@@ -8,6 +8,7 @@ import io.github.nikola_velemir.poshtar.opt.internal.context.ProcessorContext;
 import javax.annotation.processing.RoundEnvironment;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Architectural rule that enforces a strict one-to-one mapping between a Request and its Handler.
  * <p>
@@ -18,19 +19,20 @@ import java.util.Map;
  *
  * @author Nikola Velemir
  * @version ${project.version}
- * @since 1.0.0
  * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
+ * @since 1.0.0
  */
 class AmbiguityRule implements Rule {
 
     public static final String ALREADY_HANDLED_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'";
     public static final String AMBIGUITY_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
+
     /**
      * Performs the ambiguity check against the current handler registry.
      *
      * @param roundEnv The current annotation processing round environment.
-     * @param ctx      The context containing the shared handler registry and processing utilities.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
@@ -52,13 +54,13 @@ class AmbiguityRule implements Rule {
 
         }
     }
+
     /**
      * Dispatches error messages to the compiler for both conflicting elements.
      *
-     * @param ctx        The processor context.
-     * @param requestFqn The name of the request causing the conflict.
-     * @param existing   The handler entry previously found.
-     * @param conflict   The new handler entry causing the ambiguity.
+     * @param ctx      Instance of context containing all related request, handler and behavior FQNs.     * @param requestFqn The name of the request causing the conflict.
+     * @param existing The handler entry previously found.
+     * @param conflict The new handler entry causing the ambiguity.
      */
     private static void logError(ProcessorContext ctx, String requestFqn,
                                  RegistryEntry existing, RegistryEntry conflict) {

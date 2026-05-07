@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.google.inject.persist.jpa.JpaPersistOptions;
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfigurer;
+import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adatper.module.PoshtarGuiceModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;
@@ -20,7 +20,7 @@ public class TestModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        PipelineConfigurer configurer = new PipelineConfigurer()
+        PipelineConfiguration configuration = new PipelineConfiguration()
                 .add(GlobalTestPipeline.class)
                 .add(ValidationBehaviour.class)
                 .add(OrderFirstPipeline.class)
@@ -29,7 +29,7 @@ public class TestModule extends AbstractModule {
                 .add(DeadPipeline.class)
                 .add(TransactionalPipeline.class)
                 .add(FailTransactionalPipeline.class);
-        install(new PoshtarGuiceModule(configurer, "io.github.nikola_velemir.poshtar.guice.adapter"));
+        install(new PoshtarGuiceModule(configuration, "io.github.nikola_velemir.poshtar.guice.adapter"));
         JpaPersistOptions options = JpaPersistOptions.builder()
                 .setAutoBeginWorkOnEntityManagerCreation(true)
                 .build();
