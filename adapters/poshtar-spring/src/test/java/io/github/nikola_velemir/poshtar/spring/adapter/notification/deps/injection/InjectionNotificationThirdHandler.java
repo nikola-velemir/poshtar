@@ -1,0 +1,37 @@
+/*
+ * Copyright 2026 Nikola Velemir
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.injection;
+
+
+import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Handler
+public class InjectionNotificationThirdHandler implements NotificationHandler<InjectionNotification> {
+    @Autowired
+    private final DummyIncrementService incrementService;
+
+    public InjectionNotificationThirdHandler(DummyIncrementService incrementService) {
+        this.incrementService = incrementService;
+    }
+
+    @Override
+    public void handle(InjectionNotification injectionNotification) {
+        injectionNotification.value = incrementService.inc(injectionNotification.value);
+    }
+}
