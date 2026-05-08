@@ -23,4 +23,4 @@ jobs:
 
     - name: Build with Maven
       # This runs your tests and triggers the annotation processor rules
-      run: mvn clean install -DskipTests=false
+      run: mvn clean install -DskipTests=false -Pvalidate
