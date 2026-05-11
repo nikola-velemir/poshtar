@@ -1,6 +1,6 @@
-# PoshtaR Validation API
+# PoshtaR Validator API
 
-The Validation API allows you to override some architectural rules enforced by validations processor. While PoshtaR aims for strict architectural integrity, real-world edge cases sometimes require you to bypass specific rules. This library provides the supression annotations to do this safely.
+The Validator API allows you to override some architectural rules enforced by validations processor. While PoshtaR aims for strict architectural integrity, real-world edge cases sometimes require you to bypass specific rules. This library provides the supression annotations to do this safely.
 
 ## Installation
 Add this dependency to your pom.xml. Since these are compile-time annotations, you can often set the scope to provided.
@@ -19,9 +19,9 @@ Sometimes the processor rules are a bit too tight. Use these annotations to tell
 
 **1. @SuppressOrphan**
 
-By default, the PoshtaR validator will fail the build if it finds a Request without a corresponding `RequestHandler`.
+By default, the PoshtaR validator will fail the build if it finds a `Request` without a corresponding `RequestHandler`.
 
-Use Case: You are in the middle of a refactor, or you are defining a DTO-only request that will be handled by a third-party system later.
+Use Case: You are in the middle of a refactor, you dont want the processor to prolong your session.
 
 **2. @SuppressDead**
 
