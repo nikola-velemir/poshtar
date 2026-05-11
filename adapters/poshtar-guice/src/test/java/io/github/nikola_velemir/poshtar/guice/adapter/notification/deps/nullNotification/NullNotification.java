@@ -19,5 +19,5 @@ package io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNot
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 
-public class NullNotification implements Notification {
+public final class NullNotification implements Notification {
 }

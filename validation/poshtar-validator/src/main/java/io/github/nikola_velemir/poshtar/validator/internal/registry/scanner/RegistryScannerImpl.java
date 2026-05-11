@@ -19,6 +19,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.registry.scanner;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
@@ -43,6 +44,7 @@ import javax.lang.model.type.TypeMirror;
  * </ul>
  * </p>
  * <p>
+ *
  * @author Nikola Velemir
  * @version ${project.version}
  * @since 1.0.0
@@ -51,6 +53,7 @@ class RegistryScannerImpl implements RegistryScanner {
     private static final String HANDLER_ANNOTATION_NAME = Handler.class.getName();
     private static final String BEHAVIOUR_ANNOTATION_NAME = Behaviour.class.getName();
 
+    private static final CharSequence NOTIFICATION_INTERFACE_NAME = Notification.class.getName();
     private static final CharSequence REQUEST_INTERFACE_NAME = Request.class.getName();
     private final Logger logger = LoggerProvider.provideErrorLogger();
 
@@ -68,6 +71,8 @@ class RegistryScannerImpl implements RegistryScanner {
         scanForBehaviours(roundEnv, ctx);
 
         scanForRequests(roundEnv, ctx);
+
+        scanForNotifications(roundEnv, ctx);
     }
 
     private void scanForRequests(RoundEnvironment roundEnv, ProcessorContext ctx) {
@@ -87,7 +92,23 @@ class RegistryScannerImpl implements RegistryScanner {
                 ))
                 .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
     }
+    private void scanForNotifications(RoundEnvironment roundEnv, ProcessorContext ctx) {
+        TypeElement requestInterface = ctx.getElements()
+                .getTypeElement(NOTIFICATION_INTERFACE_NAME);
+        if (requestInterface == null) return;
 
+        TypeMirror erasedNotification = ctx.env.getTypeUtils()
+                .erasure(requestInterface.asType());
+
+        roundEnv.getRootElements().stream()
+                .filter(e -> e.getKind() == ElementKind.CLASS || e.getKind() == ElementKind.RECORD)
+                .map(e -> (TypeElement) e)
+                .filter(e -> ctx.env.getTypeUtils().isAssignable(
+                        ctx.env.getTypeUtils().erasure(e.asType()),
+                        erasedNotification
+                ))
+                .forEach(e -> ctx.registerNotification(e.getQualifiedName().toString()));
+    }
 
     private void scanForBehaviours(RoundEnvironment roundEnv, ProcessorContext ctx) {
         TypeElement behaviourAnnot = ctx.getElements().getTypeElement(BEHAVIOUR_ANNOTATION_NAME);

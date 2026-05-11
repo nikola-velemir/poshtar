@@ -42,7 +42,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
-            <artifactId>poshtar-adapter</artifactId>
+            <artifactId>poshtar-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
