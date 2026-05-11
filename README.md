@@ -13,6 +13,7 @@ In `.NET` ecosystem, `MediatR` library is widely adopted, and today is considere
 As of writing this , `java` lacks a widely adopted, DI-agnostic mediator library, with `MediatR`- style pipelines.
 
 ## Key Features
+
 - DI Agnostic: Native support for Spring Boot, Google Guice, or vanilla Java.
 
 - Request to Handler mappings: One request is handled by one and only one handler. Handlers represent a singular use case, preventing "Fat Services".
@@ -93,7 +94,7 @@ public class YourHandler implements RequestHandler<YourRequest, YourResponse> {
     public YourResponse handle(YourRequest request) {
 		/*
 		Your awesome business logic.
-		/*
+		*/
     }
 }
 ```
@@ -137,7 +138,7 @@ public class YourHandler implements NotificationHandler<YourNotification> {
     public void handle(YourNotification notification) {
 		/*
 		Your awesome business logic.
-		/*
+		*/
     }
 }
 ```
