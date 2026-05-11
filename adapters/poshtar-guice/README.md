@@ -112,3 +112,5 @@ public class UserApi {
 ## Compile-Time Validation
 
 Even when using Guice’s runtime resolution, it is strongly recommended that you use the `poshtar-validator` annotation processor. Processor will prevent architectural violations, helping you find errors early.
+
+Refer to the root `README.md` for instructions on adding the `poshtar-validator` to your build plugins.

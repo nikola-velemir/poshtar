@@ -47,13 +47,15 @@ Violation: Compilation error if a `Request` type lacks a matching `RequestHandle
 
 Override: Apply `@SuppressOrphan` to the Request type.
 
+---
+
 **2. Handler Ambiguity**
 
 The library enforces a strict one-to-one mapping between a `Request` and its `RequestHandler`.
 
 Violation: Compilation error if multiple `RequestHandler` implementations are detected for the same `Request` type.
 
-
+---
 
 **3. Interface and Annotation (Wiring) Consistency**
 
@@ -63,14 +65,20 @@ Constraint: A class annotated with `@Behaviour` cannot implement the `RequestHan
 
 Constraint: A class annotated with `@Handler` cannot implement the `PipelineBehaviour` interface.
 
+---
+
 
 **4. Single Responsibility Enforcement**
 
 To prevent high coupling and maintain functional cohesion, a single class is prohibited from implementing multiple PoshtaR interfaces (e.g., a type cannot implement both `RequestHandler` and `NotificationHandler`).
 
+---
+
 **5. No direct injection**
 
-To prevent from bypassing pipeline and mediator logic, it is prohibited to directly instantiate or inject PoshtaR components. Only mediator interface (`Poshtar`) can be injected for use.
+To prevent a developer from bypassing pipeline and mediator logic, it is prohibited to directly instantiate or inject PoshtaR components. Only mediator interface (`Poshtar`) can be injected for use.
+
+---
 
 **6. Pipeline Continuity (Dead Pipeline Detection)**
 
@@ -82,6 +90,8 @@ Reasoning: Prevents "silent" failures where a middleware behavior stops the exec
 
 Override: Apply `@SuppressDead` to the method if short-circuiting is the intended architectural behavior (e.g., a caching layer).
 
+---
+
 **7. Non-Primitive Response Types**
 
 PoshtaR enforces the use of `Object` types for all Request-Response pairs. The generic parameter $T$ in Request<T> and RequestHandler<R, T> must be a reference type.
@@ -89,6 +99,8 @@ PoshtaR enforces the use of `Object` types for all Request-Response pairs. The g
 Violation: Warned if a primitive type (e.g., int, boolean, double) is used as a response type.
 
 Reasoning: It is much more concise to have a return type that is a custom defined object, or collection of such objects, rather than a primitive type.
+
+---
 
 **8. Request Immutability and Finality**
 
