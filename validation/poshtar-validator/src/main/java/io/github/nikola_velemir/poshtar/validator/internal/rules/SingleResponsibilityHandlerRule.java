@@ -62,10 +62,8 @@ class SingleResponsibilityHandlerRule implements Rule {
             if (checkIfImplementsNotificationHandler(ctx, handlerElement)) ++interfaceCount;
             if (checkIfImplementsBehaviour(ctx, handlerElement)) ++interfaceCount;
 
-            System.out.println(interfaceCount);
-            if (interfaceCount <= 1) continue;
 
-            logError(ctx, handlerElement);
+            if (interfaceCount > 1) logError(ctx, handlerElement);
 
         }
     }
