@@ -32,6 +32,7 @@ class RuleProvider {
             new NoPrimitiveReturnTypesRule(),
             new OrphanRequestRule(),
             new RequestFinalityRule(),
+            new NotificationFinalityRule(),
             new AmbiguityRule(),
             new HandlerNoInjectionRule(),
             new BehaviourNoInjectionRule(),

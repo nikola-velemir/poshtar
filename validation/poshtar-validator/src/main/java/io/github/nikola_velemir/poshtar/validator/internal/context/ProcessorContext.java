@@ -46,7 +46,7 @@ public class ProcessorContext {
     public final Trees trees;
     private final Map<String, RegistryEntry> handlerRegistry = new LinkedHashMap<>();
     private final Set<String> knownRequests = new HashSet<>();
-
+    private final Set<String> knownNotifications = new HashSet<>();
     /**
      * Constructs a context with an explicit Trees instance.
      *
@@ -76,7 +76,14 @@ public class ProcessorContext {
     public void registerRequest(String requestFqn) {
         knownRequests.add(requestFqn);
     }
-
+    /**
+     * Registers a notification type found in the source code.
+     *
+     * @param notificationFqn The fully qualified name of the notification class.
+     */
+    public void registerNotification(String notificationFqn){
+        knownNotifications.add(notificationFqn);
+    }
     /**
      * Returns an unmodifiable view of the handler registry.
      *
@@ -171,6 +178,14 @@ public class ProcessorContext {
      */
     public Set<String> getKnownRequests() {
         return Collections.unmodifiableSet(knownRequests);
+    }
+    /**
+     * Provides a set of found notification FQNs to the client class.
+     *
+     * @return An unmodifiable view of all discovered notification types.
+     */
+    public Set<String> getKnownNotifications() {
+        return Collections.unmodifiableSet(knownNotifications);
     }
 
 }
