@@ -26,6 +26,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import java.util.stream.Stream;
 
 /**
  * Rule that prevents the developer from declaring a class both as a handler and a behavior.
@@ -42,7 +43,7 @@ import javax.lang.model.type.TypeMirror;
  */
 class SingleResponsibilityHandlerRule implements Rule {
 
-    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s may only implement one of given interfaces.";
+    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s or %s may only implement one of given interfaces.";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     /**
@@ -56,18 +57,26 @@ class SingleResponsibilityHandlerRule implements Rule {
         var entries = ctx.getHandlerRegistry();
         for (var entry : entries.values()) {
             var handlerElement = (TypeElement) entry.handlerElement();
-
-            int interfaceCount = 0;
-            if (checkIfImplementsRequestHandler(ctx, handlerElement)) ++interfaceCount;
-            if (checkIfImplementsNotificationHandler(ctx, handlerElement)) ++interfaceCount;
-            if (checkIfImplementsBehaviour(ctx, handlerElement)) ++interfaceCount;
-
-
-            if (interfaceCount > 1) logError(ctx, handlerElement);
-
+            if (implementsMoreThanOne(ctx, handlerElement)) logError(ctx, handlerElement);
         }
     }
 
+    private static boolean implementsMoreThanOne(ProcessorContext ctx, TypeElement handlerElement) {
+        return handlerElement.getInterfaces()
+                .stream()
+                .filter(t-> isOneOfTargetInterfaces(ctx, t))
+                .limit(2)
+                .count() > 1;
+    }
+
+    private static boolean isOneOfTargetInterfaces(ProcessorContext ctx, TypeMirror iface) {
+        return Stream.of(
+                        RequestHandler.class.getName(),
+                        NotificationHandler.class.getName(),
+                        PipelineBehaviour.class.getName()
+                )
+                .anyMatch(fqn -> checkIfType(ctx, iface, fqn));
+    }
     private static void logError(ProcessorContext ctx, TypeElement handlerElement) {
 
         String errorMessage = String.format(
@@ -78,27 +87,6 @@ class SingleResponsibilityHandlerRule implements Rule {
         );
 
         logger.log(ctx.env, errorMessage, handlerElement);
-    }
-
-    private static boolean checkIfImplementsRequestHandler(ProcessorContext ctx, TypeElement handlerElement) {
-        return handlerElement
-                .getInterfaces()
-                .stream()
-                .anyMatch(t -> checkIfType(ctx, t, RequestHandler.class.getName()));
-    }
-
-    private static boolean checkIfImplementsNotificationHandler(ProcessorContext ctx, TypeElement handlerElement) {
-        return handlerElement
-                .getInterfaces()
-                .stream()
-                .anyMatch(t -> checkIfType(ctx, t, NotificationHandler.class.getName()));
-    }
-
-    private static boolean checkIfImplementsBehaviour(ProcessorContext ctx, TypeElement handlerElement) {
-        return handlerElement
-                .getInterfaces()
-                .stream()
-                .anyMatch(t -> checkIfType(ctx, t, PipelineBehaviour.class.getName()));
     }
 
     private static boolean checkIfType(ProcessorContext ctx, TypeMirror iface, String interfaceFqn) {
