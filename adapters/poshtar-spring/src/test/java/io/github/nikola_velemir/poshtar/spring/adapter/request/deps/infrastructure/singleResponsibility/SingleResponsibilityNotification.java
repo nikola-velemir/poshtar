@@ -16,27 +16,7 @@
 
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.singleResponsibility;
 
+import io.github.nikola_velemir.poshtar.core.notification.Notification;
 
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
-import io.github.nikola_velemir.poshtar.core.types.Unit;
-
-@Handler
-public class SingleResponsibilityHandler
-        implements RequestHandler<SingleResponsibilityFirstRequest, Unit>
-//        , NotificationHandler<SingleResponsibilityNotification>
-{
-
-
-
-    @Override
-    public Unit handle(SingleResponsibilityFirstRequest request) {
-        return null;
-    }
-
-//    @Override
-//    public void handle(SingleResponsibilityNotification notification) {
-//
-//    }
+public final class SingleResponsibilityNotification implements Notification {
 }

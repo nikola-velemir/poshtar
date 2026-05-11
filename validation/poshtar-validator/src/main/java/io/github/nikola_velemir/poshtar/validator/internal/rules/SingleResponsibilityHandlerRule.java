@@ -16,6 +16,7 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules;
 
+import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
@@ -32,7 +33,7 @@ import javax.lang.model.type.TypeMirror;
  * <p>
  * Class can have only on responsibility. In context of this library,
  * class that is to handle a request may only be either a handler or a behavior.
- * Rule prevents from implementing both {@link RequestHandler} and {@link PipelineBehaviour}.
+ * Rule prevents from implementing two of  {@link RequestHandler}, {@link NotificationHandler} and {@link PipelineBehaviour}.
  * </p>
  *
  * @author Nikola Velemir
@@ -45,7 +46,7 @@ class SingleResponsibilityHandlerRule implements Rule {
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     /**
-     * Checks if class in question implements both {@link RequestHandler} and {@link PipelineBehaviour}
+     * Checks if class in question implements two of {@link NotificationHandler}, {@link RequestHandler} and {@link PipelineBehaviour}
      *
      * @param roundEnv The environment providing access to elements in the current processing round.
      * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
@@ -56,10 +57,13 @@ class SingleResponsibilityHandlerRule implements Rule {
         for (var entry : entries.values()) {
             var handlerElement = (TypeElement) entry.handlerElement();
 
-            boolean implementsHandler = checkIfImplementsHandler(ctx, handlerElement);
-            boolean implementsBehaviour = checkIfImplementsBehaviour(ctx, handlerElement);
+            int interfaceCount = 0;
+            if (checkIfImplementsRequestHandler(ctx, handlerElement)) ++interfaceCount;
+            if (checkIfImplementsNotificationHandler(ctx, handlerElement)) ++interfaceCount;
+            if (checkIfImplementsBehaviour(ctx, handlerElement)) ++interfaceCount;
 
-            if (!implementsHandler || !implementsBehaviour) continue;
+            System.out.println(interfaceCount);
+            if (interfaceCount <= 1) continue;
 
             logError(ctx, handlerElement);
 
@@ -71,17 +75,25 @@ class SingleResponsibilityHandlerRule implements Rule {
         String errorMessage = String.format(
                 VIOLATION_MESSAGE,
                 RequestHandler.class.getName(),
+                NotificationHandler.class.getName(),
                 PipelineBehaviour.class.getName()
         );
 
         logger.log(ctx.env, errorMessage, handlerElement);
     }
 
-    private static boolean checkIfImplementsHandler(ProcessorContext ctx, TypeElement handlerElement) {
+    private static boolean checkIfImplementsRequestHandler(ProcessorContext ctx, TypeElement handlerElement) {
         return handlerElement
                 .getInterfaces()
                 .stream()
                 .anyMatch(t -> checkIfType(ctx, t, RequestHandler.class.getName()));
+    }
+
+    private static boolean checkIfImplementsNotificationHandler(ProcessorContext ctx, TypeElement handlerElement) {
+        return handlerElement
+                .getInterfaces()
+                .stream()
+                .anyMatch(t -> checkIfType(ctx, t, NotificationHandler.class.getName()));
     }
 
     private static boolean checkIfImplementsBehaviour(ProcessorContext ctx, TypeElement handlerElement) {
