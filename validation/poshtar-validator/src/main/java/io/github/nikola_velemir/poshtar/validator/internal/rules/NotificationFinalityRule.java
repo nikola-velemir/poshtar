@@ -13,7 +13,6 @@ public class NotificationFinalityRule extends FinalityRule{
 
     @Override
     protected Set<String> getFQNs(ProcessorContext ctx) {
-        System.out.println(ctx.getKnownNotifications());
         return ctx.getKnownNotifications();
     }
 }
