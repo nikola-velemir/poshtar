@@ -71,6 +71,8 @@ class RegistryScannerImpl implements RegistryScanner {
         scanForBehaviours(roundEnv, ctx);
 
         scanForRequests(roundEnv, ctx);
+
+        scanForNotifications(roundEnv, ctx);
     }
 
     private void scanForRequests(RoundEnvironment roundEnv, ProcessorContext ctx) {
@@ -105,7 +107,7 @@ class RegistryScannerImpl implements RegistryScanner {
                         ctx.env.getTypeUtils().erasure(e.asType()),
                         erasedNotification
                 ))
-                .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
+                .forEach(e -> ctx.registerNotification(e.getQualifiedName().toString()));
     }
 
     private void scanForBehaviours(RoundEnvironment roundEnv, ProcessorContext ctx) {

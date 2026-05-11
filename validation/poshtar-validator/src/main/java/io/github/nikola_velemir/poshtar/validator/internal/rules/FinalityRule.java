@@ -8,23 +8,24 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import java.util.Set;
 
-public class FinalityRule implements Rule {
+public abstract class FinalityRule implements Rule {
 
-    private static final String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Notification '%s' must be final or a record!";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
+
+    protected abstract String getViolationMessage();
+    protected abstract Set<String> getFQNs(ProcessorContext ctx);
     /**
      * Validates the finality of request classes. Logs the error if finality is violated.
      * @param roundEnv The environment providing access to elements in the current processing round.
      * @param ctx      Instance of context containing all related request, handler and behavior FQNs.
      */
-    private  final String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Notification '%s' must be final or a record!";
-
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
-
-        for (var notificationFqn : ctx.getKnownNotifications()) {
+        var fqns = getFQNs(ctx);
+        for (var notificationFqn : fqns) {
 
             TypeElement element = ctx.env.getElementUtils().getTypeElement(notificationFqn);
 
@@ -34,15 +35,16 @@ public class FinalityRule implements Rule {
         }
     }
 
-    private static boolean checkIfFinalOrRecord(TypeElement element) {
+    private boolean checkIfFinalOrRecord(TypeElement element) {
         boolean isRecord = element.getKind() == ElementKind.RECORD;
         boolean isFinal = element.getModifiers().contains(Modifier.FINAL);
         return isRecord || isFinal;
 
     }
 
-    private static void logError(ProcessorContext ctx, String requestFqn, TypeElement targetClass) {
-        String errorMessage = String.format(FINALITY_VIOLATED_MESSAGE, requestFqn);
+    private void logError(ProcessorContext ctx, String requestFqn, TypeElement targetClass) {
+        String finalityViolationMessage = getViolationMessage();
+        String errorMessage = String.format(finalityViolationMessage, requestFqn);
         logger.log(ctx.env, errorMessage, targetClass);
 
     }

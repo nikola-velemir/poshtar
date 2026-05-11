@@ -20,5 +20,5 @@ package io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transa
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 
 
-public class MandatoryNotification implements Notification {
+public final class MandatoryNotification implements Notification {
 }
