@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/nikola-velemir/poshtar">
+    <img src="../../assets/logo.svg" width="120" alt="PoshtaR Logo" />
+  </a>
+</p>
+
 # PoshtaR Spring Boot Adapter
 
 The Spring Adapter allows you to leverage Spring for your PoshtaR components. By using the `@EnablePoshtar` annotation, the library automatically scans your project, registers your components, and prepares them for execution.

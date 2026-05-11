@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/nikola-velemir/poshtar">
+    <img src="./assets/logo.svg" width="120" alt="PoshtaR Logo" />
+  </a>
+</p>
+
 # PoshtaR - DI agnostic Mediator & Pipeline library
 
 PoshtaR is a dependency-injection-agnostic implementation of the

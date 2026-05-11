@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/nikola-velemir/poshtar">
+    <img src="../../assets/logo.svg" width="120" alt="PoshtaR Logo" />
+  </a>
+</p>
+
 # Poshtar Guice Adapter
 
 The Guice Adapter provides automated component discovery and integration for Google Guice. It is designed for developers who prefer the explicit control and speed of Google Guice. It bridges the gap between your Guice Modules and the PoshtaR.
@@ -103,6 +109,6 @@ public class UserApi {
 }
 ```
 
-## Static Validation
+## Compile-Time Validation
 
-Even when using Guice’s runtime resolution, it is strongly recommended to use the `poshtar-validator` annotation processor. Processor will prevent architectural violations, helping you find errors early.
+Even when using Guice’s runtime resolution, it is strongly recommended that you use the `poshtar-validator` annotation processor. Processor will prevent architectural violations, helping you find errors early.

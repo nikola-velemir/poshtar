@@ -1,4 +1,10 @@
-# Poshtar Validator
+<p align="center">
+  <a href="https://github.com/nikola-velemir/poshtar">
+    <img src="../../assets/logo.svg" width="120" alt="PoshtaR Logo" />
+  </a>
+</p>
+
+# Poshtar Validator 
 
 The PoshtaR Validator is a static analysis tool implemented as a Java Annotation Processor. It intercepts the compilation process to enforce architectural constraints and verify the structural integrity of the Mediator pattern implementation at compile-time.
 

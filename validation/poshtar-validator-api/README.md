@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/nikola-velemir/poshtar">
+    <img src="../../assets/logo.svg" width="120" alt="PoshtaR Logo" />
+  </a>
+</p>
+
 # PoshtaR Validator API
 
 The Validator API allows you to override some architectural rules enforced by validations processor. While PoshtaR aims for strict architectural integrity, real-world edge cases sometimes require you to bypass specific rules. This library provides the supression annotations to do this safely.
