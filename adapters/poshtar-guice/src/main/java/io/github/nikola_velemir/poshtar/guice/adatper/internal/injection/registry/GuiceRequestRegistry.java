@@ -19,12 +19,11 @@ package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.regist
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
-import jdk.jshell.spi.ExecutionControl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 

@@ -17,7 +17,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.internal.configuration;
 
 
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
+import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarImpl;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;

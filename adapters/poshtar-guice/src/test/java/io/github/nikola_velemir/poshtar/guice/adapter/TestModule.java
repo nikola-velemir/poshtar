@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.google.inject.persist.jpa.JpaPersistOptions;
-import io.github.nikola_velemir.poshtar.adapter.configuration.PipelineConfiguration;
+import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adatper.module.PoshtarGuiceModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;

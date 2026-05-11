@@ -31,7 +31,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>poshtar-core</module>
-        <module>poshtar-adapter</module>
+        <!-- <module>poshtar-adapter</module> -->
         <module>validation/poshtar-validator-api</module>
         <module>validation/poshtar-validator</module>
         <module>adapters/poshtar-spring</module>
