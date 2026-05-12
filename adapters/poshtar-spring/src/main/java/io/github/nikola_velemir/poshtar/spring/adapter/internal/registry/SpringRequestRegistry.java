@@ -22,6 +22,7 @@ import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConf
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -41,6 +42,8 @@ import java.util.*;
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final PipelineConfiguration pipelineConfiguration;
+    private volatile boolean initialized = false;
+
     /**
      * Instantiates the registry, with the provided Spring context.
      * @param context Spring context, used for Posthar component discovery.
@@ -57,7 +60,8 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
         List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(context);
 
         for (RequestHandler<?, ?> handler : allHandlers.values()) {
-            Class<?> requestType = ResolvableType.forClass(handler.getClass())
+            Class<?> targetClass = AopUtils.getTargetClass(handler);
+            Class<?> requestType = ResolvableType.forClass(targetClass)
                     .as(RequestHandler.class)
                     .getGeneric(0).resolve();
 
@@ -84,7 +88,7 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
 
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
-        ResolvableType behaviourInterface = ResolvableType.forClass(behaviour.getClass())
+        ResolvableType behaviourInterface = ResolvableType.forClass(AopUtils.getTargetClass(behaviour))
                 .as(PipelineBehaviour.class);
         Class<?> genericRequestType = behaviourInterface.getGeneric(0).resolve();
         if (genericRequestType == null) {
@@ -96,7 +100,8 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == context) {
+        if (event.getApplicationContext() == context && !initialized) {
+            initialized = true;
             init(context);
         }
     }

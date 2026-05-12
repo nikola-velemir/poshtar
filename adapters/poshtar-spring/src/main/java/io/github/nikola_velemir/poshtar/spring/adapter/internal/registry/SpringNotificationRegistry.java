@@ -19,6 +19,7 @@ package io.github.nikola_velemir.poshtar.spring.adapter.internal.registry;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -35,6 +36,8 @@ import java.util.Map;
 public class SpringNotificationRegistry extends AbstractNotificationRegistry implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ApplicationContext context;
+    private volatile boolean initialized;
+
     /**
      * Instantiates the registry, with the provided Spring context.
      * @param context Spring context, used for Posthar component discovery.
@@ -50,10 +53,10 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
         for (NotificationHandler<Notification> handler : allHandlers.values()) {
 
 
-            ResolvableType resolvableType = ResolvableType.forClass(handler.getClass())
-                    .as(NotificationHandler.class);
-
-            Class<?> notificationType = resolvableType.getGeneric(0).resolve();
+            Class<?> targetClass = AopUtils.getTargetClass(handler);
+            Class<?> notificationType = ResolvableType.forClass(targetClass)
+                    .as(NotificationHandler.class)
+                    .getGeneric(0).resolve();
 
             if (notificationType != null && Notification.class.isAssignableFrom(notificationType)) {
                 @SuppressWarnings("unchecked")
@@ -71,7 +74,8 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == context) {
+        if (event.getApplicationContext() == context && !initialized) {
+            initialized = true;
             init(context);
         }
     }
