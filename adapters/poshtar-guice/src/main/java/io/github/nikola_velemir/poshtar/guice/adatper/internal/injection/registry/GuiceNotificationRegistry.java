@@ -19,9 +19,13 @@ package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.regist
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class maps specific notification type to its designated handler class, including proxies.
@@ -33,9 +37,11 @@ import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotif
  * @since 1.0.0
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
+
 public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
     /**
      * Instantiates the registry, with the provided Guice injector.
+     *
      * @param injector Guice injector, used to discover classes thru bindings.
      */
     public GuiceNotificationRegistry(Injector injector) {
@@ -43,20 +49,23 @@ public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
     }
 
     private void init(Injector injector) {
-
-        for (Binding<?> binding : injector.getAllBindings().values()) {
-
-            Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
-            if (NotificationHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
-                NotificationHandler handler = (NotificationHandler) injector.getInstance(binding.getKey());
-                TypeToken<?> typeToken = TypeToken.of(handler.getClass());
-                TypeToken<?> superType = typeToken.getSupertype((Class) NotificationHandler.class);
-                Class<?> notificationType = superType.resolveType(NotificationHandler.class.getTypeParameters()[0]).getRawType();
-                if (Notification.class.isAssignableFrom(notificationType)) {
-                    Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;
-                    register(castedType, handler);
+        Injector current = injector;
+        while (current != null) {
+            List<Key<?>> keys = new ArrayList<>(current.getBindings().keySet());
+            for (Key<?> key : keys) {
+                Class<?> rawType = key.getTypeLiteral().getRawType();
+                if (NotificationHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
+                    NotificationHandler handler = (NotificationHandler) current.getInstance(key);
+                    TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(handler));
+                    TypeToken<?> superType = typeToken.getSupertype((Class) NotificationHandler.class);
+                    Class<?> notificationType = superType.resolveType(NotificationHandler.class.getTypeParameters()[0]).getRawType();
+                    if (Notification.class.isAssignableFrom(notificationType)) {
+                        Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;
+                        register(castedType, handler);
+                    }
                 }
             }
+            current = current.getParent();
         }
     }
 }

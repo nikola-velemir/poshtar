@@ -72,7 +72,7 @@ import java.util.List;
  */
 public class PoshtarGuiceModule extends AbstractModule {
     private final String[] basePackages;
-    private final PipelineConfiguration pipelinepipelineConfiguration;
+    private final PipelineConfiguration pipelineConfiguration;
     /**
      * Constructs a module with custom pipeline configuration and scan targets.
      *
@@ -80,7 +80,7 @@ public class PoshtarGuiceModule extends AbstractModule {
      * @param basePackages  The packages to scan for handlers and behaviors; if empty, scans the entire classpath.
      */
     public PoshtarGuiceModule(PipelineConfiguration configuration, String... basePackages) {
-        pipelinepipelineConfiguration = configuration;
+        pipelineConfiguration = configuration;
         this.basePackages = basePackages.length > 0 ? basePackages : new String[]{""};
     }
     /**
@@ -89,7 +89,7 @@ public class PoshtarGuiceModule extends AbstractModule {
      * @param basePackages The packages to scan for handlers; if empty, scans the entire classpath.
      */
     public PoshtarGuiceModule(String... basePackages) {
-        pipelinepipelineConfiguration = new PipelineConfiguration();
+        pipelineConfiguration = new PipelineConfiguration();
         this.basePackages = basePackages.length > 0 ? basePackages : new String[]{""};
     }
     /**
@@ -111,7 +111,7 @@ public class PoshtarGuiceModule extends AbstractModule {
     @Provides
     @Singleton
     public RequestRegistry provideRequestRegistry(Injector injector) {
-        return new GuiceRequestRegistry(pipelinepipelineConfiguration, injector);
+        return new GuiceRequestRegistry(pipelineConfiguration, injector);
     }
     /**
      * Provides a singleton instance of the NotificationRegistry.
@@ -138,9 +138,9 @@ public class PoshtarGuiceModule extends AbstractModule {
     }
 
     private void bindBehaviours() {
-        if (pipelinepipelineConfiguration == null) return;
+        if (pipelineConfiguration == null) return;
 
-        List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses = pipelinepipelineConfiguration.getBehaviourClasses();
+        List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses = pipelineConfiguration.getBehaviourClasses();
         for (Class<? extends PipelineBehaviour<?, ?>> behaviourClass : behaviourClasses) {
             bind(behaviourClass).in(Singleton.class);
         }

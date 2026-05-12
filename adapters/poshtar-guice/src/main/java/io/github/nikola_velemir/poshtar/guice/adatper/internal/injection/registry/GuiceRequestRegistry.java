@@ -17,8 +17,8 @@
 package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Binding;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.Request;
@@ -59,7 +59,7 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
         List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(injector);
         List<RequestHandler> allHandlers = provideHandlers(injector);
         for (RequestHandler<?, ?> handler : allHandlers) {
-            TypeToken<?> typeToken = TypeToken.of(handler.getClass());
+            TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(handler));
 
             TypeToken<?> superType = typeToken.getSupertype((Class) RequestHandler.class);
 
@@ -85,18 +85,23 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
 
     private static List<RequestHandler> provideHandlers(Injector injector) {
         List<RequestHandler> allHandlers = new ArrayList<>();
-        for (Binding<?> binding : injector.getAllBindings().values()) {
-            Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
-            if (RequestHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
-                allHandlers.add((RequestHandler) injector.getInstance(binding.getKey()));
+        Injector current = injector;
+        while (current != null) {
+            List<Key<?>> keys = new ArrayList<>(current.getBindings().keySet()); // getBindings() = own level only
+            for (Key<?> key : keys) {
+                Class<?> rawType = key.getTypeLiteral().getRawType();
+                if (RequestHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
+                    allHandlers.add((RequestHandler) current.getInstance(key));
+                }
             }
+            current = current.getParent();
         }
         return allHandlers;
     }
 
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
-        TypeToken<?> typeToken = TypeToken.of(behaviour.getClass());
+        TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(behaviour));
         TypeToken<?> superType = typeToken.getSupertype((Class) PipelineBehaviour.class);
         Class<?> genericRequestType = superType.resolveType(PipelineBehaviour.class.getTypeParameters()[0]).getRawType();
 
