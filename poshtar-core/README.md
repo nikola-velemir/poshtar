@@ -10,7 +10,7 @@ PoshtaR Core is the engine powering the entire PoshtaR ecosystem. It is designed
 
 ## Core Concepts
 
-The Core module defines the three primary pillars of the architecture:
+The Core module defines the primary pillars of the architecture:
 
 - The Mediator (`Poshtar`): A central communication point that decouples the message sender from its executioner.
 
