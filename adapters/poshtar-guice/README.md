@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Poshtar Guice Adapter
+# PoshtaR Guice Adapter
 
 The Guice Adapter provides automated component discovery and integration for Google Guice. It is designed for developers who prefer the explicit control and speed of Google Guice. It bridges the gap between your Guice Modules and the PoshtaR.
 
