@@ -34,14 +34,13 @@ To integrate the validator into the build lifecycle, configure the `maven-compil
 </plugin>
 ```
 
-
 ## Static Validation Rules
 
-The processor executes the following validation logic during build phase of the project:
+The processor executes the following validation logic during compilation:
 
-**1. Orhpaned Requests**
+**1. Orphaned Requests**
 
-Every class implementing the `Request<T>` interface must have exactly one associated class annotated with @Handler that implements `RequestHandler<R, T>`.
+Every class implementing the `Request<T>` interface must have exactly one associated class annotated with `@Handler` that implements `RequestHandler<R, T>`.
 
 Violation: Compilation error if a `Request` type lacks a matching `RequestHandler` implementation.
 
@@ -61,12 +60,11 @@ Violation: Compilation error if multiple `RequestHandler` implementations are de
 
 The processor validates that components are correctly categorized and do not possess conflicting definitions.
 
-Constraint: A class annotated with `@Behaviour` cannot implement the `RequestHandler` interface.
+Constraint: A class annotated with `@Behaviour` cannot implement the `RequestHandler` or `NotificationHandler` interfaces.
 
 Constraint: A class annotated with `@Handler` cannot implement the `PipelineBehaviour` interface.
 
 ---
-
 
 **4. Single Responsibility Enforcement**
 
@@ -74,9 +72,9 @@ To prevent high coupling and maintain functional cohesion, a single class is pro
 
 ---
 
-**5. No direct injection**
+**5. No Direct Injection**
 
-To prevent a developer from bypassing pipeline and mediator logic, it is prohibited to directly instantiate or inject PoshtaR components. Only mediator interface (`Poshtar`) can be injected for use.
+To prevent a developer from bypassing pipeline and mediator logic, it is prohibited to directly instantiate or inject PoshtaR components. Only the mediator interface (`Poshtar`) can be injected for use.
 
 ---
 
@@ -84,7 +82,7 @@ To prevent a developer from bypassing pipeline and mediator logic, it is prohibi
 
 The processor performs an Abstract Syntax Tree (AST) analysis on all classes implementing `PipelineBehaviour`. It verifies that the handle method of the `RequestDelegate` is invoked within the method body to ensure the request chain is not unintentionally terminated.
 
-Violation: Compilation error if the processor fails to detect a call to requestDelegate.handle(request).
+Violation: Compilation error if the processor fails to detect a call to `requestDelegate.handle(request)`.
 
 Reasoning: Prevents "silent" failures where a middleware behavior stops the execution flow without a deliberate return or exception, leading to unreachable handlers.
 
@@ -94,18 +92,18 @@ Override: Apply `@SuppressDead` to the method if short-circuiting is the intende
 
 **7. Non-Primitive Response Types**
 
-PoshtaR enforces the use of `Object` types for all Request-Response pairs. The generic parameter $T$ in Request<T> and RequestHandler<R, T> must be a reference type.
+PoshtaR enforces the use of `Object` types for all Request-Response pairs. The generic parameter $T$ in `Request<T>` and `RequestHandler<R, T>` must be a reference type.
 
-Violation: Warned if a primitive type (e.g., int, boolean, double) is used as a response type.
+Violation: Warned if a primitive type (e.g., `int`, `boolean`, `double`) is used as a response type.
 
-Reasoning: It is much more concise to have a return type that is a custom defined object, or collection of such objects, rather than a primitive type.
+Reasoning: Primitive types cannot carry structured result or error information and do not compose well with the rest of the type system. A custom object or collection thereof is far more expressive and extensible as a response type.
 
 ---
 
 **8. Request Immutability and Finality**
 
-To prevent side effects during pipeline execution, every class implementing the Request<T> or Notification interface must be declared as `final` or `record`.
+To prevent side effects during pipeline execution, every class implementing the `Request<T>` or `Notification` interface must be declared as `final` or `record`.
 
-Violation: Compilation error if a Request or Notification class is not marked with the `final` modifier, or if its not a `record`.
+Violation: Compilation error if a `Request` or `Notification` class is not marked with the `final` modifier, or if it is not a `record`.
 
 Reasoning: Request object travels through multiple behaviors before reaching the handler. Restricting inheritance ensures that the request structure is immutable and its behavior is predictable across the entire pipeline, preventing the "Fragile Base Class" problem within messaging.
