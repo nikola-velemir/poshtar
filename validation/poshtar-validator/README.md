@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Poshtar Validator 
+# PoshtaR Validator 
 
 The PoshtaR Validator is a static analysis tool implemented as a Java Annotation Processor. It intercepts the compilation process to enforce architectural constraints and verify the structural integrity of the Mediator pattern implementation at compile-time.
 
