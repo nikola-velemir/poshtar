@@ -102,7 +102,7 @@ public class RequestTests {
             em.getTransaction().commit();
             assertFalse(results.isEmpty(), "Transaction did not commit!.");
 
-            var entity = results.getFirst();
+            var entity = results.get(0);
 
             poshtar.send(new UpdateTransactionalRequest(entity.getId(), "Updated"));
 

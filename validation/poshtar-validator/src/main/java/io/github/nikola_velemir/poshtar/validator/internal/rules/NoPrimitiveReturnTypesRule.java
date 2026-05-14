@@ -129,7 +129,7 @@ class NoPrimitiveReturnTypesRule implements Rule {
             if (iface instanceof DeclaredType declared) {
                 Element ifaceElement = declared.asElement();
                 if (ifaceElement instanceof TypeElement te && te.getQualifiedName().contentEquals(Request.class.getName())) {
-                    return declared.getTypeArguments().getFirst();
+                    return declared.getTypeArguments().get(0);
                 }
             }
         }
@@ -143,7 +143,7 @@ class NoPrimitiveReturnTypesRule implements Rule {
         for (TypeMirror iface : ctx.getTypes().directSupertypes(element.asType())) {
             if (ctx.getTypes().isAssignable(ctx.getTypes().erasure(iface), ctx.getTypes().erasure(requestInterface))) {
                 if (iface instanceof DeclaredType declared && !declared.getTypeArguments().isEmpty()) {
-                    return declared.getTypeArguments().getFirst();
+                    return declared.getTypeArguments().get(0);
                 }
             }
         }

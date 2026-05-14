@@ -136,7 +136,7 @@ public class NotificationTests {
         AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> poshtar.publish(failNotification));
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
-        assertInstanceOf(RuntimeException.class, errors.getFirst());
+        assertInstanceOf(RuntimeException.class, errors.get(0));
         assertEquals(1, failNotification.payload);
         System.out.println(">>> TEST PASSED <<<");
     }

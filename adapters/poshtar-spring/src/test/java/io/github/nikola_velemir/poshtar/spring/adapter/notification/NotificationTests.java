@@ -120,7 +120,7 @@ public class NotificationTests {
         AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class, () -> {
             poshtar.publish(mandatoryNotification);
         });
-        Exception ex = (Exception) mainEx.getErrors().getFirst();
+        Exception ex = (Exception) mainEx.getErrors().get(0);
         String expected = "No existing transaction found for transaction marked with propagation 'mandatory'";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
@@ -136,7 +136,7 @@ public class NotificationTests {
         });
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
-        assertInstanceOf(IllegalTransactionStateException.class, errors.getFirst());
+        assertInstanceOf(IllegalTransactionStateException.class, errors.get(0));
         assertEquals(1, failNotification.payload);
         System.out.println(">>> TEST PASSED <<<");
     }
@@ -152,6 +152,6 @@ public class NotificationTests {
         );
         List<Throwable> errors = ex.getErrors();
         assertEquals(1, errors.size());
-        assertInstanceOf(IllegalTransactionStateException.class, errors.getFirst());
+        assertInstanceOf(IllegalTransactionStateException.class, errors.get(0));
     }
 }
