@@ -106,6 +106,6 @@ public class LoggingBehaviour<TRequest extends Request<TResponse>, TResponse>
 
 - Type Safety: Leverages Java Generics to ensure Request and Response are always aligned at the code level.
 
-- Extensibility: Provides the essential interfaces (`RequestRegistry`, `NotificationRegistry`) that adapters (Spring/Guice) use to wire PoshtaR into your favorite DI container.
+- Extensibility: Provides the essential interfaces (RequestRegistry, NotificationRegistry) that adapters (Spring/Guice) use to wire PoshtaR into your favorite DI container.
 
 - Performance: Minimal overhead. The pipeline is optimized to run with a minimal number of object allocations.
