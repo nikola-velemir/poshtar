@@ -86,7 +86,7 @@ class RegistryTypeHelper {
                     List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
                     if (typeArgs.isEmpty()) continue;
 
-                    TypeMirror requestType = typeArgs.getFirst();
+                    TypeMirror requestType = typeArgs.get(0);
 
                     if (requestType.getKind() == TypeKind.ERROR) {
                         Name handlerName = handler.getSimpleName();

@@ -9,18 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      # This runs two separate build jobs in parallel
+      matrix:
+        java-version: [ '17', '21' ]
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
         cache: 'maven'
 
     - name: Build with Maven
-      # This runs your tests and triggers the annotation processor rules
-      run: mvn clean install -DskipTests=false -Pvalidate
+      run: mvn clean install -Pvalidate
