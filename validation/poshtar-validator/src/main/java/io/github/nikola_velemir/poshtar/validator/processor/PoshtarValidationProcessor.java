@@ -55,7 +55,7 @@ import java.util.Set;
  * @since 1.0.0
  */
 @AutoService(Processor.class)
-@SupportedSourceVersion(SourceVersion.RELEASE_21)
+@SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class PoshtarValidationProcessor extends AbstractProcessor {
     /**
      * The set of annotations this processor is interested in monitoring.
