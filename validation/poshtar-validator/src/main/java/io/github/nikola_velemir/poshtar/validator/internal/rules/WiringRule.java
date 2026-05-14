@@ -31,9 +31,9 @@ import javax.lang.model.element.TypeElement;
  * Rule extending this template should prevent wiring violations, where developer should not be allowed to:
  * </p>
  * <ul>
- *     <li>Annotate a class implements {@link io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler}
+ *     <li>Annotated a class implements {@link io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler}
  *     with {@link io.github.nikola_velemir.poshtar.core.annotations.Behaviour}.</li>
- *     <li>Annotate a class implements {@link io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour}
+ *     <li>Annotated a class implements {@link io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour}
  *     with {@link io.github.nikola_velemir.poshtar.core.annotations.Handler}.</li>
  *
  * </ul>
