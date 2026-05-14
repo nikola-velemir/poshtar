@@ -33,7 +33,7 @@ import javax.lang.model.element.ExecutableElement;
  * @see io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead
  * @since 1.0.0
  */
-public class SuppressionChecker {
+class SuppressionChecker {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
 
     /**

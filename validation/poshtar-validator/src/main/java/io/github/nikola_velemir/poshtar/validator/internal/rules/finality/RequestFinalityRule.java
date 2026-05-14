@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.finality;
 
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 /**

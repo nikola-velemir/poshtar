@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline;
 
 import com.sun.source.tree.*;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline.FlowAnalyser;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline.SuppressionChecker;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
