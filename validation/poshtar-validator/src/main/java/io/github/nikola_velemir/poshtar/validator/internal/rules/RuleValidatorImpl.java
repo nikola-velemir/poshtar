@@ -18,20 +18,42 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules;
 
 
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline.DeadPipelineRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.finality.FinalityRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.NoInjectionRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.registration.RegistrationRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.responsibility.ResponsibilityRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.returnTypes.ReturnTypesRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.wiring.WiringRuleProvider;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Base implementation of the {@link RuleValidator}.
- * <p>During validation, passes thru the list of rules provided by {@link RuleProvider}, calling validate on each one</p>
+ * <p>During validation, passes thru the list of rules provided by rule providers,
+ * calling validate on each one</p>
  *
  */
 class RuleValidatorImpl implements RuleValidator {
-    private final List<Rule> rules = RuleProvider.provideRules();
+    private static final List<Rule> RULES = provideRules();
+
+    private static List<Rule> provideRules(){
+       return Stream.of(
+                DeadPipelineRuleProvider.provide(),
+                FinalityRuleProvider.provide(),
+                NoInjectionRuleProvider.provide(),
+                RegistrationRuleProvider.provide(),
+                ResponsibilityRuleProvider.provide(),
+                ReturnTypesRuleProvider.provide(),
+                WiringRuleProvider.provide()
+        ).flatMap(List::stream
+        ).toList();
+    }
 
     public void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        for (Rule rule : rules) {
+        for (Rule rule : RULES) {
             rule.validate(roundEnv, ctx);
         }
     }

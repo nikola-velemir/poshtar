@@ -35,7 +35,7 @@ import java.util.Set;
  * @version ${project.version}
  * @since 1.0.0
  */
-public class FlowAnalyser {
+class FlowAnalyser {
     private final ProcessorContext ctx;
     private final CalleeResolver resolver;
     private final Set<ExecutableElement> visited = new HashSet<>();

@@ -17,8 +17,9 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.wiring;
 
 
-//
-//
+import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
+
 //public class ForgotToAnnotateRequestHandler implements RequestHandler<ForgotToAnnotateRequest, Unit> {
 //    @Override
 //    public Unit handle(ForgotToAnnotateRequest request) {

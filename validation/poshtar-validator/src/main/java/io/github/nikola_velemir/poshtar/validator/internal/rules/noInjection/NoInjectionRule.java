@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection;
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.InjectionBypassChecker;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.InjectionBypassCheckerProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
@@ -40,7 +39,6 @@ import java.util.Set;
  */
 abstract class NoInjectionRule implements Rule {
     private static final String MEDIATOR_FQN = Poshtar.class.getName();
-    private final InjectionBypassChecker bypassChecker = InjectionBypassCheckerProvider.provide();
 
     /**
      * Checks if the class used is forbidden to be injected. Logs the error if forbidden class is found.
@@ -59,7 +57,7 @@ abstract class NoInjectionRule implements Rule {
 
             if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
 
-            if (bypassChecker.isBypassed(clazz, ctx)) continue;
+            if (InjectionBypassChecker.isBypassed(clazz, ctx)) continue;
 
             checkClassBody((TypeElement) root, forbidden, ctx);
         }

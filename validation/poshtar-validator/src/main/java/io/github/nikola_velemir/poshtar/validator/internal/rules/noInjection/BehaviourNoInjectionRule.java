@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;

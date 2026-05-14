@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.wiring;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
