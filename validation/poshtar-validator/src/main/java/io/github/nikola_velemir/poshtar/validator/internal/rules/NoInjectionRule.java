@@ -18,6 +18,8 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules;
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.InjectionBypassChecker;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.InjectionBypassCheckerProvider;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
@@ -37,7 +39,8 @@ import java.util.Set;
  * @since 1.0.0
  */
 abstract class NoInjectionRule implements Rule {
-    protected static final String MEDIATOR_FQN = Poshtar.class.getName();
+    private static final String MEDIATOR_FQN = Poshtar.class.getName();
+    private final InjectionBypassChecker bypassChecker = InjectionBypassCheckerProvider.provide();
 
     /**
      * Checks if the class used is forbidden to be injected. Logs the error if forbidden class is found.
@@ -53,7 +56,10 @@ abstract class NoInjectionRule implements Rule {
         for (Element root : roundEnv.getRootElements()) {
             if (root.getKind() != ElementKind.CLASS) continue;
             TypeElement clazz = (TypeElement) root;
+
             if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
+
+            if (bypassChecker.isBypassed(clazz, ctx)) continue;
 
             checkClassBody((TypeElement) root, forbidden, ctx);
         }
@@ -116,7 +122,7 @@ abstract class NoInjectionRule implements Rule {
      * Error logging logic.
      *
      * @param target Element that is bound to the error.
-     * @param ctx  Instance of context containing all related request, handler and behavior FQNs.
+     * @param ctx    Instance of context containing all related request, handler and behavior FQNs.
      */
     protected abstract void logError(Element target, ProcessorContext ctx);
 
