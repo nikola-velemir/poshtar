@@ -29,7 +29,8 @@ node_modules/
 *.metadata.json
 **/coverage/
 **/.nyc_output/
-
+**/target/
+**/target
 # --- Environment Secrets ---
 **/src/environments/environment.prod.ts
 **/.env

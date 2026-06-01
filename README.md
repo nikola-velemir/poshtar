@@ -4,6 +4,7 @@
   </a>
 </p>
 
+
 # PoshtaR - DI agnostic Mediator & Pipeline library
 
 PoshtaR is a dependency-injection-agnostic implementation of the
@@ -266,3 +267,8 @@ PoshtaR helps you enforce SOLID principles without the boilerplate:
 ## Contributing and support
 
 PoshtaR is in active development. If you are interested in seeing library grow in functionality or have suggestions, open a Github Issue.
+
+## Contact
+For inquiries regarding this library, you can reach the maintainer at:
+* **Email:** nvelem.nikola@gmail.com
+* **Location:** Temerin, 21235, Serbia
