@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      # This runs two separate build jobs in parallel
       matrix:
         java-version: [ '17', '21' ]
 

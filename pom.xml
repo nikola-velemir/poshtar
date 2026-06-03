@@ -82,7 +82,6 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Shared plugin config — referenced by profiles, not re-declared -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
@@ -149,7 +148,6 @@
         </pluginManagement>
 
         <plugins>
-            <!-- Always runs: compiler + surefire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -164,8 +162,7 @@
     </build>
 
     <profiles>
-        <!-- 1. VALIDATE PROFILE: Run before committing -->
-        <!-- Command: mvn clean verify -Pvalidate -->
+
         <profile>
             <id>validate</id>
             <build>
@@ -182,8 +179,7 @@
             </build>
         </profile>
 
-        <!-- 2. DEPLOY PROFILE: Run for publishing to Maven Central -->
-        <!-- Command: mvn clean deploy -Pdeploy -->
+
     <profile>
             <id>deploy</id>
             <build>
