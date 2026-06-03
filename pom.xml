@@ -50,7 +50,7 @@
 
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-RC1</version>
 
     <packaging>pom</packaging>
     <modules>
@@ -184,7 +184,7 @@
 
         <!-- 2. DEPLOY PROFILE: Run for publishing to Maven Central -->
         <!-- Command: mvn clean deploy -Pdeploy -->
-        <profile>
+    <profile>
             <id>deploy</id>
             <build>
                 <plugins>
@@ -203,6 +203,17 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.4.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
