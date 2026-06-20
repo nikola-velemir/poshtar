@@ -22,11 +22,11 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 
 import java.util.Set;
 
-class NotificationFinalityRule extends FinalityRule{
+class NotificationFinalityRule extends FinalityRule {
     @Override
-    protected String getViolationMessage() {
+    protected String getViolationMessage(String fqn) {
         String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Notification '%s' must be final or a record!";
-        return FINALITY_VIOLATED_MESSAGE;
+        return String.format(FINALITY_VIOLATED_MESSAGE, fqn);
     }
 
     @Override

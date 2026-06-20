@@ -87,10 +87,10 @@
                     <version>4.8.6.1</version>
                     <configuration>
                         <effort>Max</effort>
-                        <threshold>Low</threshold>
+                        <threshold>Medium</threshold>
                         <xmlOutput>true</xmlOutput>
                         <htmlOutput>true</htmlOutput>
-                        <failOnError>false</failOnError>
+                        <failOnError>true</failOnError>
                         <plugins>
                             <plugin>
                                 <groupId>com.h3xstream.findsecbugs</groupId>
@@ -194,6 +194,10 @@
             <id>validate</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>

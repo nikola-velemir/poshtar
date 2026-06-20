@@ -38,9 +38,9 @@ import java.util.Set;
 class RequestFinalityRule extends FinalityRule {
 
     @Override
-    protected String getViolationMessage() {
+    protected String getViolationMessage(String fqn) {
         String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Request '%s' must be final or a record!";
-        return FINALITY_VIOLATED_MESSAGE;
+        return String.format(FINALITY_VIOLATED_MESSAGE, fqn);
     }
 
     @Override
