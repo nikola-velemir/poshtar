@@ -18,10 +18,10 @@
 
 package io.github.nikola_velemir.poshtar.core.pipeline.configuration;
 
-
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,11 +32,14 @@ import java.util.List;
  * the order in which they will be executed when a request is dispatched.
  * </p>
  *
- * <p>Example usage:</p>
+ * <p>
+ * Example usage:
+ * </p>
+ * 
  * <pre>
  * configurer
- *     .add(LoggingBehaviour.class)
- *     .add(ValidationBehaviour.class);
+ *         .add(LoggingBehaviour.class)
+ *         .add(ValidationBehaviour.class);
  * </pre>
  *
  * @author Nikola Velemir
@@ -47,8 +50,7 @@ public class PipelineConfiguration {
     /**
      * Internal list of behavior classes, maintaining the order of registration.
      */
-    private final List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses =
-            new ArrayList<>();
+    private final List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses = new ArrayList<>();
 
     /**
      * Adds a behavior class to the end of the pipeline.
@@ -68,12 +70,13 @@ public class PipelineConfiguration {
         this.behaviourClasses.add(behaviourClass);
         return this;
     }
+
     /**
      * Retrieves the ordered list of registered behavior classes.
      *
      * @return A list of classes representing the configured pipeline.
      */
     public List<Class<? extends PipelineBehaviour<?, ?>>> getBehaviourClasses() {
-        return behaviourClasses;
+        return Collections.unmodifiableList(behaviourClasses);
     }
 }
