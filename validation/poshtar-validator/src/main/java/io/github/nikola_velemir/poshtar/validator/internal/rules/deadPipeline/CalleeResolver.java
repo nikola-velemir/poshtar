@@ -75,7 +75,7 @@ class CalleeResolver {
                     }
                 }
             }
-        } catch (Exception ignored) {
+        } catch (RuntimeException ignored) {
             // Resolution is best-effort — if it fails we skip recursion
         }
         return null;

@@ -57,7 +57,7 @@ import java.util.Set;
 class DeadPipelineRule implements Rule {
     private static final String SUPPRESS_ANNOTATION_NAME = SuppressDead.class.getName();
     private static final String DELEGATE_SIMPLE_NAME = RequestDelegate.class.getSimpleName();
-    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.\n Logic found no exit path, which will break the pipeline. Use %s if your logic is correct, but bypasses the chain";
+    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.%n Logic found no exit path, which will break the pipeline. Use %s if your logic is correct, but bypasses the chain";
     private static final Logger logger = LoggerProvider.provideWarningLogger();
 
     /**

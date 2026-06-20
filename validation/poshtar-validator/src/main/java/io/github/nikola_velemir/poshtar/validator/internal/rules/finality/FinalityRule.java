@@ -34,7 +34,7 @@ public abstract class FinalityRule implements Rule {
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
 
-    protected abstract String getViolationMessage();
+    protected abstract String getViolationMessage(String requestFqn);
     protected abstract Set<String> getFQNs(ProcessorContext ctx);
     /**
      * Validates the finality of request classes. Logs the error if finality is violated.
@@ -62,8 +62,8 @@ public abstract class FinalityRule implements Rule {
     }
 
     private void logError(ProcessorContext ctx, String requestFqn, TypeElement targetClass) {
-        String finalityViolationMessage = getViolationMessage();
-        String errorMessage = String.format(finalityViolationMessage, requestFqn);
+        String finalityViolationMessage = getViolationMessage(requestFqn);
+        String errorMessage = finalityViolationMessage;
         logger.log(ctx.env, errorMessage, targetClass);
 
     }

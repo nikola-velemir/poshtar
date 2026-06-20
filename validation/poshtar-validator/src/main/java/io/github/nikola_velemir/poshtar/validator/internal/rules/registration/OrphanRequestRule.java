@@ -45,7 +45,7 @@ import java.util.Set;
  */
 class OrphanRequestRule implements Rule {
     private static final Logger logger = LoggerProvider.provideErrorLogger();
-    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: No handler registered for request '%s'\n" + "You may use %s to bypass this rule!";
+    private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: No handler registered for request '%s'%n" + "You may use %s to bypass this rule!";
 
     /**
      *

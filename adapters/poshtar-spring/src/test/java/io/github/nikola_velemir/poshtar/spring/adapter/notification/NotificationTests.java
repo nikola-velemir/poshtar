@@ -47,7 +47,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {TestApplication.class})
+@SpringBootTest(classes = { TestApplication.class })
 @Import(MockTransactionConfig.class)
 public class NotificationTests {
     @Autowired
@@ -123,6 +123,8 @@ public class NotificationTests {
             poshtar.publish(mandatoryNotification);
         });
         Exception ex = (Exception) mainEx.getErrors().get(0);
+        System.out.println(mainEx.toString());
+
         String expected = "No existing transaction found for transaction marked with propagation 'mandatory'";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
@@ -150,8 +152,7 @@ public class NotificationTests {
                 AggregateNotificationException.class, () -> {
                     poshtar.publish(failAsyncNotification);
 
-                }
-        );
+                });
         List<Throwable> errors = ex.getErrors();
         assertEquals(1, errors.size());
         assertInstanceOf(IllegalTransactionStateException.class, errors.get(0));
