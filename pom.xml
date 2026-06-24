@@ -59,6 +59,7 @@
         <module>validation/poshtar-validator</module>
         <module>adapters/poshtar-spring</module>
         <module>adapters/poshtar-guice</module>
+        <module>adapters/poshtar-quarkus</module>
     </modules>
 
     <properties>

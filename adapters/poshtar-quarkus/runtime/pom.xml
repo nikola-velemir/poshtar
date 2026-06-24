@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.nikola-velemir</groupId>
+        <artifactId>poshtar-quarkus</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>poshtar-quarkus-runtime</artifactId>
+    <name>Poshtar - Quarkus Extension - Runtime</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <quarkus.annotation.processor.deployment.artifact>io.github.nikola-velemir:poshtar-quarkus-deployment:${project.version}</quarkus.annotation.processor.deployment.artifact>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-extension-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <configuration>
+                    <deploymentArtifact>io.github.nikola-velemir:poshtar-quarkus-deployment:${project.version}</deploymentArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>extension-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
