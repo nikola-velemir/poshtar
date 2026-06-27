@@ -1,5 +1,7 @@
-package io.github.nikola.velemir.poshtar.quarkus.runtime;
+package io.github.nikola.velemir.poshtar.quarkus.runtime.internal.recorder;
 
+import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.registry.QuarkusNotificationRegistry;
+import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.registry.QuarkusRequestRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.quarkus.arc.Arc;
@@ -8,23 +10,27 @@ import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 
 import java.util.List;
+import java.util.Map;
 
 @Recorder
 public class PoshtarRecorder {
-    @SuppressWarnings("unchecked")
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRegistries(
-            List<String> handlerClassNames,
-            List<String> notificationHandlerClassNames) {
+            Map<String, String> handlerToRequest,
+            Map<String, String> notificationHandlerToNotification, Map<String, String> behaviourToRequest) {
+
         BeanManager bm = Arc.container().beanManager();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         QuarkusRequestRegistry requestRegistry = Arc.container()
                 .instance(QuarkusRequestRegistry.class).get();
         QuarkusNotificationRegistry notificationRegistry = Arc.container()
                 .instance(QuarkusNotificationRegistry.class).get();
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         PipelineConfiguration pipelineConfiguration = Arc.container()
                 .instance(PipelineConfiguration.class).get();
+
         List<? extends PipelineBehaviour<?, ?>> behaviours = pipelineConfiguration.getBehaviourClasses()
                 .stream()
                 .map(clazz -> {
@@ -35,14 +41,18 @@ public class PoshtarRecorder {
                             bean, clazz, bm.createCreationalContext(bean));
                 })
                 .toList();
+        requestRegistry.init(behaviourToRequest);
+        handlerToRequest.forEach((handlerName, requestName) -> {
+            Class<?> handlerClass = loadClass(handlerName, cl);
+            Class<?> requestClass = loadClass(requestName, cl);
+            requestRegistry.registerFromClass(handlerClass, requestClass, (List<PipelineBehaviour<?, ?>>) behaviours, bm);
+        });
 
-        handlerClassNames.stream()
-                .map(name -> loadClass(name, cl))
-                .forEach(clazz -> requestRegistry.registerFromClass(clazz, (List<PipelineBehaviour<?, ?>>) behaviours, bm));
-
-        notificationHandlerClassNames.stream()
-                .map(name -> loadClass(name, cl))
-                .forEach(clazz -> notificationRegistry.registerFromClass(clazz, bm));
+        notificationHandlerToNotification.forEach((handlerName, notifName) -> {
+            Class<?> handlerClass = loadClass(handlerName, cl);
+            Class<?> notifClass = loadClass(notifName, cl);
+            notificationRegistry.registerFromClass(handlerClass, notifClass, bm);
+        });
     }
 
     private Class<?> loadClass(String name, ClassLoader cl) {

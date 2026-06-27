@@ -1,4 +1,4 @@
-package io.github.nikola.velemir.poshtar.quarkus.runtime;
+package io.github.nikola.velemir.poshtar.quarkus.runtime.internal.producer;
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarImpl;

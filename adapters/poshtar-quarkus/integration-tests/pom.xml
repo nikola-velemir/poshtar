@@ -9,9 +9,9 @@
     </parent>
     <artifactId>poshtar-quarkus-integration-tests</artifactId>
     <name>PoshtaR Quarkus - Integration Tests</name>
-
+    <packaging>jar</packaging>
     <properties>
-        <skipITs>true</skipITs>
+        <skipITs>false</skipITs>
     </properties>
 
     <dependencies>

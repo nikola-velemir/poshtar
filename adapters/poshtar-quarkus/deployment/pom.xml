@@ -9,6 +9,7 @@
     </parent>
     <artifactId>poshtar-quarkus-deployment</artifactId>
     <name>PoshtaR Quarkus - Deployment</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

@@ -10,7 +10,7 @@
     </parent>
     <artifactId>poshtar-quarkus</artifactId>
     <name>PoshtaR Quarkus - Runtime</name>
-
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
