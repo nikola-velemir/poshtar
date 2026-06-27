@@ -16,21 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
-
-
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.mandatory.success;
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
 
-@Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
-
-    @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
-        return requestDelegate.handle(request);
-    }
+public final class SucceedForMandatoryRequest implements Request<Unit> {
+    public int payload = 0;
 }

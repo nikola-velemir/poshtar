@@ -16,21 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
+package io.github.nikola.velemir.poshtar.quarkus.it.component;
 
 
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.model.TestEntity;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
+import java.util.Optional;
 
-    @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
-        return requestDelegate.handle(request);
+@ApplicationScoped
+public class TestRepository implements PanacheRepositoryBase<TestEntity, Long> {
+    public Optional<TestEntity> findByData(String data) {
+        return find("data", data).firstResultOptional();
     }
+
+
 }

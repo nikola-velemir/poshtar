@@ -6,9 +6,8 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
 import io.quarkus.arc.Arc;
+import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import java.lang.reflect.ParameterizedType;
@@ -59,26 +58,28 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
                 .stream()
                 .filter(clazz -> behaviourClassNames.contains(clazz.getName()))
                 .map(clazz -> {
-                    try {
-                        return (PipelineBehaviour<?, ?>) clazz.getDeclaredConstructor().newInstance();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Could not instantiate behaviour class: " + clazz.getName(), e);
+                    InstanceHandle<?> handle = Arc.container().instance(clazz);
+                    if (!handle.isAvailable()) {
+                        throw new RuntimeException("No CDI bean found for behaviour class: " + clazz.getName());
                     }
+                    return (PipelineBehaviour<?, ?>) handle.get();
                 })
                 .toList();
     }
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
-        for (Type iface : behaviour.getClass().getGenericInterfaces()) {
-            if (!(iface instanceof ParameterizedType pt)) continue;
-            if (!pt.getRawType().equals(PipelineBehaviour.class)) continue;
-
-            Type arg = pt.getActualTypeArguments()[0];
-            if (arg instanceof Class<?> genericRequestType) {
-                return genericRequestType.isAssignableFrom(requestType);
+        Class<?> clazz = behaviour.getClass();
+        while (clazz != null && clazz != Object.class) {
+            for (Type iface : clazz.getGenericInterfaces()) {
+                if (!(iface instanceof ParameterizedType pt)) continue;
+                if (!pt.getRawType().equals(PipelineBehaviour.class)) continue;
+                Type arg = pt.getActualTypeArguments()[0];
+                if (arg instanceof Class<?> genericRequestType) {
+                    return genericRequestType.isAssignableFrom(requestType);
+                }
+                return true; // TypeVariable = global behaviour
             }
-            // TypeVariable (e.g. TRequest extends Request<TResponse>) — global behaviour, supports everything
-            return true;
+            clazz = clazz.getSuperclass();
         }
         return false;
     }

@@ -16,21 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
-
+package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.mandatory.success;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
+import io.quarkus.narayana.jta.QuarkusTransaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.Transactional;
 
 @Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
+public class SucceedForMandatoryPipeline implements PipelineBehaviour<SucceedForMandatoryRequest, Unit> {
 
     @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public Unit handle(SucceedForMandatoryRequest request, RequestDelegate<SucceedForMandatoryRequest, Unit> requestDelegate) {
+        System.out.println("Called inside mandatory transaction");
+        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
+        System.out.println("Is Transaction REALLY Active? " + isActive);
         return requestDelegate.handle(request);
     }
 }

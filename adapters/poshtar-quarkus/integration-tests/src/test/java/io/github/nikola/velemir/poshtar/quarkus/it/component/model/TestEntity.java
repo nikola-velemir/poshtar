@@ -16,21 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.model;
 
+import jakarta.persistence.*;
 
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.core.request.Request;
+@Entity
+@Table(name = "test_entities")
+public class TestEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
+    private String data;
+
+    public TestEntity(){}
+
+    public TestEntity(String data){
+        this.data = data;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
 
     @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
-        return requestDelegate.handle(request);
+    public String toString() {
+        return "TestEntity{" +
+                "id=" + id +
+                ", data='" + data + '\'' +
+                '}';
     }
 }

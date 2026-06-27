@@ -19,10 +19,15 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component;
 
 import groovy.lang.Singleton;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global.GlobalTestPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.order.OrderSecondPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.specific.SpecificPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.basic.success.TransactionalPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.validate.ValidationBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,10 +40,15 @@ public class PipelineConfig {
     public PipelineConfiguration poshtarPipeline() {
         return new PipelineConfiguration()
                 .add(OrderFirstPipeline.class)
-                .add(GlobalTestPipeline.class)
+                 .add(GlobalTestPipeline.class)
                 .add(OrderSecondPipeline.class)
                 .add(SpecificPipeline.class)
-                .add(ValidationBehaviour.class);
+                .add(ValidationBehaviour.class)
+                .add(TransactionalPipeline.class)
+                .add(SucceedForMandatoryPipeline.class)
+                .add(FailMandatoryPipeline.class)
+                .add(DeadPipeline.class)
+                .add(FailTransactionalPipeline.class);
 
     }
 }

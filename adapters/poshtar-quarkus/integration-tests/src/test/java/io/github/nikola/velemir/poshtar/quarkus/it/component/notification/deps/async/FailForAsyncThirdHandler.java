@@ -16,21 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.async;
+import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
+import jakarta.transaction.Transactional;
 
-
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.core.request.Request;
-
-@Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
-
+@Handler
+public class FailForAsyncThirdHandler implements NotificationHandler<FailForAsyncNotification> {
     @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
-        return requestDelegate.handle(request);
+    @Transactional(Transactional.TxType.MANDATORY)
+    public void handle(FailForAsyncNotification failForAsyncNotification) {
+        throw new RuntimeException("Purposefully causing exception");
     }
 }

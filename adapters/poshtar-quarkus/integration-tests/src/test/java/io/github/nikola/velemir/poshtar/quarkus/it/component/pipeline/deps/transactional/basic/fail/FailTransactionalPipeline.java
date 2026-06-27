@@ -16,21 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.basic.fail;
 
-
+import io.github.nikola.velemir.poshtar.quarkus.it.component.TestRepository;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.model.TestEntity;
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @Behaviour
-public class GlobalTestPipeline
-        implements PipelineBehaviour<Request<Object>, Object> {
+public class FailTransactionalPipeline implements PipelineBehaviour<FailTransactionalRequest, Unit> {
+
+    @Inject
+    TestRepository testRepository;
+
+    public FailTransactionalPipeline(TestRepository testRepository) {
+        this.testRepository = testRepository;
+    }
 
     @Override
-    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
-        System.out.println("Global pipeline called");
-        return requestDelegate.handle(request);
+    @Transactional
+    public Unit handle(FailTransactionalRequest request, RequestDelegate<FailTransactionalRequest, Unit> delegate) {
+        var te = new TestEntity(request.payload());
+        testRepository.persist(te);
+        throw new RuntimeException("Failing on purpose");
     }
 }

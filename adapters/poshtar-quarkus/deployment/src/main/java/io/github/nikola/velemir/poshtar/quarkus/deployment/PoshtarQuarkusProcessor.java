@@ -12,6 +12,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Dependent;
 import org.jboss.jandex.DotName;
 
@@ -38,18 +39,29 @@ class PoshtarQuarkusProcessor {
     }
 
     @BuildStep
-    AdditionalBeanBuildItem registerHandlerBeans(CombinedIndexBuildItem index) {
+    AdditionalBeanBuildItem registerPoshtarComponents(CombinedIndexBuildItem index) {
         AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder()
-                .setUnremovable();
+                .setUnremovable(); // Prevents ArC from optimizing away unused behaviors
+
+        // 1. Register Handlers
         index.getIndex()
                 .getAnnotations(DotName.createSimple(Handler.class.getName()))
                 .stream()
                 .map(annotation -> annotation.target().asClass().name().toString())
                 .forEach(builder::addBeanClass);
+
+        // 2. Register Behaviours
+        index.getIndex()
+                .getAnnotations(DotName.createSimple(Behaviour.class.getName()))
+                .stream()
+                .map(annotation -> annotation.target().asClass().name().toString())
+                .forEach(builder::addBeanClass);
+
+        builder.setDefaultScope(DotName.createSimple(ApplicationScoped.class.getName()));
+
         return builder.build();
+
     }
-
-
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     void registerHandlersAndBehaviours(
