@@ -18,7 +18,6 @@ public class QuarkusNotificationRegistry extends AbstractNotificationRegistry {
                 bean, handlerClass, bm.createCreationalContext(bean));
 
         register((Class) notifClass, handler);
-        System.out.println("[PoshtaR] Registered notification handler: " + handlerClass.getSimpleName()
-                + " -> " + notifClass.getSimpleName());
+       
     }
 }

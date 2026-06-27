@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 public class QuarkusRequestRegistry extends AbstractRequestRegistry {
     private Map<String, String> behaviourToRequest;
     public void init(Map<String, String> behaviourToRequest) {
-        this.behaviourToRequest = behaviourToRequest;
+        this.behaviourToRequest = behaviourToRequest != null ? Map.copyOf(behaviourToRequest) : Map.of();
     }
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void registerFromClass(
@@ -31,13 +32,11 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
 
         List<PipelineBehaviour<?, ?>> filtered = filterBehaviours(allBehaviours, requestClass);
         register((Class) requestClass, handler, filtered);
-        System.out.println("[PoshtaR] Registered handler: " + handlerClass.getSimpleName()
-                + " -> " + requestClass.getSimpleName());
+
     }
 
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
-        // Walk up past any Arc proxy subclass to find the real class name
         Class<?> clazz = behaviour.getClass();
         while (clazz != null && clazz != Object.class) {
             if (behaviourToRequest.containsKey(clazz.getName())) {

@@ -7,11 +7,6 @@ import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.recorder.Poshta
 import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.producer.QuarkusPoshtarProducer;
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.Notification;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.core.request.Request;
-import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -29,10 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.nikola.velemir.poshtar.quarkus.deployment.ProcessorConstants.*;
+
 class PoshtarQuarkusProcessor {
-
-    private static final String FEATURE = "poshtar-quarkus";
-
+    public static final DotName APPLICATION_SCOPED_DOTNAME = DotName.createSimple(ApplicationScoped.class.getName());
+    public static final DotName HANDLER_ANNOTATION_DOT_NAME = DotName.createSimple(Handler.class.getName());
+    public static final DotName BEHAVIOUR_ANNOTATION_DOT_NAME = DotName.createSimple(Behaviour.class.getName());
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
@@ -58,10 +55,10 @@ class PoshtarQuarkusProcessor {
         IndexView idx = index.getIndex();
 
         Map<String, String> handlerToRequest = resolveHandlerMap(
-                idx, RequestHandler.class.getName(), Request.class.getName());
+                idx, REQUEST_HANDLER_CLASS_NAME, REQUEST_CLASS_NAME);
 
         Map<String, String> notificationHandlerToNotification = resolveHandlerMap(
-                idx, NotificationHandler.class.getName(), Notification.class.getName());
+                idx, NOTIFICATION_HANDLER_CLASS_NAME, NOTIFICATION_CLASS_NAME);
 
         Map<String, String> behaviourToRequest = resolveBehaviourMap(idx);
 
@@ -71,9 +68,9 @@ class PoshtarQuarkusProcessor {
     private Map<String, String> resolveBehaviourMap(IndexView idx) {
         Map<String, String> result = new LinkedHashMap<>();
 
-        for (ClassInfo ci : idx.getAllKnownImplementations(DotName.createSimple(PipelineBehaviour.class.getName()))) {
+        for (ClassInfo ci : idx.getAllKnownImplementations(DotName.createSimple(PIPELINE_BEHAVIOUR_CLASS_NAME))) {
             for (org.jboss.jandex.Type iface : ci.interfaceTypes()) {
-                if (!iface.name().toString().equals(PipelineBehaviour.class.getName())) continue;
+                if (!iface.name().toString().equals(PIPELINE_BEHAVIOUR_CLASS_NAME)) continue;
                 if (!(iface instanceof org.jboss.jandex.ParameterizedType pt)) continue;
 
                 org.jboss.jandex.Type arg = pt.arguments().get(0);
@@ -100,7 +97,6 @@ class PoshtarQuarkusProcessor {
                 org.jboss.jandex.Type arg = pt.arguments().get(0);
                 String argName = arg.name().toString();
 
-                // Verify the type argument is actually a Request/Notification subtype
                 if (idx.getClassByName(DotName.createSimple(argName)) != null
                         && idx.getAllKnownImplementors(DotName.createSimple(markerInterface))
                         .stream()
@@ -116,8 +112,8 @@ class PoshtarQuarkusProcessor {
     @BuildStep
     List<BeanDefiningAnnotationBuildItem> defineBeans() {
         return List.of(
-                new BeanDefiningAnnotationBuildItem(DotName.createSimple(Handler.class.getName()), DotName.createSimple(ApplicationScoped.class.getName())),
-                new BeanDefiningAnnotationBuildItem(DotName.createSimple(Behaviour.class.getName()), DotName.createSimple(ApplicationScoped.class.getName()))
+                new BeanDefiningAnnotationBuildItem(HANDLER_ANNOTATION_DOT_NAME, APPLICATION_SCOPED_DOTNAME),
+                new BeanDefiningAnnotationBuildItem(BEHAVIOUR_ANNOTATION_DOT_NAME, APPLICATION_SCOPED_DOTNAME)
         );
     }
 }

@@ -63,6 +63,7 @@
     </modules>
 
     <properties>
+        <poshtar.root>${project.basedir}</poshtar.root>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,6 +93,7 @@
                         <xmlOutput>true</xmlOutput>
                         <htmlOutput>true</htmlOutput>
                         <failOnError>true</failOnError>
+                        <excludeFilterFile>${spotbugs.excludeFilterFile}</excludeFilterFile>
                         <plugins>
                             <plugin>
                                 <groupId>com.h3xstream.findsecbugs</groupId>
@@ -118,6 +120,7 @@
                         <configLocation>google_checks.xml</configLocation>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
+                        
                     </configuration>
                     <executions>
                         <execution>
@@ -179,7 +182,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

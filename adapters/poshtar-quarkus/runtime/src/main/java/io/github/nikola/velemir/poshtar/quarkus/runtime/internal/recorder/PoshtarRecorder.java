@@ -6,6 +6,7 @@ import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviou
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.annotations.Recorder;
+import jakarta.annotation.Nonnull;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 
@@ -31,7 +32,34 @@ public class PoshtarRecorder {
         PipelineConfiguration pipelineConfiguration = Arc.container()
                 .instance(PipelineConfiguration.class).get();
 
-        List<? extends PipelineBehaviour<?, ?>> behaviours = pipelineConfiguration.getBehaviourClasses()
+        List<? extends PipelineBehaviour<?, ?>> behaviours = extractBehaviours(pipelineConfiguration, bm);
+
+        requestRegistry.init(behaviourToRequest);
+
+        registerRequestMappings(handlerToRequest, cl, requestRegistry, (List<PipelineBehaviour<?, ?>>) behaviours, bm);
+
+        registerNotificationMappings(notificationHandlerToNotification, cl, notificationRegistry, bm);
+    }
+
+    private void registerNotificationMappings(Map<String, String> notificationHandlerToNotification, ClassLoader cl, QuarkusNotificationRegistry notificationRegistry, BeanManager bm) {
+        notificationHandlerToNotification.forEach((handlerName, notifName) -> {
+            Class<?> handlerClass = loadClass(handlerName, cl);
+            Class<?> notifClass = loadClass(notifName, cl);
+            notificationRegistry.registerFromClass(handlerClass, notifClass, bm);
+        });
+    }
+
+    private void registerRequestMappings(Map<String, String> handlerToRequest, ClassLoader cl, QuarkusRequestRegistry requestRegistry, List<PipelineBehaviour<?, ?>> behaviours, BeanManager bm) {
+        handlerToRequest.forEach((handlerName, requestName) -> {
+            Class<?> handlerClass = loadClass(handlerName, cl);
+            Class<?> requestClass = loadClass(requestName, cl);
+            requestRegistry.registerFromClass(handlerClass, requestClass, behaviours, bm);
+        });
+    }
+
+    @Nonnull
+    private static List<? extends PipelineBehaviour<?, ?>> extractBehaviours(PipelineConfiguration pipelineConfiguration, BeanManager bm) {
+        return pipelineConfiguration.getBehaviourClasses()
                 .stream()
                 .map(clazz -> {
                     Bean<?> bean = bm.getBeans(clazz).stream().findFirst()
@@ -41,18 +69,6 @@ public class PoshtarRecorder {
                             bean, clazz, bm.createCreationalContext(bean));
                 })
                 .toList();
-        requestRegistry.init(behaviourToRequest);
-        handlerToRequest.forEach((handlerName, requestName) -> {
-            Class<?> handlerClass = loadClass(handlerName, cl);
-            Class<?> requestClass = loadClass(requestName, cl);
-            requestRegistry.registerFromClass(handlerClass, requestClass, (List<PipelineBehaviour<?, ?>>) behaviours, bm);
-        });
-
-        notificationHandlerToNotification.forEach((handlerName, notifName) -> {
-            Class<?> handlerClass = loadClass(handlerName, cl);
-            Class<?> notifClass = loadClass(notifName, cl);
-            notificationRegistry.registerFromClass(handlerClass, notifClass, bm);
-        });
     }
 
     private Class<?> loadClass(String name, ClassLoader cl) {
