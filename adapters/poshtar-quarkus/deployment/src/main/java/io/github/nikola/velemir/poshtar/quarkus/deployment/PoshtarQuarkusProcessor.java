@@ -1,4 +1,5 @@
 package io.github.nikola.velemir.poshtar.quarkus.deployment;
+
 import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.registry.QuarkusNotificationRegistry;
 
 import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.registry.QuarkusRequestRegistry;
@@ -19,6 +20,7 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.ParameterizedType;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ class PoshtarQuarkusProcessor {
     public static final DotName APPLICATION_SCOPED_DOTNAME = DotName.createSimple(ApplicationScoped.class.getName());
     public static final DotName HANDLER_ANNOTATION_DOT_NAME = DotName.createSimple(Handler.class.getName());
     public static final DotName BEHAVIOUR_ANNOTATION_DOT_NAME = DotName.createSimple(Behaviour.class.getName());
+
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
@@ -46,6 +49,7 @@ class PoshtarQuarkusProcessor {
                         QuarkusNotificationRegistry.class.getName()
                 ).build();
     }
+
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     void registerHandlers(
@@ -61,8 +65,35 @@ class PoshtarQuarkusProcessor {
                 idx, NOTIFICATION_HANDLER_CLASS_NAME, NOTIFICATION_CLASS_NAME);
 
         Map<String, String> behaviourToRequest = resolveBehaviourMap(idx);
+        Map<String, List<String>> handlerToBehaviours = mapHandlerToBehaviours(handlerToRequest, behaviourToRequest, idx);
+        recorder.initRegistries(handlerToRequest, notificationHandlerToNotification, handlerToBehaviours);
+    }
 
-        recorder.initRegistries(handlerToRequest, notificationHandlerToNotification, behaviourToRequest);
+    private @NonNull Map<String, List<String>> mapHandlerToBehaviours(Map<String, String> handlerToRequest, Map<String, String> behaviourToRequest, IndexView idx) {
+        Map<String, List<String>> handlerToBehaviours = new LinkedHashMap<>();
+        handlerToRequest.forEach((handlerName, requestName) -> {
+            List<String> matching = behaviourToRequest.entrySet().stream()
+                    .filter(e -> {
+                        String supportedRequest = e.getValue();
+                        if (supportedRequest == null) return true; // global
+                        return isAssignableFrom(idx, supportedRequest, requestName);
+                    })
+                    .map(Map.Entry::getKey)
+                    .toList();
+            handlerToBehaviours.put(handlerName, matching);
+        });
+        return handlerToBehaviours;
+    }
+
+    private boolean isAssignableFrom(IndexView idx, String superName, String subName) {
+        if (superName.equals(subName)) return true;
+        ClassInfo ci = idx.getClassByName(DotName.createSimple(subName));
+        if (ci == null) return false;
+        // Check superclass
+        if (ci.superName() != null && isAssignableFrom(idx, superName, ci.superName().toString())) return true;
+        // Check interfaces
+        return ci.interfaceNames().stream()
+                .anyMatch(iface -> isAssignableFrom(idx, superName, iface.toString()));
     }
 
     private Map<String, String> resolveBehaviourMap(IndexView idx) {
@@ -86,10 +117,11 @@ class PoshtarQuarkusProcessor {
 
         return result;
     }
+
     private Map<String, String> resolveHandlerMap(IndexView idx, String handlerInterface, String markerInterface) {
         Map<String, String> result = new LinkedHashMap<>();
 
-        for (ClassInfo ci : idx.getAllKnownImplementors(DotName.createSimple(handlerInterface))) {
+        for (ClassInfo ci : idx.getAllKnownImplementations(DotName.createSimple(handlerInterface))) {
             for (org.jboss.jandex.Type iface : ci.interfaceTypes()) {
                 if (!iface.name().toString().equals(handlerInterface)) continue;
                 if (!(iface instanceof ParameterizedType pt)) continue;
@@ -98,7 +130,7 @@ class PoshtarQuarkusProcessor {
                 String argName = arg.name().toString();
 
                 if (idx.getClassByName(DotName.createSimple(argName)) != null
-                        && idx.getAllKnownImplementors(DotName.createSimple(markerInterface))
+                        && idx.getAllKnownImplementations(DotName.createSimple(markerInterface))
                         .stream()
                         .anyMatch(c -> c.name().toString().equals(argName))) {
                     result.put(ci.name().toString(), argName);
@@ -109,6 +141,7 @@ class PoshtarQuarkusProcessor {
 
         return result;
     }
+
     @BuildStep
     List<BeanDefiningAnnotationBuildItem> defineBeans() {
         return List.of(

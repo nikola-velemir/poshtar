@@ -19,7 +19,8 @@ public class PoshtarRecorder {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRegistries(
             Map<String, String> handlerToRequest,
-            Map<String, String> notificationHandlerToNotification, Map<String, String> behaviourToRequest) {
+            Map<String, String> notificationHandlerToNotification,
+            Map<String, List<String>> handlerToBehaviours) {
 
         BeanManager bm = Arc.container().beanManager();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -32,43 +33,62 @@ public class PoshtarRecorder {
         PipelineConfiguration pipelineConfiguration = Arc.container()
                 .instance(PipelineConfiguration.class).get();
 
-        List<? extends PipelineBehaviour<?, ?>> behaviours = extractBehaviours(pipelineConfiguration, bm);
+        List<Class<? extends PipelineBehaviour<?, ?>>> orderedBehaviourClasses = pipelineConfiguration.getBehaviourClasses();
+        Map<String, PipelineBehaviour<?, ?>> behaviourProxies = extractBehaviourProxies(orderedBehaviourClasses, bm);
 
-        requestRegistry.init(behaviourToRequest, cl);
 
-        registerRequestMappings(handlerToRequest, cl, requestRegistry, (List<PipelineBehaviour<?, ?>>) behaviours, bm);
-
-        registerNotificationMappings(notificationHandlerToNotification, cl, notificationRegistry, bm);
+        registerRequestMappings(handlerToRequest, handlerToBehaviours, orderedBehaviourClasses, behaviourProxies, requestRegistry, bm, cl);
+        registerNotificationMappings(notificationHandlerToNotification, notificationRegistry, bm, cl);
     }
 
-    private void registerNotificationMappings(Map<String, String> notificationHandlerToNotification, ClassLoader cl, QuarkusNotificationRegistry notificationRegistry, BeanManager bm) {
+    @Nonnull
+    private static Map<String, PipelineBehaviour<?, ?>> extractBehaviourProxies(List<Class<? extends PipelineBehaviour<?, ?>>> orderedBehaviourClasses, BeanManager bm) {
+        Map<String, PipelineBehaviour<?, ?>> behaviourProxies = new java.util.LinkedHashMap<>();
+        for (Class<?> clazz : orderedBehaviourClasses) {
+            Bean<?> bean = bm.resolve(bm.getBeans(clazz));
+            if (bean == null) throw new RuntimeException("No CDI bean for behaviour: " + clazz.getName());
+            behaviourProxies.put(clazz.getName(), (PipelineBehaviour<?, ?>) bm.getReference(
+                    bean, clazz, bm.createCreationalContext(bean)));
+        }
+        return behaviourProxies;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void registerRequestMappings(
+            Map<String, String> handlerToRequest,
+            Map<String, List<String>> handlerToBehaviours,
+            List<Class<? extends PipelineBehaviour<?, ?>>> orderedBehaviourClasses,
+            Map<String, PipelineBehaviour<?, ?>> behaviourProxies,
+            QuarkusRequestRegistry requestRegistry,
+            BeanManager bm,
+            ClassLoader cl) {
+
+        handlerToRequest.forEach((handlerName, requestName) -> {
+            Class<?> handlerClass = loadClass(handlerName, cl);
+            Class<?> requestClass = loadClass(requestName, cl);
+
+
+            List<String> applicableBehaviourNames = handlerToBehaviours.getOrDefault(handlerName, List.of());
+            List<? extends PipelineBehaviour<?, ?>> filteredBehaviours = orderedBehaviourClasses.stream()
+                    .filter(bc -> applicableBehaviourNames.contains(bc.getName()))
+                    .map(bc -> behaviourProxies.get(bc.getName()))
+                    .toList();
+
+            requestRegistry.registerFromClass(handlerClass, requestClass, (List<PipelineBehaviour<?, ?>>) filteredBehaviours, bm);
+        });
+    }
+
+    private void registerNotificationMappings(
+            Map<String, String> notificationHandlerToNotification,
+            QuarkusNotificationRegistry notificationRegistry,
+            BeanManager bm,
+            ClassLoader cl) {
+
         notificationHandlerToNotification.forEach((handlerName, notifName) -> {
             Class<?> handlerClass = loadClass(handlerName, cl);
             Class<?> notifClass = loadClass(notifName, cl);
             notificationRegistry.registerFromClass(handlerClass, notifClass, bm);
         });
-    }
-
-    private void registerRequestMappings(Map<String, String> handlerToRequest, ClassLoader cl, QuarkusRequestRegistry requestRegistry, List<PipelineBehaviour<?, ?>> behaviours, BeanManager bm) {
-        handlerToRequest.forEach((handlerName, requestName) -> {
-            Class<?> handlerClass = loadClass(handlerName, cl);
-            Class<?> requestClass = loadClass(requestName, cl);
-            requestRegistry.registerFromClass(handlerClass, requestClass, behaviours, bm);
-        });
-    }
-
-    @Nonnull
-    private static List<? extends PipelineBehaviour<?, ?>> extractBehaviours(PipelineConfiguration pipelineConfiguration, BeanManager bm) {
-        return pipelineConfiguration.getBehaviourClasses()
-                .stream()
-                .map(clazz -> {
-                    Bean<?> bean = bm.getBeans(clazz).stream().findFirst()
-                            .orElseThrow(() -> new RuntimeException(
-                                    "No CDI bean for behaviour: " + clazz.getName()));
-                    return (PipelineBehaviour<?, ?>) bm.getReference(
-                            bean, clazz, bm.createCreationalContext(bean));
-                })
-                .toList();
     }
 
     private Class<?> loadClass(String name, ClassLoader cl) {
@@ -78,4 +98,5 @@ public class PoshtarRecorder {
             throw new RuntimeException("Could not load class: " + name, e);
         }
     }
+
 }
