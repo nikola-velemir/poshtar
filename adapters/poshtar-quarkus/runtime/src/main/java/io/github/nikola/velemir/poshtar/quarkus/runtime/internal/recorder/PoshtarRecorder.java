@@ -34,7 +34,7 @@ public class PoshtarRecorder {
 
         List<? extends PipelineBehaviour<?, ?>> behaviours = extractBehaviours(pipelineConfiguration, bm);
 
-        requestRegistry.init(behaviourToRequest);
+        requestRegistry.init(behaviourToRequest, cl);
 
         registerRequestMappings(handlerToRequest, cl, requestRegistry, (List<PipelineBehaviour<?, ?>>) behaviours, bm);
 

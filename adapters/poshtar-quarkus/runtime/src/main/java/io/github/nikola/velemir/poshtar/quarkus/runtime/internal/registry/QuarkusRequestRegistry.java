@@ -10,45 +10,48 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @ApplicationScoped
 public class QuarkusRequestRegistry extends AbstractRequestRegistry {
-    private Map<String, String> behaviourToRequest;
-    public void init(Map<String, String> behaviourToRequest) {
-        this.behaviourToRequest = behaviourToRequest != null ? Map.copyOf(behaviourToRequest) : Map.of();
+
+    private Map<String, Class<?>> behaviourToRequestClass;
+
+    public void init(Map<String, String> behaviourToRequest, ClassLoader cl) {
+        Map<String, Class<?>> resolved = new HashMap<>();
+        behaviourToRequest.forEach((behaviourName, requestName) -> {
+            if (requestName == null) {
+                resolved.put(behaviourName, null);
+            } else {
+                try {
+                    resolved.put(behaviourName, Class.forName(requestName, false, cl));
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Could not load behaviour request type: " + requestName, e);
+                }
+            }
+        });
+        this.behaviourToRequestClass = Map.copyOf(resolved);
     }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void registerFromClass(
             Class<?> handlerClass,
             Class<?> requestClass,
             List<PipelineBehaviour<?, ?>> allBehaviours,
             BeanManager bm) {
-
-        Bean<?> bean = bm.getBeans(handlerClass).stream().findFirst()
-                .orElseThrow(() -> new RuntimeException(
-                        "No CDI bean for handler: " + handlerClass.getName()));
+        Bean<?> bean = bm.resolve(bm.getBeans(handlerClass));;
+        if (bean == null) throw new RuntimeException("No CDI bean for handler: " + handlerClass.getName());
         RequestHandler handler = (RequestHandler) bm.getReference(
                 bean, handlerClass, bm.createCreationalContext(bean));
-
         List<PipelineBehaviour<?, ?>> filtered = filterBehaviours(allBehaviours, requestClass);
         register((Class) requestClass, handler, filtered);
-
     }
 
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
         Class<?> clazz = behaviour.getClass();
         while (clazz != null && clazz != Object.class) {
-            if (behaviourToRequest.containsKey(clazz.getName())) {
-                String supportedType = behaviourToRequest.get(clazz.getName());
-                if (supportedType == null) return true; // global behaviour
-                try {
-                    Class<?> supportedClass = Class.forName(supportedType,
-                            false, Thread.currentThread().getContextClassLoader());
-                    return supportedClass.isAssignableFrom(requestType);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Could not load behaviour request type: " + supportedType, e);
-                }
+            if (behaviourToRequestClass.containsKey(clazz.getName())) {
+                Class<?> supportedClass = behaviourToRequestClass.get(clazz.getName());
+                return supportedClass == null || supportedClass.isAssignableFrom(requestType);
             }
             clazz = clazz.getSuperclass();
         }
