@@ -103,7 +103,7 @@ public class NotificationTests {
         Exception ex = (Exception) mainEx.getErrors().get(0);
         System.out.println(mainEx);
 
-        String expected = "No existing transaction found for transaction marked with propagation 'mandatory'";
+        String expected = "ARJUNA016110: Transaction is required for invocation";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
         System.out.println(">>> TEST PASSED <<<");
