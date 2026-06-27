@@ -8,10 +8,11 @@ import java.util.List;
 @Recorder
 public class PoshtarRecorder {
 
-    public void registerHandlers(List<String> handlerClassNames) {
+    public void registerHandlersAndBehaviours(List<String> handlerClassNames, List<String> behaviourClassNames) {
         QuarkusRequestRegistry registry = Arc.container()
                 .instance(QuarkusRequestRegistry.class)
                 .get();
-        registry.initFromClassNames(handlerClassNames);
+        registry.initFromClassNames(handlerClassNames, behaviourClassNames);
     }
+
 }

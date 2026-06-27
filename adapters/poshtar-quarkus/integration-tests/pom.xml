@@ -25,6 +25,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.nikola-velemir</groupId>
+            <artifactId>poshtar-validator-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>

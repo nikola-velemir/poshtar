@@ -6,13 +6,9 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
 import io.quarkus.arc.Arc;
-import io.quarkus.arc.InjectableBean;
-import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 
 import java.lang.reflect.ParameterizedType;
@@ -22,24 +18,17 @@ import java.util.List;
 @ApplicationScoped
 public class QuarkusRequestRegistry extends AbstractRequestRegistry {
 
-    @Inject
-    @Any
-    @SuppressWarnings("rawtypes")
-    Instance<RequestHandler> handlers;
-
-    @Inject
-    Instance<PipelineBehaviour<?, ?>> behaviours;
 
     @Inject
     PipelineConfiguration pipelineConfiguration;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void initFromClassNames(List<String> classNames) {
-        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours();
-
+    public void initFromClassNames(List<String> classNames, List<String> behaviourClassNames) {
+        List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(behaviourClassNames);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         for (String className : classNames) {
             try {
-                Class<?> beanClass = Class.forName(className);
+                Class<?> beanClass = Class.forName(className, true, classLoader);
                 RequestHandler handler = (RequestHandler) Arc.container()
                         .instance(beanClass)
                         .get();
@@ -55,7 +44,7 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
                             && Request.class.isAssignableFrom(requestType)) {
                         List<PipelineBehaviour<?, ?>> filtered =
                                 filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
-                        registerHandler((Class) requestType, handler, filtered);
+                        register((Class) requestType, handler, filtered);
                     }
                     break;
                 }
@@ -65,31 +54,22 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
         }
     }
 
-    private <TRequest extends Request<TResponse>, TResponse> void registerHandler(
-            Class<TRequest> requestType,
-            RequestHandler<TRequest, TResponse> handler,
-            List<PipelineBehaviour<?, ?>> behaviours) {
-        register(requestType, handler, behaviours);
-    }
-
-    private List<? extends PipelineBehaviour<?, ?>> provideBehaviours() {
-        return pipelineConfiguration
-                .getBehaviourClasses()
+    private List<? extends PipelineBehaviour<?, ?>> provideBehaviours(List<String> behaviourClassNames) {
+        return pipelineConfiguration.getBehaviourClasses()
                 .stream()
-                .map(clazz -> behaviours.select(clazz).get())
+                .filter(clazz -> behaviourClassNames.contains(clazz.getName()))
+                .map(clazz -> {
+                    try {
+                        return (PipelineBehaviour<?, ?>) clazz.getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Could not instantiate behaviour class: " + clazz.getName(), e);
+                    }
+                })
                 .toList();
     }
-
     @Override
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
-        InjectableBean<?> injectableBean = Arc.container()
-                .bean(behaviour.getClass().getName());
-
-        if (injectableBean == null) return false;
-
-        Class<?> beanClass = injectableBean.getBeanClass();
-
-        for (Type iface : beanClass.getGenericInterfaces()) {
+        for (Type iface : behaviour.getClass().getGenericInterfaces()) {
             if (!(iface instanceof ParameterizedType pt)) continue;
             if (!pt.getRawType().equals(PipelineBehaviour.class)) continue;
 
@@ -97,7 +77,8 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
             if (arg instanceof Class<?> genericRequestType) {
                 return genericRequestType.isAssignableFrom(requestType);
             }
-            return true; // wildcard or type variable — supports everything
+            // TypeVariable (e.g. TRequest extends Request<TResponse>) — global behaviour, supports everything
+            return true;
         }
         return false;
     }
