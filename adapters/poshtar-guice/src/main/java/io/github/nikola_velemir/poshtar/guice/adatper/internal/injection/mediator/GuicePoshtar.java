@@ -23,27 +23,30 @@ public final class GuicePoshtar extends PoshtarBase {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         List<Throwable> collectedErrors = Collections.synchronizedList(new ArrayList<>());
         for (var handler : handlers) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                try {
-                    handler.handle(notification);
-                } catch (Exception e) {
-                    collectedErrors.add(e);
-                    System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
-                }
-            });
+            CompletableFuture<Void> future = createFutureBody(handler, notification, collectedErrors);
 
             futures.add(future);
         }
         try {
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         } catch (Exception e) {
-            // runAsync catches exceptions internally, but if join() itself fails, we catch it here.
+            collectedErrors.add(e);
         }
 
-        // 3. Now that everything is joined, check if any async handler threw an error
         if (!collectedErrors.isEmpty()) {
             throw new AggregateNotificationException(collectedErrors);
         }
 
+    }
+
+    private <TNotification extends Notification> CompletableFuture<Void> createFutureBody(NotificationHandler handler, TNotification notification, List<Throwable> collectedErrors) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                handler.handle(notification);
+            } catch (Exception e) {
+                collectedErrors.add(e);
+                System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
+            }
+        });
     }
 }
