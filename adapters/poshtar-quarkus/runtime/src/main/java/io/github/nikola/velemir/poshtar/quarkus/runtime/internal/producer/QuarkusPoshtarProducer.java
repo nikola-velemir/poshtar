@@ -1,6 +1,6 @@
 package io.github.nikola.velemir.poshtar.quarkus.runtime.internal.producer;
 
-import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.mediator.QuarkusPoshtar;
+import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.mediator.QuarkusPoshtarImpl;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
@@ -33,6 +33,6 @@ public class QuarkusPoshtarProducer {
     @ApplicationScoped
     public Poshtar poshtar(RequestRegistry requestRegistry,
                            NotificationRegistry notificationRegistry) {
-        return new QuarkusPoshtar(requestRegistry, notificationRegistry);
+        return new QuarkusPoshtarImpl(requestRegistry, notificationRegistry);
     }
 }

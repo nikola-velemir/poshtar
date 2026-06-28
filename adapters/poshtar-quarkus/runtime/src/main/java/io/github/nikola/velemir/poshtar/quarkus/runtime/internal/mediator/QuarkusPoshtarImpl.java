@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.mediator;
+package io.github.nikola.velemir.poshtar.quarkus.runtime.internal.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarBase;
@@ -12,14 +12,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public final class GuicePoshtar extends PoshtarBase {
-    public GuicePoshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
+public final class QuarkusPoshtarImpl extends PoshtarBase {
+    public QuarkusPoshtarImpl(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
         super(requestRegistry, notificationRegistry);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {
+    protected <TNotification extends Notification> void dispatch(
+            TNotification notification,
+            List<NotificationHandler> handlers) {
+
         List<Throwable> errors = Collections.synchronizedList(new ArrayList<>());
 
         List<CompletableFuture<Void>> futures = handlers.stream()
@@ -38,16 +41,5 @@ public final class GuicePoshtar extends PoshtarBase {
         if (!errors.isEmpty()) {
             throw new AggregateNotificationException(errors);
         }
-    }
-
-    private <TNotification extends Notification> CompletableFuture<Void> createFutureBody(NotificationHandler handler, TNotification notification, List<Throwable> collectedErrors) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                handler.handle(notification);
-            } catch (Exception e) {
-                collectedErrors.add(e);
-                System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
-            }
-        });
     }
 }
