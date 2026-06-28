@@ -34,6 +34,16 @@ public class InjectionNotificationFirstHandler implements NotificationHandler<In
 
     @Override
     public void handle(InjectionNotification injectionNotification) {
+
+        try {
+            Thread.sleep(2000);
+            System.out.println("Ran first Injection handler");
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Handler thread was interrupted during sleep");
+        }
+
         injectionNotification.value = incrementService.inc(injectionNotification.value);
     }
 }
