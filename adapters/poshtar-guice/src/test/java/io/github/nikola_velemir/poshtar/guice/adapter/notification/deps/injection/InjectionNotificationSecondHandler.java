@@ -34,6 +34,8 @@ public class InjectionNotificationSecondHandler implements NotificationHandler<I
 
     @Override
     public void handle(InjectionNotification injectionNotification) {
+        System.out.println("Ran second Injection handler");
+
         injectionNotification.value = incrementService.inc(injectionNotification.value);
     }
 }

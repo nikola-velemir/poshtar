@@ -24,11 +24,11 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.mediator.PoshtarImpl;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
+import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.mediator.GuicePoshtar;
 import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry.GuiceNotificationRegistry;
 import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry.GuiceRequestRegistry;
 
@@ -136,7 +136,7 @@ public class PoshtarGuiceModule extends AbstractModule {
     @Provides
     @Singleton
     public Poshtar providePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
-        return new PoshtarImpl(handlerRegistry, notificationRegistry);
+        return new GuicePoshtar(handlerRegistry, notificationRegistry);
     }
 
     private void bindBehaviours() {

@@ -21,9 +21,9 @@ package io.github.nikola_velemir.poshtar.spring.adapter.internal.configuration;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.mediator.PoshtarImpl;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
+import io.github.nikola_velemir.poshtar.spring.adapter.internal.mediator.SpringPoshtar;
 import io.github.nikola_velemir.poshtar.spring.adapter.internal.registry.SpringRequestRegistry;
 import io.github.nikola_velemir.poshtar.spring.adapter.internal.registry.SpringNotificationRegistry;
 
@@ -100,11 +100,11 @@ public class PoshtarSpringAutoConfiguration {
      *
      * @param handlerRegistry The registry containing request-to-handler mappings.
      * @param notificationRegistry The registry managing notification dispatching.
-     * @return A {@link PoshtarImpl} instance.
+     * @return A {@link SpringPoshtar} instance.
      */
     @Bean
     @ConditionalOnMissingBean
     public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
-        return new PoshtarImpl(handlerRegistry, notificationRegistry);
+        return new SpringPoshtar(handlerRegistry, notificationRegistry);
     }
 }

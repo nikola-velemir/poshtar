@@ -35,7 +35,7 @@ import java.util.List;
  * @version ${project.version}
  * @since 1.0.0
  */
-public final class PoshtarImpl implements Poshtar {
+public abstract class PoshtarBase implements Poshtar {
 
     /**
      * Request registry that is accessed to retrieve a pipeline chain for a given request type.
@@ -47,12 +47,12 @@ public final class PoshtarImpl implements Poshtar {
     private final NotificationRegistry notificationRegistry;
 
     /**
-     * Instantiates a new {@link PoshtarImpl} object, with provided {@link RequestRegistry} and {@link NotificationRegistry}.
+     * Instantiates a new {@link PoshtarBase} object, with provided {@link RequestRegistry} and {@link NotificationRegistry}.
      *
      * @param requestRegistry      provided request registry, holding all request to behavior-handler mappings.
      * @param notificationRegistry provided request registry, holding all notification to handler set mappings.
      */
-    public PoshtarImpl(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
+    public PoshtarBase(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
         this.requestRegistry = requestRegistry;
         this.notificationRegistry = notificationRegistry;
     }
@@ -91,16 +91,16 @@ public final class PoshtarImpl implements Poshtar {
         if (notification == null)
             throw new IllegalArgumentException("Request cannot be null");
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
-        List<Throwable> collectedErrors = new ArrayList<>();
         if (handlers != null) {
-            dispatchNotifications(notification, handlers, collectedErrors);
+            this.dispatch(notification, handlers);
         }
-        if (!collectedErrors.isEmpty())
-            throw new AggregateNotificationException(collectedErrors);
+
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <TNotification extends Notification> void dispatchNotifications(TNotification notification, List<NotificationHandler> handlers, List<Throwable> collectedErrors) {
+    protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {
+        List<Throwable> collectedErrors = new ArrayList<>();
+
         for (var handler : handlers) {
             try {
                 handler.handle(notification);
@@ -110,5 +110,8 @@ public final class PoshtarImpl implements Poshtar {
                 System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
             }
         }
+        if (!collectedErrors.isEmpty())
+            throw new AggregateNotificationException(collectedErrors);
+
     }
 }
