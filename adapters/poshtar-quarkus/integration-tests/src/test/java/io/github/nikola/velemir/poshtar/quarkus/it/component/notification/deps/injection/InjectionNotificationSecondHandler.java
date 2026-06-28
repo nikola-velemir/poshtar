@@ -35,5 +35,7 @@ public class InjectionNotificationSecondHandler implements NotificationHandler<I
     @Override
     public void handle(InjectionNotification injectionNotification) {
         injectionNotification.value = incrementService.inc(injectionNotification.value);
+        System.out.println("Second handler finished!");
+
     }
 }

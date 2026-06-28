@@ -77,6 +77,9 @@ public abstract class PoshtarBase implements Poshtar {
 
     }
 
+    protected NotificationRegistry getNotificationRegistry() {
+        return this.notificationRegistry;
+    }
     /**
      * Receives a notification, dispatching it to the corresponding handlers.
      *
@@ -96,6 +99,7 @@ public abstract class PoshtarBase implements Poshtar {
         }
 
     }
+
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {

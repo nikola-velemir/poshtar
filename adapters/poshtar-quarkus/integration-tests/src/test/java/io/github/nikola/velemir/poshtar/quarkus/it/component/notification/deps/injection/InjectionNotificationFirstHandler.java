@@ -34,5 +34,7 @@ public class InjectionNotificationFirstHandler implements NotificationHandler<In
     @Override
     public void handle(InjectionNotification injectionNotification) {
         injectionNotification.value = incrementService.inc(injectionNotification.value);
+        System.out.println("First handler finished!");
+
     }
 }

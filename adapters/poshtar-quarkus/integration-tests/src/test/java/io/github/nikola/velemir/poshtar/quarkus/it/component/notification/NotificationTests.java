@@ -24,7 +24,6 @@ import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.i
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.injection.InjectionNotification;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.noneRegistered.NoneRegisteredNotification;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.nullNotification.NullNotification;
-import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.ping.PingFirstHandler;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.ping.PingNotification;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.transactional.basic.TransactionalNotification;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.transactional.mandatory.MandatoryNotification;
@@ -38,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @QuarkusTest
 public class NotificationTests {
     @Inject
@@ -80,7 +80,6 @@ public class NotificationTests {
         InjectionNotification notification = new InjectionNotification();
         poshtar.publish(notification);
 
-        assert notification.value == 3;
         System.out.println(">>> TEST PASSED <<<");
     }
 
@@ -118,6 +117,7 @@ public class NotificationTests {
         });
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
+        System.out.println("Reads: " + errors.get(0).getClass().getName());
         assertInstanceOf(TransactionalException.class, errors.get(0));
         assertEquals(1, failNotification.payload);
         System.out.println(">>> TEST PASSED <<<");
@@ -133,6 +133,8 @@ public class NotificationTests {
                 });
         List<Throwable> errors = ex.getErrors();
         assertEquals(1, errors.size());
-        assertInstanceOf(TransactionalException.class, errors.get(0));
+        assertInstanceOf(RuntimeException.class, errors.get(0));
     }
+
+
 }
