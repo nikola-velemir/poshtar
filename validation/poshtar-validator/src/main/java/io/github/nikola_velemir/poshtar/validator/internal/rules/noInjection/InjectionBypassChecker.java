@@ -22,23 +22,55 @@ import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.Over
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 class InjectionBypassChecker {
     private static final String BYPASS_ANNOTATION_FQN = OverruleNoInjection.class.getName();
 
     public static boolean isBypassed(TypeElement clazz, ProcessorContext ctx) {
+
         return hasAnnotation(clazz, ctx) && isInTestPackage(clazz, ctx);
     }
 
     private static boolean hasAnnotation(TypeElement clazz, ProcessorContext ctx) {
-        return clazz.getAnnotationMirrors()
-                .stream()
-                .map(mirror -> mirror.getAnnotationType().asElement().toString())
-                .anyMatch(BYPASS_ANNOTATION_FQN::equals);
+        return clazz.getAnnotationMirrors().stream().map(mirror -> mirror.getAnnotationType().asElement().toString()).anyMatch(BYPASS_ANNOTATION_FQN::equals);
     }
 
     private static boolean isInTestPackage(TypeElement clazz, ProcessorContext ctx) {
+        boolean hasTestAnnotations = clazz.getAnnotationMirrors().stream()
+                .map(m -> m.getAnnotationType().asElement().toString())
+                .anyMatch(fqn -> fqn.startsWith("org.junit.") || fqn.startsWith("org.testng."));
+        boolean isInTestFiles = checkTestFiles(clazz, ctx);
+        return hasTestAnnotations || isInTestFiles;
+    }
+
+    private static boolean checkTestFiles(TypeElement clazz, ProcessorContext ctx) {
         String fqn = clazz.getQualifiedName().toString();
-        return fqn.contains(".test.");
+        try {
+            FileObject resource = ctx.env.getFiler()
+                    .getResource(StandardLocation.SOURCE_PATH,
+                            ctx.env.getElementUtils()
+                                    .getPackageOf(clazz).getQualifiedName().toString(),
+                            clazz.getSimpleName() + ".java");
+            String uri = resource.toUri().toString();
+            if (uri.contains("/test/")) return true;
+        } catch (IOException | IllegalArgumentException ignored) {
+        }
+
+        String sourceRoots = ctx.env.getOptions().get("sourceRoots");
+        if (sourceRoots != null) {
+            String classPath = fqn.replace('.', '/') + ".java";
+            return Arrays.stream(sourceRoots.split(File.pathSeparator))
+                    .anyMatch(root -> {
+                        File f = new File(root, classPath);
+                        return f.exists() && root.replace('\\', '/').contains("/test/");
+                    });
+        }
+
+        return false;
     }
 }

@@ -20,13 +20,21 @@ package io.github.nikola_velemir.poshtar.spring.adapter.request;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingFirstRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingSecondRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingSecondRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.injection.DummyLoggingService;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.nullRequest.NullRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactional.mandatory.MandatoryRequestHandler;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
 import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
@@ -41,23 +49,27 @@ import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactiona
 import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactional.basic.TransactionalRequestHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = TestApplication.class)
 @Import(MockTransactionConfig.class)
+@OverruleNoInjection
 public class RequestTests {
     @Autowired
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
+
     @Test
     void handles_Null_Send() {
-        System.out.println(RequestHandler.class.getSimpleName());
         NullRequest request = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(request));
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
+        verify(nullRequestHandler, never()).handle(any());
     }
 
     @Test
@@ -74,12 +86,14 @@ public class RequestTests {
     void should_Pass_With_At_Transactional() {
         boolean beanExists = context.containsBean(TransactionalRequestHandler.class.getName());
         assert beanExists : "Handler bean has not been registered thru @RequestHandler!";
-        assertDoesNotThrow(() -> {
-            String response = poshtar.send(new TransactionalRequest("Hello Poshtar"));
-            assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
-            System.out.println(">>> TEST PASSED: " + response);
-        });
+        TransactionalRequest transactionalRequest = new TransactionalRequest("Hello Poshtar");
 
+        assertDoesNotThrow(() -> {
+            String response = poshtar.send(transactionalRequest);
+            assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
+        });
+        verify(transactionalRequestHandler, times(1)).handle(eq(transactionalRequest));
+        System.out.println(">>> TEST PASSED: ");
 
     }
 
@@ -92,6 +106,20 @@ public class RequestTests {
         String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
+        verify(mandatoryRequestHandler, never()).handle(eq(request));
+        verify(mandatoryRequestHandler, never()).handle(any());
+
+    }
+
+    @Test
+    void should_Chain_Accordingly() {
+        var request = new ChainingFirstRequest();
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Hello from second", response.getResponse());
+        });
+        verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
+        verify(chainingSecondRequestHandler,times(1)).handle(eq(new ChainingSecondRequest(1)));
     }
 
     @Test
@@ -100,10 +128,13 @@ public class RequestTests {
         boolean beanExists = context.containsBean(PingRequestHandler.class.getName());
         assert beanExists : "Handler bean not registered thru @RequestHandler!";
 
-        String response = poshtar.send(new PingRequest("Hello Poshtar"));
+        PingRequest pingRequest = new PingRequest("Hello Poshtar");
+        String response = poshtar.send(pingRequest);
 
         assert response.equals("Pong: Hello Poshtar") : "Wrong response!";
         System.out.println(">>> TEST PASSED: " + response);
+
+        verify(pingRequestHandler, times(1)).handle(eq(pingRequest));
     }
 
     @Test
@@ -112,9 +143,29 @@ public class RequestTests {
         boolean beanExists = context.containsBean(InjectionRequestHandler.class.getName());
         assert beanExists : "Handler not registered thru @RequestHandler!";
 
-        String response = poshtar.send(new InjectionRequest("Hello Poshtar"));
+        InjectionRequest injectionRequest = new InjectionRequest("Hello Poshtar");
+        String response = poshtar.send(injectionRequest);
 
         assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
-        System.out.println(">>> TEST PROŠAO: " + response);
+        System.out.println(">>> TEST PASSED: " + response);
+        verify(injectionRequestHandler, times(1)).handle(eq(injectionRequest));
+        verify(dummyLoggingService, times(1)).log(any());
     }
+
+    @MockitoSpyBean
+    private NullRequestHandler nullRequestHandler;
+    @MockitoSpyBean
+    private PingRequestHandler pingRequestHandler;
+    @MockitoSpyBean
+    private InjectionRequestHandler injectionRequestHandler;
+    @MockitoSpyBean
+    private DummyLoggingService dummyLoggingService;
+    @MockitoSpyBean
+    private TransactionalRequestHandler transactionalRequestHandler;
+    @MockitoSpyBean
+    private MandatoryRequestHandler mandatoryRequestHandler;
+    @MockitoSpyBean
+    private ChainingFirstRequestHandler chainingFirstRequestHandler;
+    @MockitoSpyBean
+    private ChainingSecondRequestHandler chainingSecondRequestHandler;
 }
