@@ -62,6 +62,7 @@ import static org.mockito.Mockito.*;
 @Import(MockTransactionConfig.class)
 public class NotificationTests {
     @Autowired
+    @MockitoSpyBean
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
@@ -85,6 +86,9 @@ public class NotificationTests {
         assertEquals(expected, actual);
 
         verify(nullNotificationHandler, never()).handle(eq(notification));
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -101,6 +105,9 @@ public class NotificationTests {
         System.out.println(">>> TEST PASSED <<<");
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -122,17 +129,21 @@ public class NotificationTests {
         verify(injectionNotificationSecondHandler, times(1)).handle(any());
         verify(injectionNotificationThirdHandler, times(1)).handle(any());
         verify(dummyIncrementService, times(3)).inc(anyInt());
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
-        assertDoesNotThrow(() -> {
-            poshtar.publish(transactionNotification);
-        });
+        assertDoesNotThrow(() -> poshtar.publish(transactionNotification));
         System.out.println(">>> TEST PASSED <<<");
         verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
         verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
+
+        verify(poshtar, times(1)).publish(eq(transactionNotification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -150,6 +161,10 @@ public class NotificationTests {
 
         verify(mandatoryNotificationHandler, never()).handle(eq(mandatoryNotification));
         verify(mandatoryNotificationHandler, never()).handle(any());
+
+        verify(poshtar, times(1)).publish(eq(mandatoryNotification));
+        verify(poshtar, times(1)).publish(any());
+
         System.out.println(">>> TEST PASSED <<<");
 
 
@@ -172,6 +187,8 @@ public class NotificationTests {
         verify(failedExecutionNotificationFineHandler, times(1)).handle(eq(failNotification));
         verify(failedExecutionNotificationFineHandler, times(1)).handle(any());
 
+        verify(poshtar, times(1)).publish(eq(failNotification));
+        verify(poshtar, times(1)).publish(any());
         System.out.println(">>> TEST PASSED <<<");
     }
 
@@ -191,6 +208,10 @@ public class NotificationTests {
         verify(failForAsyncFirstHandler, times(1)).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, never()).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, never()).handle(any());
+
+
+        verify(poshtar, times(1)).publish(eq(failAsyncNotification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @MockitoSpyBean

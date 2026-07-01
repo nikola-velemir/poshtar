@@ -20,11 +20,15 @@ package io.github.nikola_velemir.poshtar.spring.adapter.request;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingFirstRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingFirstRequestHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingSecondRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.ChainingSecondRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.base.*;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock.MockChainedFirstRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock.MockChainedFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock.MockChainedSecondRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock.MockChainedSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.injection.DummyLoggingService;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.mock.MockRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.mock.MockRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.mock.MockResponse;
 import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.nullRequest.NullRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactional.mandatory.MandatoryRequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
@@ -34,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
@@ -57,6 +62,7 @@ import static org.mockito.Mockito.*;
 @OverruleNoInjection
 public class RequestTests {
     @Autowired
+    @MockitoSpyBean
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
@@ -70,6 +76,53 @@ public class RequestTests {
         String actual = ex.getMessage();
         assertEquals(expected, actual);
         verify(nullRequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(any());
+
+    }
+
+    @Test
+    void should_stub_specific_handler() {
+        MockRequest firstMockRequest = new MockRequest("Hello Poshtar");
+        MockResponse firstStubbedResponse = new MockResponse("Hello");
+        MockRequest secondMockRequest = new MockRequest("Hello Author");
+        MockResponse stubbedResponse = new MockResponse("Author");
+
+        when(mockRequestHandler.handle(eq(secondMockRequest))).thenReturn(stubbedResponse);
+        when(mockRequestHandler.handle(eq(firstMockRequest))).thenReturn(firstStubbedResponse);
+
+        MockResponse response = poshtar.send(firstMockRequest);
+
+        assertNotNull(response);
+        assertEquals("Hello", response.response());
+
+        response = poshtar.send(secondMockRequest);
+
+        assertNotNull(response);
+        assertEquals("Author", response.response());
+
+
+        verify(mockRequestHandler, times(1)).handle(eq(firstMockRequest));
+
+        verify(mockRequestHandler, times(1)).handle(eq(secondMockRequest));
+        verify(mockRequestHandler, times(2)).handle(any());
+        verify(poshtar, times(2)).send(any());
+
+    }
+
+    @Test
+    void should_stub_in_hierarchy_handler() {
+
+        MockChainedFirstRequest firstRequest = new MockChainedFirstRequest();
+        when(mockChainedSecondRequestHandler.handle(any())).thenReturn("TESTEST");
+
+        var response = poshtar.send(firstRequest);
+
+        assertNotNull(response);
+        assertEquals("TESTEST", response.payload());
+
+        verify(mockChainedSecondRequestHandler, times(1)).handle(eq(new MockChainedSecondRequest("Hello")));
+        verify(mockChainedfirstRequestHandler, times(1)).handle(eq(firstRequest));
+        verify(poshtar, times(2)).send(any());
     }
 
     @Test
@@ -80,6 +133,8 @@ public class RequestTests {
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
         String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -93,6 +148,8 @@ public class RequestTests {
             assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
         });
         verify(transactionalRequestHandler, times(1)).handle(eq(transactionalRequest));
+        verify(poshtar, times(1)).send(any());
+
         System.out.println(">>> TEST PASSED: ");
 
     }
@@ -108,6 +165,8 @@ public class RequestTests {
 
         verify(mandatoryRequestHandler, never()).handle(eq(request));
         verify(mandatoryRequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(any());
+
 
     }
 
@@ -115,11 +174,13 @@ public class RequestTests {
     void should_Chain_Accordingly() {
         var request = new ChainingFirstRequest();
         assertDoesNotThrow(() -> {
-            var response = poshtar.send(request);
+            ChainedResponse response = poshtar.send(request);
             assertEquals("Hello from second", response.getResponse());
         });
         verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
-        verify(chainingSecondRequestHandler,times(1)).handle(eq(new ChainingSecondRequest(1)));
+        verify(chainingSecondRequestHandler, times(1)).handle(eq(new ChainingSecondRequest(1)));
+        verify(poshtar, times(2)).send(any());
+
     }
 
     @Test
@@ -135,6 +196,8 @@ public class RequestTests {
         System.out.println(">>> TEST PASSED: " + response);
 
         verify(pingRequestHandler, times(1)).handle(eq(pingRequest));
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -150,6 +213,8 @@ public class RequestTests {
         System.out.println(">>> TEST PASSED: " + response);
         verify(injectionRequestHandler, times(1)).handle(eq(injectionRequest));
         verify(dummyLoggingService, times(1)).log(any());
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @MockitoSpyBean
@@ -168,4 +233,10 @@ public class RequestTests {
     private ChainingFirstRequestHandler chainingFirstRequestHandler;
     @MockitoSpyBean
     private ChainingSecondRequestHandler chainingSecondRequestHandler;
+    @MockitoBean
+    private MockRequestHandler mockRequestHandler;
+    @MockitoSpyBean
+    private MockChainedFirstRequestHandler mockChainedfirstRequestHandler;
+    @MockitoBean
+    private MockChainedSecondRequestHandler mockChainedSecondRequestHandler;
 }
