@@ -24,6 +24,13 @@ import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPi
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipelineCatcher;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderSecondPipeline;
@@ -38,11 +45,11 @@ import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.repository.TestRepository;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
@@ -105,7 +112,6 @@ public class PipelineTests {
         verify(specificPipeline, times(1)).handle(eq(specificRequest), any(RequestDelegate.class));
         verify(testPipeline, times(1)).handle(eq(notSpecificRequest), any(RequestDelegate.class));
         verify(testPipeline, times(2)).handle(any(), any(RequestDelegate.class));
-
 
 
         verify(poshtar, times(1)).send(eq(specificRequest));
@@ -202,6 +208,37 @@ public class PipelineTests {
     }
 
     @Test
+    void should_Mock_Basic() {
+        var request = new BasicMockRequest();
+        when(basicMockPipeline.handle(eq(request), any(RequestDelegate.class))).thenReturn("Did not pass");
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Did not pass", response);
+        });
+        verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(basicMockrequestHandler, times(0)).handle(eq(request));
+        verify(basicMockrequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(eq(request));
+
+    }
+
+    @Test
+    void should_Mock_Hierarchy() {
+        var request = new HierarchyRequest();
+        when(hierarchySecondBehaviour.handle(eq(request), any(RequestDelegate.class))).thenReturn("I miss the handler :(");
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("I miss the handler :(", response);
+        });
+        verify(hierarchyFirstBehaviour, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(hierarchySecondBehaviour, times(1)).handle(eq(request), any(RequestDelegate.class));
+
+        verify(hierarchyRequestHandler, never()).handle(eq(request));
+        verify(hierarchyRequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(eq(request));
+    }
+
+    @Test
     void should_Fail_For_Mandatory() {
         boolean beanExists = context.containsBean(FailMandatoryPipeline.class.getName());
         assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
@@ -271,7 +308,7 @@ public class PipelineTests {
         verify(validationRequestHandler, times(1)).handle(eq(goodValidationRequest));
         verify(validationBehaviour, times(1)).handle(eq(goodValidationRequest), any(RequestDelegate.class));
 
-        verify(validationRequestHandler,never()).handle(eq(badValidationRequest));
+        verify(validationRequestHandler, never()).handle(eq(badValidationRequest));
         verify(validationBehaviour, times(1)).handle(eq(badValidationRequest), any(RequestDelegate.class));
 
         verify(poshtar, times(1)).send(eq(goodValidationRequest));
@@ -317,4 +354,14 @@ public class PipelineTests {
     private ValidationBehaviour validationBehaviour;
     @MockitoSpyBean
     private ValidationRequestHandler validationRequestHandler;
+    @MockitoSpyBean
+    private BasicMockRequestHandler basicMockrequestHandler;
+    @MockitoBean
+    private BasicMockPipeline basicMockPipeline;
+    @MockitoSpyBean
+    private HierarchyFirstBehaviour hierarchyFirstBehaviour;
+    @MockitoBean
+    private HierarchySecondBehaviour hierarchySecondBehaviour;
+    @MockitoSpyBean
+    private HierarchyRequestHandler hierarchyRequestHandler;
 }
