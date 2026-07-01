@@ -26,6 +26,9 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 class InjectionBypassChecker {
@@ -65,12 +68,24 @@ class InjectionBypassChecker {
         if (sourceRoots != null) {
             String classPath = fqn.replace('.', '/') + ".java";
             return Arrays.stream(sourceRoots.split(File.pathSeparator))
-                    .anyMatch(root -> {
-                        File f = new File(root, classPath);
-                        return f.exists() && root.replace('\\', '/').contains("/test/");
-                    });
+                    .anyMatch(root -> checkTargetPath(root, classPath));
         }
 
         return false;
+    }
+
+    private static boolean checkTargetPath(String root, String classPath) {
+        try {
+            Path baseDir = Paths.get(root).toAbsolutePath().normalize();
+            Path targetFile = baseDir.resolve(classPath).toAbsolutePath().normalize();
+
+            if (!targetFile.startsWith(baseDir)) {
+                return false;
+            }
+
+            return Files.exists(targetFile) && baseDir.toString().replace('\\', '/').contains("/test/");
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
