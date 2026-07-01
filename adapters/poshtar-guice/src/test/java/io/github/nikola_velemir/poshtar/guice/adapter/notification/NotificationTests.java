@@ -18,31 +18,83 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.notification;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.*;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotificationHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingFirstHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingSecondHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationFirstHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationSecondHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationFirstHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationSecondHandler;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.InjectionNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.noneRegistered.NoneRegisteredNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotification;
+import org.mockito.Mockito;
 
 
 import java.util.List;
 
+import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.buildTestInjector;
+import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.createHandlerSpies;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-public class NotificationTests {
+class NotificationTests {
     private static Poshtar poshtar;
     private static Injector injector;
+    static FailedExecutionNotificationHandler failedExecutionHandler;
+    static FailedExecutionNotificationFineHandler failedExecutionFineHandler;
+    static InjectionNotificationFirstHandler injectionFirstHandler;
+    static InjectionNotificationSecondHandler injectionSecondHandler;
+    static InjectionNotificationThirdHandler injectionThirdHandler;
+    static DummyIncrementService dummyIncrementService;
+    static NullNotificationHandler nullHandler;
+    static PingFirstHandler pingFirstHandler;
+    static PingSecondHandler pingSecondHandler;
+    static FailTransactionalNotificationFirstHandler failTransactionalFirst;
+    static FailTransactionalNotificationSecondHandler failTransactionalSecond;
+    static TransactionalNotificationFirstHandler transactionalNotificationFirstHandler;
+    static TransactionalNotificationSecondHandler transactionalNotificationSecondHandler;
+
+    @BeforeEach
+    void initTestContainer() {
+        DummyIncrementService realIncrementService = new DummyIncrementService();
+        dummyIncrementService = Mockito.spy(realIncrementService);
+
+        Injector bootstrapInjector = Guice.createInjector(
+                Modules.override(new TestModule()).with(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(DummyIncrementService.class).toInstance(dummyIncrementService);
+                    }
+                })
+        );
+
+        createHandlerSpies(bootstrapInjector);
+
+        Injector injector = buildTestInjector();
+
+        poshtar = injector.getInstance(Poshtar.class);
+    }
+
 
     @BeforeAll
     static void setUp() {
@@ -57,10 +109,11 @@ public class NotificationTests {
         assertDoesNotThrow(() -> poshtar.publish(noneNotification));
         assertEquals(0, noneNotification.payload);
     }
+
     @Test
     void should_Fail_For_Transactional() {
         var transactionNotification = new FailTransactionalNotification("Fail Pass");
-        Exception ex = assertThrowsExactly(AggregateNotificationException.class,() -> {
+        Exception ex = assertThrowsExactly(AggregateNotificationException.class, () -> {
             poshtar.publish(transactionNotification);
 
 
@@ -72,9 +125,13 @@ public class NotificationTests {
         em.getTransaction().commit();
         assertFalse(results.isEmpty(), "Transaction did not commit!.");
         assertEquals(1, results.size());
+
+        verify(failTransactionalFirst, times(1)).handle(eq(transactionNotification));
+        verify(failTransactionalSecond, times(1)).handle(eq(transactionNotification));
         System.out.println(">>> TEST PASSED <<<");
 
     }
+
     @Test
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification("Pass");
@@ -91,7 +148,12 @@ public class NotificationTests {
             results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Second Pass'", TestEntity.class).getResultList();
             em.getTransaction().commit();
             assertFalse(results.isEmpty(), "Transaction did not commit!.");
+
         });
+
+        verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
+        verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
+
         System.out.println(">>> TEST PASSED <<<");
 
     }
@@ -104,6 +166,8 @@ public class NotificationTests {
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
+        verify(nullHandler, never()).handle(eq(notification));
+        verify(nullHandler, never()).handle(any());
     }
 
     @Test
@@ -113,7 +177,10 @@ public class NotificationTests {
         PingNotification notification = new PingNotification();
         poshtar.publish(notification);
 
-        assert notification.payload == 2;
+
+        verify(pingFirstHandler, times(1)).handle(eq(notification));
+        verify(pingSecondHandler, times(1)).handle(eq(notification));
+
         System.out.println(">>> TEST PASSED <<<");
     }
 
@@ -126,6 +193,13 @@ public class NotificationTests {
             poshtar.publish(notification);
 
             assert notification.value == 3;
+
+            verify(injectionFirstHandler, times(1)).handle(eq(notification));
+
+            verify(injectionSecondHandler, times(1)).handle(eq(notification));
+
+            verify(injectionThirdHandler, times(1)).handle(eq(notification));
+
             System.out.println(">>> TEST PASSED <<<");
         });
     }
@@ -141,6 +215,8 @@ public class NotificationTests {
         assertInstanceOf(RuntimeException.class, errors.get(0));
         assertEquals(1, failNotification.payload);
         System.out.println(">>> TEST PASSED <<<");
+        verify(failedExecutionHandler, times(1)).handle(eq(failNotification));
+        verify(failedExecutionFineHandler, times(1)).handle(eq(failNotification));
     }
 
 }

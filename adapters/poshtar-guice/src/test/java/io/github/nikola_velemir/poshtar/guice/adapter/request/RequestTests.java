@@ -40,7 +40,6 @@ import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.infrastructure.NotFoundRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionResponse;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.ping.PingRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.success.TransactionalRequest;
@@ -49,6 +48,8 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
+import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.buildTestInjector;
+import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.createSpies;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -58,46 +59,29 @@ import static org.mockito.Mockito.*;
 public class RequestTests {
     private Poshtar poshtar;
     private Injector injector;
-    private NullRequestHandler nullRequestHandler;
-    private PingRequestHandler pingRequestHandler;
-    private InjectionRequestHandler injectionRequestHandler;
-    private TransactionalRequestHandler transactionalRequestHandler;
-    private UpdateTransactionalRequestHandler updateTransactionalRequestHandler;
-    private FailForTransactionalRequestHandler failForTransactionalRequestHandler;
+    static NullRequestHandler nullRequestHandler;
+    static PingRequestHandler pingRequestHandler;
+    static InjectionRequestHandler injectionRequestHandler;
+    static TransactionalRequestHandler transactionalRequestHandler;
+    static UpdateTransactionalRequestHandler updateTransactionalRequestHandler;
+    static FailForTransactionalRequestHandler failForTransactionalRequestHandler;
+    static DummyLoggingService dummyLoggingService;
+
     static {
-        // Silence the noisy Guice ProxyFactory AOP warning stream
         java.util.logging.Logger.getLogger("com.google.inject.internal.ProxyFactory")
                 .setLevel(java.util.logging.Level.SEVERE);
     }
 
-    private DummyLoggingService dummyLoggingService;
 
     @BeforeEach
     void initTestContainer() {
-        // 1. Create a baseline injector to construct real instances matching your setup
+        // 1. Spy the shared dependency first
         Injector bootstrapInjector = Guice.createInjector(new TestModule());
-
-        extractSpies(bootstrapInjector);
-
-        injector = createTestInjector();
-
-        // 4. Get your active mediator instance wrapped with your test hooks
-        poshtar = injector.getInstance(Poshtar.class);
-    }
-
-    private void extractSpies(Injector bootstrapInjector) {
-        NullRequestHandler realNullRequestHandler = bootstrapInjector.getInstance(NullRequestHandler.class);
-        nullRequestHandler = Mockito.spy(realNullRequestHandler);
-
-        PingRequestHandler realPingRequestHandler = bootstrapInjector.getInstance(PingRequestHandler.class);
-        pingRequestHandler = Mockito.spy(realPingRequestHandler);
-
-        // 1. Extract and spy the leaf node logging dependency first
         DummyLoggingService realLoggingService = bootstrapInjector.getInstance(DummyLoggingService.class);
         dummyLoggingService = Mockito.spy(realLoggingService);
 
-        // 2. Build an intermediate injector supplying our spied dependencies down the line
-        Injector intermediateInjector = Guice.createInjector(
+        // 2. Create handlers with spy dependency injected, then wrap them in spies
+        Injector handlerInjector = Guice.createInjector(
                 Modules.override(new TestModule()).with(new AbstractModule() {
                     @Override
                     protected void configure() {
@@ -105,30 +89,16 @@ public class RequestTests {
                     }
                 })
         );
-        InjectionRequestHandler realInjectionHandler = new InjectionRequestHandler(dummyLoggingService);
-        injectionRequestHandler = Mockito.spy(realInjectionHandler);
-        injectionRequestHandler = Mockito.spy(intermediateInjector.getInstance(InjectionRequestHandler.class));
-        transactionalRequestHandler = Mockito.spy(intermediateInjector.getInstance(TransactionalRequestHandler.class));
-        updateTransactionalRequestHandler = Mockito.spy(intermediateInjector.getInstance(UpdateTransactionalRequestHandler.class));
-        failForTransactionalRequestHandler = Mockito.spy(intermediateInjector.getInstance(FailForTransactionalRequestHandler.class));
+
+        createSpies(handlerInjector);
+
+        injector = buildTestInjector();
+
+        poshtar = injector.getInstance(Poshtar.class);
     }
 
-    private Injector createTestInjector() {
-        return Guice.createInjector(
-                Modules.override(new TestModule()).with(new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(NullRequestHandler.class).toInstance(nullRequestHandler);
-                        bind(PingRequestHandler.class).toInstance(pingRequestHandler);
-                        bind(InjectionRequestHandler.class).toInstance(injectionRequestHandler);
-                        bind(DummyLoggingService.class).toInstance(dummyLoggingService);
-                        bind(TransactionalRequestHandler.class).toInstance(transactionalRequestHandler);
-                        bind(UpdateTransactionalRequestHandler.class).toInstance(updateTransactionalRequestHandler);
-                        bind(FailForTransactionalRequestHandler.class).toInstance(failForTransactionalRequestHandler);
-                    }
-                })
-        );
-    }
+
+
 
     @Test
     void should_Register_And_Execute_Handler_Automatically() {
