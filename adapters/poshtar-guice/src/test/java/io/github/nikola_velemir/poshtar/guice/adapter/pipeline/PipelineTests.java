@@ -18,10 +18,30 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.pipeline;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipelineCatcher;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderFirstPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderSecondPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationBehaviour;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequestHandler;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
@@ -33,23 +53,83 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.Spe
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequest;
+import org.mockito.Mockito;
 
 
 import java.util.List;
 
+import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.buildTestInjector;
+import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.createSpies;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
+@SuppressWarnings("rawtypes")
+@OverruleNoInjection
 public class PipelineTests {
-    private static Poshtar poshtar;
-    private static Injector injector;
+    static FailTransactionalPipeline failTransactionalPipeline;
+    static FailTransactionalRequestHandler failTransactionalHandler;
+    static TransactionalPipeline transactionalPipeline;
+    static TransactionalRequestHandler transactionalHandler;
+    private Poshtar poshtar;
+    private Injector injector;
+    static GlobalTestPipeline globalPipeline;
+    static SpecificPipeline specificPipeline;
+    static DeadPipeline deadPipeline;
+    static DeadPipelineCatcher deadPipelineCatcher;
+    static DeadRequestHandler deadRequestHandler;
+    static OrderFirstPipeline orderFirstPipeline;
+    static OrderSecondPipeline orderSecondPipeline;
+    static OrderRequestHandler orderRequestHandler;
+    static ValidationRequestHandler validationRequestHandler;
+    static ValidationBehaviour validationBehaviour;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         injector = Guice.createInjector(new TestModule());
+        poshtar = injector.getInstance(Poshtar.class);
+
+        EntityManager em = injector.getInstance(EntityManager.class);
+        em.getTransaction().begin();
+        em.createQuery("DELETE FROM TestEntity").executeUpdate();
+        em.getTransaction().commit();
+    }
+
+    @BeforeEach
+    void initTestContainer() {
+        Injector behaviourInjector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
+            @Override
+            protected void configure() {
+
+            }
+        }));
+        createSpies(behaviourInjector);
+
+        injector = buildTestInjector();
 
         poshtar = injector.getInstance(Poshtar.class);
     }
 
+
+    @AfterEach
+    void tearDown() {
+        EntityManager em = injector.getInstance(EntityManager.class);
+        if (em.isOpen()) em.close();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void should_Call_Global_Pipeline_Exactly_Once() {
+        var request = new GlobalPipelineTestRequest();
+
+        poshtar.send(request);
+
+        verify(globalPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
+    }
+
+    @SuppressWarnings("unchecked")
     @Test
     void should_Call_Specific_Pipeline() {
         var specificRequest = new SpecificRequest();
@@ -59,74 +139,88 @@ public class PipelineTests {
         var notSpecificRequest = new NotSpecificRequest();
         poshtar.send(notSpecificRequest);
         assertEquals(0, notSpecificRequest.payload);
+        verify(globalPipeline, times(1)).handle(eq(specificRequest), any(RequestDelegate.class));
+        verify(specificPipeline, times(1)).handle(eq(specificRequest), any(RequestDelegate.class));
+        verify(globalPipeline, times(1)).handle(eq(notSpecificRequest), any(RequestDelegate.class));
+        verify(globalPipeline, times(2)).handle(any(), any(RequestDelegate.class));
     }
 
     @Test
-    void should_call_Dead_Pipeline() {
+    void should_Call_Dead_Pipeline() {
         var deadRequest = new DeadRequest();
         assertDoesNotThrow(() -> {
             var result = poshtar.send(deadRequest);
             assertNull(result);
         });
+        verify(deadPipeline, times(1)).handle(eq(deadRequest), any(RequestDelegate.class));
+        verify(deadPipelineCatcher, never()).handle(eq(deadRequest), any(RequestDelegate.class));
+        verify(deadPipelineCatcher, never()).handle(any(), any());
+        verify(deadRequestHandler, never()).handle(eq(deadRequest));
+        verify(deadRequestHandler, never()).handle(any());
     }
 
     @Test
     void should_Respect_Order() {
         var orderRequest = new OrderRequest();
-        assertDoesNotThrow(() -> {
-            poshtar.send(orderRequest);
-
-        });
+        assertDoesNotThrow(() -> poshtar.send(orderRequest));
         assertEquals(3, orderRequest.payload);
+        verify(orderFirstPipeline, times(1)).handle(eq(orderRequest), any(RequestDelegate.class));
+        verify(orderSecondPipeline, times(1)).handle(eq(orderRequest), any(RequestDelegate.class));
+        verify(orderRequestHandler, times(1)).handle(eq(orderRequest));
     }
-
 
     @Test
     void should_Work_For_Validation() {
-
         var goodValidationRequest = new ValidationRequest(1);
         assertDoesNotThrow(() -> {
             var response = poshtar.send(goodValidationRequest);
             assertEquals(2, response);
         });
-        var badValidatioNRequest = new ValidationRequest(0);
-        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.send(badValidatioNRequest);
-        });
-        assertEquals(0, badValidatioNRequest.payload());
-        String actual = ex.getMessage();
-        String expected = "Payload is wrong";
-        assertEquals(expected, actual);
+
+        var badValidationRequest = new ValidationRequest(0);
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(badValidationRequest));
+        assertEquals(0, badValidationRequest.payload());
+        assertEquals("Payload is wrong", ex.getMessage());
+
+        verify(validationRequestHandler, times(1)).handle(eq(goodValidationRequest));
+        verify(validationBehaviour, times(1)).handle(eq(goodValidationRequest), any(RequestDelegate.class));
+
+        verify(validationRequestHandler, never()).handle(eq(badValidationRequest));
+        verify(validationBehaviour, times(1)).handle(eq(badValidationRequest), any(RequestDelegate.class));
+
     }
 
     @Test
     void should_Pass_For_Transactional() {
-
         var transactionalRequest = new TransactionalRequest();
-        assertDoesNotThrow(() -> {
-            poshtar.send(transactionalRequest);
-
-            EntityManager em = injector.getInstance(EntityManager.class);
-
-            em.getTransaction().begin();
-            List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'From transactional pipeline'", TestEntity.class).getResultList();
-            em.getTransaction().commit();
-            assertFalse(results.isEmpty(), "Transaction did not commit!.");
-        });
+        assertDoesNotThrow(() -> poshtar.send(transactionalRequest));
         assertEquals(2, transactionalRequest.payload);
-    }
-    @Test
-    void should_Fail_For_Transactional(){
-        var failTransactionalRequest = new FailTransactionalRequest("Fail from transactional pipeline");
-        assertThrowsExactly(RuntimeException.class, ()->{
-           poshtar.send(failTransactionalRequest);
 
-        });
         EntityManager em = injector.getInstance(EntityManager.class);
-
         em.getTransaction().begin();
-        List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Fail from transactional pipeline'", TestEntity.class).getResultList();
+        List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d WHERE d.data = 'From transactional pipeline'", TestEntity.class).getResultList();
         em.getTransaction().commit();
-        assertTrue(results.isEmpty(), "Transaction did commit!.");
+
+        assertFalse(results.isEmpty(), "Transaction did not commit");
+        assertEquals(1, results.size());
+
+        verify(transactionalPipeline, times(1)).handle(eq(transactionalRequest), any(RequestDelegate.class));
+        verify(transactionalHandler, times(1)).handle(eq(transactionalRequest));
+    }
+
+    @Test
+    void should_Fail_For_Transactional() {
+        var failTransactionalRequest = new FailTransactionalRequest("Fail from transactional pipeline");
+        assertThrowsExactly(RuntimeException.class, () -> poshtar.send(failTransactionalRequest));
+
+        EntityManager em = injector.getInstance(EntityManager.class);
+        em.getTransaction().begin();
+        List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d WHERE d.data = 'Fail from transactional pipeline'", TestEntity.class).getResultList();
+        em.getTransaction().commit();
+
+        assertTrue(results.isEmpty(), "Transaction should have rolled back");
+
+        verify(failTransactionalPipeline, times(1)).handle(eq(failTransactionalRequest), any(RequestDelegate.class));
+        verify(failTransactionalHandler, never()).handle(eq(failTransactionalRequest));
     }
 }

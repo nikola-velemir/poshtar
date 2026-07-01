@@ -18,10 +18,24 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.request;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.ping.PingRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.success.TransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.success.UpdateTransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
@@ -30,45 +44,101 @@ import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.infrastructure.NotFoundRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionResponse;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.ping.PingRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.success.TransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.success.UpdateTransactionalRequest;
+import org.mockito.Mockito;
 
 import java.util.List;
 
+import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.buildTestInjector;
+import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.createSpies;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
+@OverruleNoInjection
 public class RequestTests {
     private static Poshtar poshtar;
-    private static Injector injector;
+    private Injector injector;
+    static NullRequestHandler nullRequestHandler;
+    static PingRequestHandler pingRequestHandler;
+    static InjectionRequestHandler injectionRequestHandler;
+    static TransactionalRequestHandler transactionalRequestHandler;
+    static UpdateTransactionalRequestHandler updateTransactionalRequestHandler;
+    static FailForTransactionalRequestHandler failForTransactionalRequestHandler;
+    static DummyLoggingService dummyLoggingService;
+    static ChainingFirstRequestHandler chainingFirstRequestHandler;
+    static ChainingSecondRequestHandler chainingSecondRequestHandler;
 
-    @BeforeAll
-    static void setUp() {
-        injector = Guice.createInjector(new TestModule());
+    static {
+        java.util.logging.Logger.getLogger("com.google.inject.internal.ProxyFactory")
+                .setLevel(java.util.logging.Level.SEVERE);
+    }
+
+
+    @BeforeEach
+    void initTestContainer() {
+        // 1. Spy the shared dependency first
+        Injector bootstrapInjector = Guice.createInjector(new TestModule());
+        DummyLoggingService realLoggingService = bootstrapInjector.getInstance(DummyLoggingService.class);
+        dummyLoggingService = Mockito.spy(realLoggingService);
+
+        // 2. Create handlers with spy dependency injected, then wrap them in spies
+        Injector handlerInjector = Guice.createInjector(
+                Modules.override(new TestModule()).with(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(DummyLoggingService.class).toInstance(dummyLoggingService);
+                    }
+                })
+        );
+
+        createSpies(handlerInjector);
+
+
+        injector = buildTestInjector();
 
         poshtar = injector.getInstance(Poshtar.class);
     }
 
     @Test
+    void should_Chain_Accordingly() {
+        var request = new ChainingFirstRequest();
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Hello from second", response.getResponse());
+        });
+        System.out.println("Spy Handler Hashcode: " + System.identityHashCode(RequestTests.chainingFirstRequestHandler));
+        System.out.println("Spy Second Handler Hashcode: " + System.identityHashCode(RequestTests.chainingSecondRequestHandler));
+
+        verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
+        verify(chainingSecondRequestHandler, times(1)).handle(any(ChainingSecondRequest.class));
+
+    }
+
+    @Test
     void should_Register_And_Execute_Handler_Automatically() {
 
-        String response = poshtar.send(new PingRequest("Hello Poshtar"));
+        PingRequest pingRequest = new PingRequest("Hello Poshtar");
+        String response = poshtar.send(pingRequest);
 
         assert response.equals("Pong: Hello Poshtar") : "Wrong response!";
         System.out.println(">>> TEST PASSED: " + response);
+        verify(pingRequestHandler, times(1)).handle(eq(pingRequest));
 
     }
 
     @Test
     void handles_Null_Send() {
-        NullRequest request = null;
-        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(request));
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(null));
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
+        verify(nullRequestHandler, never()).handle(any());
     }
 
     @Test
@@ -83,17 +153,22 @@ public class RequestTests {
 
     @Test
     void should_Register_And_Inject_Service() {
-        InjectionResponse response = poshtar.send(new InjectionRequest("Hello Poshtar"));
+        var injectionRequest = new InjectionRequest("Hello Poshtar");
+        InjectionResponse response = poshtar.send(injectionRequest);
 
         assert response.payload().equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
-        System.out.println(">>> TEST PROŠAO: " + response);
+        verify(injectionRequestHandler, times(1)).handle(eq(injectionRequest));
+        verify(dummyLoggingService, times(1)).log(any());
+
+        System.out.println(">>> TEST PASSED: " + response);
     }
 
     @Test
     void should_Pass_With_At_Transactional() {
 
         assertDoesNotThrow(() -> {
-            String response = poshtar.send(new TransactionalRequest("Hello Poshtar"));
+            var transactionalRequest = new TransactionalRequest("Hello Poshtar");
+            String response = poshtar.send(transactionalRequest);
             assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
             System.out.println(">>> TEST PASSED: " + response);
 
@@ -106,21 +181,25 @@ public class RequestTests {
 
             var entity = results.get(0);
 
-            poshtar.send(new UpdateTransactionalRequest(entity.getId(), "Updated"));
+            var updateRequest = new UpdateTransactionalRequest(entity.getId(), "Updated");
+            poshtar.send(updateRequest);
 
             em.getTransaction().begin();
             List<TestEntity> updateResults = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Updated'", TestEntity.class).getResultList();
             em.getTransaction().commit();
             assertFalse(updateResults.isEmpty(), "Transaction did not commit!.");
 
+            verify(transactionalRequestHandler, times(1)).handle(eq(transactionalRequest));
+            verify(updateTransactionalRequestHandler, times(1)).handle(eq(updateRequest));
         });
+
     }
 
     @Test
     void should_Fail_With_At_Transactional() {
-
+        var request = new FailForTransactionalRequest("Fail for poshtar");
         Exception ex = assertThrowsExactly(RuntimeException.class, () -> {
-            String response = poshtar.send(new FailForTransactionalRequest("Fail for poshtar"));
+            String response = poshtar.send(request);
             assert !response.equals("Fail for poshtar") : "Response is incorrect";
             System.out.println(">>> TEST PASSED: " + response);
         });
@@ -134,5 +213,8 @@ public class RequestTests {
         List<TestEntity> results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Fail for poshtar'", TestEntity.class).getResultList();
         em.getTransaction().commit();
         assertTrue(results.isEmpty(), "Transaction did not roll back! Entity was saved.");
+
+        verify(failForTransactionalRequestHandler, times(1)).handle(eq(request));
     }
+
 }
