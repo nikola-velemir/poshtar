@@ -32,6 +32,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transact
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationSecondHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationSecondHandler;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@OverruleNoInjection
 class NotificationTests {
     private static Poshtar poshtar;
     private static Injector injector;

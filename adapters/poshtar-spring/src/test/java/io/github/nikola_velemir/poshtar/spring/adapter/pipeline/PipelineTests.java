@@ -86,7 +86,6 @@ public class PipelineTests {
 
         poshtar.send(request);
 
-        // This will now correctly fail if it's called 0 times, and pass only on 1
         verify(testPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
     }
 

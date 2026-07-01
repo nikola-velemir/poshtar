@@ -22,6 +22,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequestHandler;
@@ -57,7 +61,7 @@ import static org.mockito.Mockito.*;
 
 @OverruleNoInjection
 public class RequestTests {
-    private Poshtar poshtar;
+    private static Poshtar poshtar;
     private Injector injector;
     static NullRequestHandler nullRequestHandler;
     static PingRequestHandler pingRequestHandler;
@@ -66,6 +70,8 @@ public class RequestTests {
     static UpdateTransactionalRequestHandler updateTransactionalRequestHandler;
     static FailForTransactionalRequestHandler failForTransactionalRequestHandler;
     static DummyLoggingService dummyLoggingService;
+    static ChainingFirstRequestHandler chainingFirstRequestHandler;
+    static ChainingSecondRequestHandler chainingSecondRequestHandler;
 
     static {
         java.util.logging.Logger.getLogger("com.google.inject.internal.ProxyFactory")
@@ -92,13 +98,26 @@ public class RequestTests {
 
         createSpies(handlerInjector);
 
+
         injector = buildTestInjector();
 
         poshtar = injector.getInstance(Poshtar.class);
     }
 
+    @Test
+    void should_Chain_Accordingly() {
+        var request = new ChainingFirstRequest();
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Hello from second", response.getResponse());
+        });
+        System.out.println("Spy Handler Hashcode: " + System.identityHashCode(RequestTests.chainingFirstRequestHandler));
+        System.out.println("Spy Second Handler Hashcode: " + System.identityHashCode(RequestTests.chainingSecondRequestHandler));
 
+        verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
+        verify(chainingSecondRequestHandler, times(1)).handle(any(ChainingSecondRequest.class));
 
+    }
 
     @Test
     void should_Register_And_Execute_Handler_Automatically() {

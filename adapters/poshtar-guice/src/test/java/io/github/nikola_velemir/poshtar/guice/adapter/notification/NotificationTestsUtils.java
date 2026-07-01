@@ -18,7 +18,9 @@ import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transact
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationSecondHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationSecondHandler;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.mockito.Mockito;
+@OverruleNoInjection
 
 public class NotificationTestsUtils {
 
