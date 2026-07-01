@@ -52,40 +52,17 @@ class InjectionBypassChecker {
     }
 
     private static boolean checkTestFiles(TypeElement clazz, ProcessorContext ctx) {
-        String fqn = clazz.getQualifiedName().toString();
         try {
+
             FileObject resource = ctx.env.getFiler()
                     .getResource(StandardLocation.SOURCE_PATH,
-                            ctx.env.getElementUtils()
-                                    .getPackageOf(clazz).getQualifiedName().toString(),
+                            ctx.env.getElementUtils().getPackageOf(clazz).getQualifiedName().toString(),
                             clazz.getSimpleName() + ".java");
+
             String uri = resource.toUri().toString();
-            if (uri.contains("/test/")) return true;
+            return uri.contains("/test/");
         } catch (IOException | IllegalArgumentException ignored) {
         }
-
-        String sourceRoots = ctx.env.getOptions().get("sourceRoots");
-        if (sourceRoots != null) {
-            String classPath = fqn.replace('.', '/') + ".java";
-            return Arrays.stream(sourceRoots.split(File.pathSeparator))
-                    .anyMatch(root -> checkTargetPath(root, classPath));
-        }
-
         return false;
-    }
-
-    private static boolean checkTargetPath(String root, String classPath) {
-        try {
-            Path baseDir = Paths.get(root).toAbsolutePath().normalize();
-            Path targetFile = baseDir.resolve(classPath).toAbsolutePath().normalize();
-
-            if (!targetFile.startsWith(baseDir)) {
-                return false;
-            }
-
-            return Files.exists(targetFile) && baseDir.toString().replace('\\', '/').contains("/test/");
-        } catch (Exception e) {
-            return false;
-        }
     }
 }
