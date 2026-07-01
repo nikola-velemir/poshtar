@@ -26,6 +26,7 @@ import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.F
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.injection.*;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.mock.*;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.nullNotification.NullNotificationHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationSecondHandler;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
@@ -171,6 +173,35 @@ public class NotificationTests {
     }
 
     @Test
+    void should_Stub_Basic() {
+        var mockNotification = new MockNotification();
+
+        when(mockService.getHello()).thenReturn("Bye");
+
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Bye", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHello();
+        verify(basicMockHandler, times(1)).handle(eq(mockNotification));
+        verify(poshtar, times(1)).publish(eq(mockNotification));
+    }
+
+    @Test
+    void should_Stub_Hierarchy() {
+        var mockNotification = new MockHierarchyNotification();
+
+        when(mockServiceDeep.getHi()).thenReturn("Ciao");
+        when(mockService.getHi()).then(i -> mockServiceDeep.getHi());
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Ciao", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHi();
+        verify(mockServiceDeep, times(1)).getHi();
+        verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
+        verify(poshtar, times(1)).publish(eq(mockNotification));
+    }
+
+    @Test
     void should_Fail_Purposefully_On_Execution() {
         var failNotification = new FailedExecutionNotification();
 
@@ -244,4 +275,12 @@ public class NotificationTests {
     private FailForAsyncSecondHandler failForAsyncSecondHandler;
     @MockitoSpyBean
     private FailForAsyncThirdHandler failForAsyncThirdHandler;
+    @MockitoBean
+    private MockService mockService;
+    @MockitoBean
+    private MockServiceDeep mockServiceDeep;
+    @MockitoSpyBean
+    private MockFirstNotificationHandler basicMockHandler;
+    @MockitoSpyBean
+    private MockHierarchyNotificationHandler hierarchyNotificationHandler;
 }
