@@ -19,7 +19,6 @@
 package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
@@ -38,7 +37,7 @@ import java.util.List;
  * @version ${project.version}
  * @since 1.0.0
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "UnstableApiUsage"})
 
 public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
     /**
@@ -58,12 +57,13 @@ public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
                 Class<?> rawType = key.getTypeLiteral().getRawType();
                 if (NotificationHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
                     NotificationHandler handler = (NotificationHandler) current.getInstance(key);
-                    TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(handler));
+
+                    TypeToken<?> typeToken = TypeToken.of(rawType);
                     TypeToken<?> superType = typeToken.getSupertype((Class) NotificationHandler.class);
                     Class<?> notificationType = superType.resolveType(NotificationHandler.class.getTypeParameters()[0]).getRawType();
+
                     if (Notification.class.isAssignableFrom(notificationType)) {
-                        Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;
-                        register(castedType, handler);
+                        register((Class<? extends Notification>) notificationType, handler);
                     }
                 }
             }

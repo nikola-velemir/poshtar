@@ -23,11 +23,19 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipelineCatcher;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderSecondPipeline;
@@ -42,6 +50,7 @@ import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.Over
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
@@ -58,8 +67,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.buildTestInjector;
-import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.createSpies;
+import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -85,31 +93,33 @@ public class PipelineTests {
     static OrderRequestHandler orderRequestHandler;
     static ValidationRequestHandler validationRequestHandler;
     static ValidationBehaviour validationBehaviour;
+    static BasicMockRequestHandler basicMockrequestHandler;
+    static BasicMockPipeline basicMockPipeline;
+    static HierarchyFirstBehaviour hierarchyFirstBehaviour;
+    static HierarchySecondBehaviour hierarchySecondBehaviour;
+    static HierarchyRequestHandler hierarchyRequestHandler;
 
     @BeforeEach
-    void setUp() {
-        injector = Guice.createInjector(new TestModule());
+    void initTestContainer() {
+        createMocks();
+
+        Injector behaviourInjector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(BasicMockPipeline.class).toInstance(PipelineTests.basicMockPipeline);
+
+                bind(HierarchySecondBehaviour.class).toInstance(PipelineTests.hierarchySecondBehaviour);
+            }
+        }));
+        createSpies(behaviourInjector);
+
+        injector = buildTestInjector();
         poshtar = injector.getInstance(Poshtar.class);
 
         EntityManager em = injector.getInstance(EntityManager.class);
         em.getTransaction().begin();
         em.createQuery("DELETE FROM TestEntity").executeUpdate();
         em.getTransaction().commit();
-    }
-
-    @BeforeEach
-    void initTestContainer() {
-        Injector behaviourInjector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
-            @Override
-            protected void configure() {
-
-            }
-        }));
-        createSpies(behaviourInjector);
-
-        injector = buildTestInjector();
-
-        poshtar = injector.getInstance(Poshtar.class);
     }
 
 
@@ -145,6 +155,42 @@ public class PipelineTests {
         verify(globalPipeline, times(2)).handle(any(), any(RequestDelegate.class));
     }
 
+    @Test
+    @Disabled
+    void should_Mock_Basic() {
+        var request = new BasicMockRequest();
+        when(basicMockPipeline.handle(eq(request), any())).thenReturn("Did not pass");
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Did not pass", response);
+        });
+        verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(basicMockrequestHandler, times(0)).handle(eq(request));
+        verify(basicMockrequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(eq(request));
+
+    }
+
+    @Test
+    @Disabled
+    void should_Mock_Hierarchy() {
+        // 1. Grab the active registry from the system
+        RequestRegistry registry = injector.getInstance(RequestRegistry.class);
+
+        // Print out the exact object classes inside your registry to see if it's a Mockito mock or a real object
+        System.out.println("REGISTRY TYPE: " + registry.getClass().getName());
+
+        var request = new HierarchyRequest();
+
+        // 2. STUBBING WITH THE PURE MOCK
+        when(hierarchySecondBehaviour.handle(eq(request), any()))
+                .thenReturn("I miss the handler :(");
+
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("I miss the handler :(", response);
+        });
+    }
     @Test
     void should_Call_Dead_Pipeline() {
         var deadRequest = new DeadRequest();

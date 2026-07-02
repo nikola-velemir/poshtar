@@ -26,8 +26,15 @@ import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.Chai
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedFirstRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedSecondRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockResponse;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.ping.PingRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequestHandler;
@@ -36,6 +43,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
@@ -52,8 +60,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.buildTestInjector;
-import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.createSpies;
+import static io.github.nikola_velemir.poshtar.guice.adapter.request.RequestTestsUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,7 +68,7 @@ import static org.mockito.Mockito.*;
 
 @OverruleNoInjection
 public class RequestTests {
-    private static Poshtar poshtar;
+    static Poshtar poshtar;
     private Injector injector;
     static NullRequestHandler nullRequestHandler;
     static PingRequestHandler pingRequestHandler;
@@ -72,6 +79,9 @@ public class RequestTests {
     static DummyLoggingService dummyLoggingService;
     static ChainingFirstRequestHandler chainingFirstRequestHandler;
     static ChainingSecondRequestHandler chainingSecondRequestHandler;
+    static MockRequestHandler mockRequestHandler;
+    static MockChainedSecondRequestHandler mockChainedSecondRequestHandler;
+    static MockChainedFirstRequestHandler mockChainedFirstRequestHandler;
 
     static {
         java.util.logging.Logger.getLogger("com.google.inject.internal.ProxyFactory")
@@ -82,6 +92,7 @@ public class RequestTests {
     @BeforeEach
     void initTestContainer() {
         // 1. Spy the shared dependency first
+        createMocks();
         Injector bootstrapInjector = Guice.createInjector(new TestModule());
         DummyLoggingService realLoggingService = bootstrapInjector.getInstance(DummyLoggingService.class);
         dummyLoggingService = Mockito.spy(realLoggingService);
@@ -117,6 +128,50 @@ public class RequestTests {
         verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
         verify(chainingSecondRequestHandler, times(1)).handle(any(ChainingSecondRequest.class));
 
+    }
+
+    @Test
+    void should_stub_specific_handler() {
+        MockRequest firstMockRequest = new MockRequest("Hello Poshtar");
+        MockResponse firstStubbedResponse = new MockResponse("Hello");
+        MockRequest secondMockRequest = new MockRequest("Hello Author");
+        MockResponse stubbedResponse = new MockResponse("Author");
+
+        when(mockRequestHandler.handle(eq(secondMockRequest))).thenReturn(stubbedResponse);
+        when(mockRequestHandler.handle(eq(firstMockRequest))).thenReturn(firstStubbedResponse);
+
+        MockResponse response = poshtar.send(firstMockRequest);
+
+        assertNotNull(response);
+        assertEquals("Hello", response.response());
+
+        response = poshtar.send(secondMockRequest);
+
+        assertNotNull(response);
+        assertEquals("Author", response.response());
+
+
+        verify(mockRequestHandler, times(1)).handle(eq(firstMockRequest));
+
+        verify(mockRequestHandler, times(1)).handle(eq(secondMockRequest));
+        verify(mockRequestHandler, times(2)).handle(any());
+
+    }
+
+    @Test
+    @Disabled
+    void should_stub_in_hierarchy_handler() {
+
+        MockChainedFirstRequest firstRequest = new MockChainedFirstRequest();
+        when(mockChainedSecondRequestHandler.handle(any())).thenReturn("TESTEST");
+
+        var response = poshtar.send(firstRequest);
+
+        assertNotNull(response);
+        assertEquals("TESTEST", response.payload());
+
+        verify(mockChainedSecondRequestHandler, times(1)).handle(eq(new MockChainedSecondRequest("Hello")));
+        verify(mockChainedFirstRequestHandler, times(1)).handle(eq(firstRequest));
     }
 
     @Test

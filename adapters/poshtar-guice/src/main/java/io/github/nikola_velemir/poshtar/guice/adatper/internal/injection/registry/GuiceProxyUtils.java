@@ -21,8 +21,9 @@ package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.regist
 class GuiceProxyUtils {
     public static Class<?> resolveTargetClass(Object instance) {
         Class<?> clazz = instance.getClass();
+
         while (clazz != null && clazz != Object.class) {
-            if (!clazz.isSynthetic() && !clazz.getName().contains("$")) {
+            if (!clazz.getName().contains("$$")) {
                 return clazz;
             }
             clazz = clazz.getSuperclass();
