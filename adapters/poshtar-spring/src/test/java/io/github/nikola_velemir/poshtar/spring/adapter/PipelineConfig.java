@@ -20,6 +20,9 @@ package io.github.nikola_velemir.poshtar.spring.adapter;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipelineCatcher;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +51,10 @@ public class PipelineConfig {
                 .add(TransactionalPipeline.class)
                 .add(SucceedForMandatoryPipeline.class)
                 .add(FailMandatoryPipeline.class)
-                .add(FailTransactionalPipeline.class);
+                .add(FailTransactionalPipeline.class)
+                .add(BasicMockPipeline.class)
+                .add(HierarchyFirstBehaviour.class)
+                .add(HierarchySecondBehaviour.class);
 
     }
 }

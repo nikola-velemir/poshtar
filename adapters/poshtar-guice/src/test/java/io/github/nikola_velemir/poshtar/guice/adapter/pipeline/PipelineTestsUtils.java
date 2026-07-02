@@ -9,6 +9,12 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPip
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipelineCatcher;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequest;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderSecondPipeline;
@@ -37,12 +43,24 @@ class PipelineTestsUtils {
         PipelineTests.failTransactionalHandler = Mockito.spy(injector.getInstance(FailTransactionalRequestHandler.class));
         PipelineTests.transactionalPipeline = Mockito.spy(injector.getInstance(TransactionalPipeline.class));
         PipelineTests.transactionalHandler = Mockito.spy(injector.getInstance(TransactionalRequestHandler.class));
-    }
 
+        PipelineTests.basicMockrequestHandler = Mockito.spy(injector.getInstance(BasicMockRequestHandler.class));
+        PipelineTests.hierarchyFirstBehaviour = Mockito.spy(injector.getInstance(HierarchyFirstBehaviour.class));
+        PipelineTests.hierarchyRequestHandler = Mockito.spy(injector.getInstance(HierarchyRequestHandler.class));
+    }
+    static void createMocks(){
+        PipelineTests.basicMockPipeline = Mockito.mock(BasicMockPipeline.class);
+        PipelineTests.hierarchySecondBehaviour = Mockito.mock(HierarchySecondBehaviour.class);
+
+    }
     static Injector buildTestInjector() {
         return Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
             @Override
             protected void configure() {
+                bind(BasicMockRequestHandler.class).toInstance(PipelineTests.basicMockrequestHandler);
+                bind(HierarchySecondBehaviour.class).toInstance(PipelineTests.hierarchySecondBehaviour);
+
+
                 bind(GlobalTestPipeline.class).toInstance(PipelineTests.globalPipeline);
                 bind(SpecificPipeline.class).toInstance(PipelineTests.specificPipeline);
                 bind(DeadPipeline.class).toInstance(PipelineTests.deadPipeline);
@@ -57,6 +75,10 @@ class PipelineTestsUtils {
                 bind(FailTransactionalPipeline.class).toInstance(PipelineTests.failTransactionalPipeline);
                 bind(TransactionalRequestHandler.class).toInstance(PipelineTests.transactionalHandler);
                 bind(TransactionalPipeline.class).toInstance(PipelineTests.transactionalPipeline);
+                bind(HierarchyFirstBehaviour.class).toInstance(PipelineTests.hierarchyFirstBehaviour);
+                bind(BasicMockPipeline.class).toInstance(PipelineTests.basicMockPipeline);
+
+                bind(HierarchyRequestHandler.class).toInstance(PipelineTests.hierarchyRequestHandler);
             }
         }));
     }

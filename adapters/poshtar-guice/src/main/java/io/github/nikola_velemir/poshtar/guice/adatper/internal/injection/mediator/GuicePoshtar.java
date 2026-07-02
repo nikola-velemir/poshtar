@@ -40,14 +40,4 @@ public final class GuicePoshtar extends PoshtarBase {
         }
     }
 
-    private <TNotification extends Notification> CompletableFuture<Void> createFutureBody(NotificationHandler handler, TNotification notification, List<Throwable> collectedErrors) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                handler.handle(notification);
-            } catch (Exception e) {
-                collectedErrors.add(e);
-                System.err.println("Handler [" + handler.getClass().getSimpleName() + "] failed, continuing...");
-            }
-        });
-    }
 }

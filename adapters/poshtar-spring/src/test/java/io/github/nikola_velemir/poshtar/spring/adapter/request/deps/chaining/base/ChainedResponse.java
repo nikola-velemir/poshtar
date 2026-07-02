@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.base;
 
 public class ChainedResponse {
     private final String response;

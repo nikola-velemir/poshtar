@@ -3,12 +3,11 @@ package io.github.nikola_velemir.poshtar.guice.adapter.request;
 import com.google.inject.*;
 import com.google.inject.util.Modules;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.request.Request;
-import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.*;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.nullRequest.NullRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.ping.PingRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail.FailForTransactionalRequestHandler;
@@ -21,36 +20,45 @@ import java.lang.reflect.Field;
 
 @OverruleNoInjection
 class RequestTestsUtils {
-    static void createSpies(Injector handlerInjector) {
+    static void createSpies(Injector injector) {
         // 1. Create all spies from the handler injector
-        RequestTests.nullRequestHandler = Mockito.spy(handlerInjector.getInstance(NullRequestHandler.class));
-        RequestTests.pingRequestHandler = Mockito.spy(handlerInjector.getInstance(PingRequestHandler.class));
-        RequestTests.injectionRequestHandler = Mockito.spy(handlerInjector.getInstance(InjectionRequestHandler.class));
-        RequestTests.transactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(TransactionalRequestHandler.class));
-        RequestTests.updateTransactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(UpdateTransactionalRequestHandler.class));
-        RequestTests.failForTransactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(FailForTransactionalRequestHandler.class));
-        RequestTests.chainingFirstRequestHandler = Mockito.spy(handlerInjector.getInstance(ChainingFirstRequestHandler.class));
-        RequestTests.chainingSecondRequestHandler = Mockito.spy(handlerInjector.getInstance(ChainingSecondRequestHandler.class));
+        RequestTests.nullRequestHandler = Mockito.spy(injector.getInstance(NullRequestHandler.class));
+        RequestTests.pingRequestHandler = Mockito.spy(injector.getInstance(PingRequestHandler.class));
+        RequestTests.injectionRequestHandler = Mockito.spy(injector.getInstance(InjectionRequestHandler.class));
+        RequestTests.transactionalRequestHandler = Mockito.spy(injector.getInstance(TransactionalRequestHandler.class));
+        RequestTests.updateTransactionalRequestHandler = Mockito.spy(injector.getInstance(UpdateTransactionalRequestHandler.class));
+        RequestTests.failForTransactionalRequestHandler = Mockito.spy(injector.getInstance(FailForTransactionalRequestHandler.class));
+        RequestTests.chainingFirstRequestHandler = Mockito.spy(injector.getInstance(ChainingFirstRequestHandler.class));
+        RequestTests.chainingSecondRequestHandler = Mockito.spy(injector.getInstance(ChainingSecondRequestHandler.class));
+    }
+
+    static void createMocks() {
+        RequestTests.mockRequestHandler = Mockito.mock(MockRequestHandler.class);
     }
 
     static Injector buildTestInjector() {
         var injector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
             @Override
             protected void configure() {
+                bind(MockRequestHandler.class).toInstance(RequestTests.mockRequestHandler);
                 bind(DummyLoggingService.class).toInstance(RequestTests.dummyLoggingService);
                 bind(NullRequestHandler.class).toInstance(RequestTests.nullRequestHandler);
                 bind(PingRequestHandler.class).toInstance(RequestTests.pingRequestHandler);
+
                 bind(InjectionRequestHandler.class).toInstance(RequestTests.injectionRequestHandler);
+
                 bind(TransactionalRequestHandler.class).toInstance(RequestTests.transactionalRequestHandler);
                 bind(UpdateTransactionalRequestHandler.class).toInstance(RequestTests.updateTransactionalRequestHandler);
                 bind(FailForTransactionalRequestHandler.class).toInstance(RequestTests.failForTransactionalRequestHandler);
+
                 bind(ChainingFirstRequestHandler.class).toInstance(RequestTests.chainingFirstRequestHandler);
                 bind(ChainingSecondRequestHandler.class).toInstance(RequestTests.chainingSecondRequestHandler);
+
 
             }
 
         }));
-         rewirePoshtarProvider(injector, RequestTests.chainingFirstRequestHandler);
+        rewirePoshtarProvider(injector, RequestTests.chainingFirstRequestHandler);
 
         return injector;
     }

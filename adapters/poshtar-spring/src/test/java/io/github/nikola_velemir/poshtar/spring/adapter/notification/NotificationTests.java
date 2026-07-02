@@ -26,6 +26,7 @@ import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.F
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.injection.*;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.mock.*;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.nullNotification.NullNotificationHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationSecondHandler;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
@@ -62,6 +64,7 @@ import static org.mockito.Mockito.*;
 @Import(MockTransactionConfig.class)
 public class NotificationTests {
     @Autowired
+    @MockitoSpyBean
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
@@ -85,6 +88,9 @@ public class NotificationTests {
         assertEquals(expected, actual);
 
         verify(nullNotificationHandler, never()).handle(eq(notification));
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -101,6 +107,9 @@ public class NotificationTests {
         System.out.println(">>> TEST PASSED <<<");
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -122,17 +131,21 @@ public class NotificationTests {
         verify(injectionNotificationSecondHandler, times(1)).handle(any());
         verify(injectionNotificationThirdHandler, times(1)).handle(any());
         verify(dummyIncrementService, times(3)).inc(anyInt());
+
+        verify(poshtar, times(1)).publish(eq(notification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
-        assertDoesNotThrow(() -> {
-            poshtar.publish(transactionNotification);
-        });
+        assertDoesNotThrow(() -> poshtar.publish(transactionNotification));
         System.out.println(">>> TEST PASSED <<<");
         verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
         verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
+
+        verify(poshtar, times(1)).publish(eq(transactionNotification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @Test
@@ -150,9 +163,42 @@ public class NotificationTests {
 
         verify(mandatoryNotificationHandler, never()).handle(eq(mandatoryNotification));
         verify(mandatoryNotificationHandler, never()).handle(any());
+
+        verify(poshtar, times(1)).publish(eq(mandatoryNotification));
+        verify(poshtar, times(1)).publish(any());
+
         System.out.println(">>> TEST PASSED <<<");
 
 
+    }
+
+    @Test
+    void should_Stub_Basic() {
+        var mockNotification = new MockNotification();
+
+        when(mockService.getHello()).thenReturn("Bye");
+
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Bye", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHello();
+        verify(basicMockHandler, times(1)).handle(eq(mockNotification));
+        verify(poshtar, times(1)).publish(eq(mockNotification));
+    }
+
+    @Test
+    void should_Stub_Hierarchy() {
+        var mockNotification = new MockHierarchyNotification();
+
+        when(mockServiceDeep.getHi()).thenReturn("Ciao");
+        when(mockService.getHi()).then(i -> mockServiceDeep.getHi());
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Ciao", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHi();
+        verify(mockServiceDeep, times(1)).getHi();
+        verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
+        verify(poshtar, times(1)).publish(eq(mockNotification));
     }
 
     @Test
@@ -172,6 +218,8 @@ public class NotificationTests {
         verify(failedExecutionNotificationFineHandler, times(1)).handle(eq(failNotification));
         verify(failedExecutionNotificationFineHandler, times(1)).handle(any());
 
+        verify(poshtar, times(1)).publish(eq(failNotification));
+        verify(poshtar, times(1)).publish(any());
         System.out.println(">>> TEST PASSED <<<");
     }
 
@@ -191,6 +239,10 @@ public class NotificationTests {
         verify(failForAsyncFirstHandler, times(1)).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, never()).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, never()).handle(any());
+
+
+        verify(poshtar, times(1)).publish(eq(failAsyncNotification));
+        verify(poshtar, times(1)).publish(any());
     }
 
     @MockitoSpyBean
@@ -223,4 +275,12 @@ public class NotificationTests {
     private FailForAsyncSecondHandler failForAsyncSecondHandler;
     @MockitoSpyBean
     private FailForAsyncThirdHandler failForAsyncThirdHandler;
+    @MockitoBean
+    private MockService mockService;
+    @MockitoBean
+    private MockServiceDeep mockServiceDeep;
+    @MockitoSpyBean
+    private MockFirstNotificationHandler basicMockHandler;
+    @MockitoSpyBean
+    private MockHierarchyNotificationHandler hierarchyNotificationHandler;
 }

@@ -24,6 +24,13 @@ import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPi
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipelineCatcher;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderSecondPipeline;
@@ -38,11 +45,11 @@ import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.repository.TestRepository;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
 import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
@@ -72,6 +79,7 @@ import static org.mockito.Mockito.*;
 @Import(MockTransactionConfig.class)
 public class PipelineTests {
     @Autowired
+    @MockitoSpyBean
     private Poshtar poshtar;
     @Autowired
     private ApplicationContext context;
@@ -87,6 +95,7 @@ public class PipelineTests {
         poshtar.send(request);
 
         verify(testPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(poshtar, times(1)).send(eq(request));
     }
 
     @Test
@@ -104,6 +113,12 @@ public class PipelineTests {
         verify(testPipeline, times(1)).handle(eq(notSpecificRequest), any(RequestDelegate.class));
         verify(testPipeline, times(2)).handle(any(), any(RequestDelegate.class));
 
+
+        verify(poshtar, times(1)).send(eq(specificRequest));
+        verify(poshtar, times(1)).send(eq(notSpecificRequest));
+        verify(poshtar, times(2)).send(any());
+
+
     }
 
     @Test
@@ -118,6 +133,9 @@ public class PipelineTests {
         verify(deadPipelineCatcher, never()).handle(any(), any());
         verify(deadRequestHandler, never()).handle(eq(deadRequest));
         verify(deadRequestHandler, never()).handle(any());
+
+        verify(poshtar, times(1)).send(eq(deadRequest));
+        verify(poshtar, times(1)).send(any());
     }
 
     @Test
@@ -131,6 +149,11 @@ public class PipelineTests {
         verify(orderFirstPipeline, times(1)).handle(eq(orderRequest), any(RequestDelegate.class));
         verify(orderSecondPipeline, times(1)).handle(eq(orderRequest), any(RequestDelegate.class));
         verify(orderRequestHandler, times(1)).handle(eq(orderRequest));
+
+
+        verify(poshtar, times(1)).send(eq(orderRequest));
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -153,6 +176,11 @@ public class PipelineTests {
 
         verify(failTransactionalPipeline, times(1)).handle(eq(transactionalRequest), any(RequestDelegate.class));
         verify(failTransactionalHandler, never()).handle(eq(transactionalRequest));
+
+
+        verify(poshtar, times(1)).send(eq(transactionalRequest));
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -173,6 +201,41 @@ public class PipelineTests {
 
         verify(transactionalPipeline, times(1)).handle(eq(transactionalRequest), any(RequestDelegate.class));
         verify(transactionalRequestHandler, times(1)).handle(eq(transactionalRequest));
+
+        verify(poshtar, times(1)).send(eq(transactionalRequest));
+        verify(poshtar, times(1)).send(any());
+
+    }
+
+    @Test
+    void should_Mock_Basic() {
+        var request = new BasicMockRequest();
+        when(basicMockPipeline.handle(eq(request), any(RequestDelegate.class))).thenReturn("Did not pass");
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("Did not pass", response);
+        });
+        verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(basicMockrequestHandler, times(0)).handle(eq(request));
+        verify(basicMockrequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(eq(request));
+
+    }
+
+    @Test
+    void should_Mock_Hierarchy() {
+        var request = new HierarchyRequest();
+        when(hierarchySecondBehaviour.handle(eq(request), any(RequestDelegate.class))).thenReturn("I miss the handler :(");
+        assertDoesNotThrow(() -> {
+            var response = poshtar.send(request);
+            assertEquals("I miss the handler :(", response);
+        });
+        verify(hierarchyFirstBehaviour, times(1)).handle(eq(request), any(RequestDelegate.class));
+        verify(hierarchySecondBehaviour, times(1)).handle(eq(request), any(RequestDelegate.class));
+
+        verify(hierarchyRequestHandler, never()).handle(eq(request));
+        verify(hierarchyRequestHandler, never()).handle(any());
+        verify(poshtar, times(1)).send(eq(request));
     }
 
     @Test
@@ -194,6 +257,10 @@ public class PipelineTests {
 
         verify(failMandatoryPipeline, never()).handle(eq(failMandatoryRequest), any(RequestDelegate.class));
         verify(failMandatoryRequestHandler, never()).handle(eq(failMandatoryRequest));
+
+        verify(poshtar, times(1)).send(eq(failMandatoryRequest));
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -212,6 +279,11 @@ public class PipelineTests {
         assertEquals(1, succeedForMandatoryRequest.payload);
         verify(succeedForMandatoryPipeline, times(1)).handle(eq(succeedForMandatoryRequest), any(RequestDelegate.class));
         verify(succeedForMandatoryRequestHandler, times(1)).handle(eq(succeedForMandatoryRequest));
+
+
+        verify(poshtar, times(1)).send(eq(succeedForMandatoryRequest));
+        verify(poshtar, times(1)).send(any());
+
     }
 
     @Test
@@ -224,11 +296,11 @@ public class PipelineTests {
             var response = poshtar.send(goodValidationRequest);
             assertEquals(2, response);
         });
-        var badValidatioNRequest = new ValidationRequest(0);
+        var badValidationRequest = new ValidationRequest(0);
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.send(badValidatioNRequest);
+            poshtar.send(badValidationRequest);
         });
-        assertEquals(0, badValidatioNRequest.payload());
+        assertEquals(0, badValidationRequest.payload());
         String actual = ex.getMessage();
         String expected = "Payload is wrong";
         assertEquals(expected, actual);
@@ -236,8 +308,13 @@ public class PipelineTests {
         verify(validationRequestHandler, times(1)).handle(eq(goodValidationRequest));
         verify(validationBehaviour, times(1)).handle(eq(goodValidationRequest), any(RequestDelegate.class));
 
-        verify(validationRequestHandler,never()).handle(eq(badValidatioNRequest));
-        verify(validationBehaviour, times(1)).handle(eq(badValidatioNRequest), any(RequestDelegate.class));
+        verify(validationRequestHandler, never()).handle(eq(badValidationRequest));
+        verify(validationBehaviour, times(1)).handle(eq(badValidationRequest), any(RequestDelegate.class));
+
+        verify(poshtar, times(1)).send(eq(goodValidationRequest));
+        verify(poshtar, times(1)).send(eq(badValidationRequest));
+
+        verify(poshtar, times(2)).send(any());
     }
 
     @MockitoSpyBean // 👈 This intercepts the bean inside the Spring Container
@@ -277,4 +354,14 @@ public class PipelineTests {
     private ValidationBehaviour validationBehaviour;
     @MockitoSpyBean
     private ValidationRequestHandler validationRequestHandler;
+    @MockitoSpyBean
+    private BasicMockRequestHandler basicMockrequestHandler;
+    @MockitoBean
+    private BasicMockPipeline basicMockPipeline;
+    @MockitoSpyBean
+    private HierarchyFirstBehaviour hierarchyFirstBehaviour;
+    @MockitoBean
+    private HierarchySecondBehaviour hierarchySecondBehaviour;
+    @MockitoSpyBean
+    private HierarchyRequestHandler hierarchyRequestHandler;
 }
