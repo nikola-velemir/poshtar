@@ -11,6 +11,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injectio
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.InjectionNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.InjectionNotificationSecondHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.InjectionNotificationThirdHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.mock.*;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotificationHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingSecondHandler;
@@ -20,11 +21,15 @@ import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transact
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationSecondHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.mockito.Mockito;
+
 @OverruleNoInjection
-
 public class NotificationTestsUtils {
+    static void createMocks() {
+        NotificationTests.mockService = Mockito.mock(MockService.class);
+        NotificationTests.mockServiceDeep = Mockito.mock(MockServiceDeep.class);
+    }
 
-    static void createHandlerSpies(Injector bootstrapInjector) {
+    static void createSpies(Injector bootstrapInjector) {
         NotificationTests.failedExecutionHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationHandler.class));
         NotificationTests.failedExecutionFineHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationFineHandler.class));
         NotificationTests.injectionFirstHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationFirstHandler.class));
@@ -37,6 +42,10 @@ public class NotificationTestsUtils {
         NotificationTests.failTransactionalSecond = Mockito.spy(bootstrapInjector.getInstance(FailTransactionalNotificationSecondHandler.class));
         NotificationTests.transactionalNotificationFirstHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationFirstHandler.class));
         NotificationTests.transactionalNotificationSecondHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationSecondHandler.class));
+
+        NotificationTests.basicMockHandler = Mockito.spy(bootstrapInjector.getInstance(BasicMockNotificationHandler.class));
+        NotificationTests.hierarchyNotificationHandler = Mockito.spy(bootstrapInjector.getInstance(MockHierarchyNotificationHandler.class));
+
     }
 
     static Injector buildTestInjector() {
@@ -57,6 +66,10 @@ public class NotificationTestsUtils {
                         bind(FailTransactionalNotificationFirstHandler.class).toInstance(NotificationTests.failTransactionalFirst);
                         bind(TransactionalNotificationSecondHandler.class).toInstance(NotificationTests.transactionalNotificationSecondHandler);
                         bind(TransactionalNotificationFirstHandler.class).toInstance(NotificationTests.transactionalNotificationFirstHandler);
+                        bind(BasicMockNotificationHandler.class).toInstance(NotificationTests.basicMockHandler);
+                        bind(MockHierarchyNotificationHandler.class).toInstance(NotificationTests.hierarchyNotificationHandler);
+                        bind(MockServiceDeep.class).toInstance(NotificationTests.mockServiceDeep);
+                        bind(MockService.class).toInstance(NotificationTests.mockService);
                     }
                 })
         );

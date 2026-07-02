@@ -126,7 +126,6 @@ public class RequestTests {
     }
 
     @Test
-    @Disabled
     void should_stub_specific_handler() {
         MockRequest firstMockRequest = new MockRequest("Hello Poshtar");
         MockResponse firstStubbedResponse = new MockResponse("Hello");

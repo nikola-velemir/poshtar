@@ -25,6 +25,7 @@ import com.google.inject.util.Modules;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.*;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.mock.*;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotificationHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingSecondHandler;
@@ -52,8 +53,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.buildTestInjector;
-import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.createHandlerSpies;
+import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -75,22 +75,30 @@ class NotificationTests {
     static FailTransactionalNotificationSecondHandler failTransactionalSecond;
     static TransactionalNotificationFirstHandler transactionalNotificationFirstHandler;
     static TransactionalNotificationSecondHandler transactionalNotificationSecondHandler;
+    static MockService mockService;
+    static BasicMockNotificationHandler basicMockHandler;
+    static MockServiceDeep mockServiceDeep;
+    static MockHierarchyNotificationHandler hierarchyNotificationHandler;
 
     @BeforeEach
     void initTestContainer() {
         DummyIncrementService realIncrementService = new DummyIncrementService();
         dummyIncrementService = Mockito.spy(realIncrementService);
 
+        createMocks();
+
         Injector bootstrapInjector = Guice.createInjector(
                 Modules.override(new TestModule()).with(new AbstractModule() {
                     @Override
                     protected void configure() {
                         bind(DummyIncrementService.class).toInstance(dummyIncrementService);
+                        bind(MockService.class).toInstance(NotificationTests.mockService);
+                        bind(MockServiceDeep.class).toInstance(NotificationTests.mockServiceDeep);
                     }
                 })
         );
 
-        createHandlerSpies(bootstrapInjector);
+        createSpies(bootstrapInjector);
 
         Injector injector = buildTestInjector();
 
@@ -110,6 +118,33 @@ class NotificationTests {
         var noneNotification = new NoneRegisteredNotification();
         assertDoesNotThrow(() -> poshtar.publish(noneNotification));
         assertEquals(0, noneNotification.payload);
+    }
+
+    @Test
+    void should_Stub_Basic() {
+        var mockNotification = new MockNotification();
+
+        when(mockService.getHello()).thenReturn("Bye");
+
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Bye", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHello();
+        verify(basicMockHandler, times(1)).handle(eq(mockNotification));
+    }
+
+    @Test
+    void should_Stub_Hierarchy() {
+        var mockNotification = new MockHierarchyNotification();
+
+        when(mockServiceDeep.getHi()).thenReturn("Ciao");
+        when(mockService.getHi()).then(i -> mockServiceDeep.getHi());
+        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertEquals("Ciao", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHi();
+        verify(mockServiceDeep, times(1)).getHi();
+        verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
     }
 
     @Test

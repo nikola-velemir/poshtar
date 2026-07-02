@@ -39,15 +39,12 @@ import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.t
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.transactional.basic.TransactionalNotificationSecondHandler;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.transactional.mandatory.MandatoryNotification;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.transactional.mandatory.MandatoryNotificationHandler;
-import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.basic.BasicMockRequestHandler;
-import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
-import jakarta.inject.Inject;
 import jakarta.transaction.TransactionalException;
 import org.junit.jupiter.api.Test;
 
