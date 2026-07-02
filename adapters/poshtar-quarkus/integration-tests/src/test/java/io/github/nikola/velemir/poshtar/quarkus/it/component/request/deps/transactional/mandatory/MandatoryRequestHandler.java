@@ -16,26 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.injection;
-
+package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transactional.mandatory;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
-import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @Handler
-public class InjectionRequestHandler implements RequestHandler<InjectionRequest, String> {
-
-    private final DummyLoggingService loggingService;
-
-    @Inject
-    public InjectionRequestHandler(DummyLoggingService loggingService) {
-        this.loggingService = loggingService;
-    }
-
+public class MandatoryRequestHandler implements RequestHandler<MandatoryRequest,String> {
     @Override
-    public String handle(InjectionRequest injectionRequest) {
-        String logResult = loggingService.log(injectionRequest.payload());
-        return "Request with " + logResult;
+    @Transactional(Transactional.TxType.MANDATORY)
+    public String handle(MandatoryRequest mandatoryRequest) {
+        return "";
     }
 }

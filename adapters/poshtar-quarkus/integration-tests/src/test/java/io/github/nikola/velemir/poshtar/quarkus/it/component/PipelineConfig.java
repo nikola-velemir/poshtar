@@ -21,6 +21,9 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component;
 import groovy.lang.Singleton;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global.GlobalTestPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.order.OrderFirstPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.order.OrderSecondPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.specific.SpecificPipeline;
@@ -40,7 +43,7 @@ public class PipelineConfig {
     public PipelineConfiguration poshtarPipeline() {
         return new PipelineConfiguration()
                 .add(OrderFirstPipeline.class)
-                 .add(GlobalTestPipeline.class)
+                .add(GlobalTestPipeline.class)
                 .add(OrderSecondPipeline.class)
                 .add(SpecificPipeline.class)
                 .add(ValidationBehaviour.class)
@@ -48,7 +51,10 @@ public class PipelineConfig {
                 .add(SucceedForMandatoryPipeline.class)
                 .add(FailMandatoryPipeline.class)
                 .add(DeadPipeline.class)
-                .add(FailTransactionalPipeline.class);
+                .add(FailTransactionalPipeline.class)
+                .add(BasicMockPipeline.class)
+                .add(HierarchyFirstBehaviour.class)
+                .add(HierarchySecondBehaviour.class);
 
     }
 }

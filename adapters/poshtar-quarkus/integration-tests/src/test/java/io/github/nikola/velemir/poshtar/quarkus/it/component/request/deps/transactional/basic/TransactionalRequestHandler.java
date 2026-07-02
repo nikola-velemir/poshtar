@@ -16,26 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.injection;
-
+package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transactional.basic;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
-import jakarta.inject.Inject;
+import io.quarkus.narayana.jta.QuarkusTransaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.Transactional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class InjectionRequestHandler implements RequestHandler<InjectionRequest, String> {
+public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, String> {
 
-    private final DummyLoggingService loggingService;
-
-    @Inject
-    public InjectionRequestHandler(DummyLoggingService loggingService) {
-        this.loggingService = loggingService;
+    public TransactionalRequestHandler() {
     }
 
+    @Transactional
     @Override
-    public String handle(InjectionRequest injectionRequest) {
-        String logResult = loggingService.log(injectionRequest.payload());
-        return "Request with " + logResult;
+    public String handle(TransactionalRequest injectionRequest) {
+
+        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
+        System.out.println("Is Transaction REALLY Active? " + isActive);
+        assertTrue(isActive);
+        return "Request with " + injectionRequest.payload();
     }
 }
