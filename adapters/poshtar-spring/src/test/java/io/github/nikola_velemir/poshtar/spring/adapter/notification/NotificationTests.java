@@ -140,12 +140,13 @@ public class NotificationTests {
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
         assertDoesNotThrow(() -> poshtar.publish(transactionNotification));
-        System.out.println(">>> TEST PASSED <<<");
         verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
         verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
 
         verify(poshtar, times(1)).publish(eq(transactionNotification));
         verify(poshtar, times(1)).publish(any());
+        System.out.println(">>> TEST PASSED <<<");
+
     }
 
     @Test

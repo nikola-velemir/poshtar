@@ -210,10 +210,11 @@ public class RequestTests {
         String response = poshtar.send(injectionRequest);
 
         assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
-        System.out.println(">>> TEST PASSED: " + response);
         verify(injectionRequestHandler, times(1)).handle(eq(injectionRequest));
         verify(dummyLoggingService, times(1)).log(any());
         verify(poshtar, times(1)).send(any());
+        System.out.println(">>> TEST PASSED: " + response);
+
 
     }
 
