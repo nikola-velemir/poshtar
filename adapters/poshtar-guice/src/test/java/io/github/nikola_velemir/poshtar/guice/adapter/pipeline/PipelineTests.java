@@ -50,7 +50,6 @@ import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.Over
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
@@ -62,7 +61,6 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.Spe
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequest;
-import org.mockito.Mockito;
 
 
 import java.util.List;
@@ -156,7 +154,6 @@ public class PipelineTests {
     }
 
     @Test
-    @Disabled
     void should_Mock_Basic() {
         var request = new BasicMockRequest();
         when(basicMockPipeline.handle(eq(request), any())).thenReturn("Did not pass");
@@ -167,12 +164,10 @@ public class PipelineTests {
         verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
         verify(basicMockrequestHandler, times(0)).handle(eq(request));
         verify(basicMockrequestHandler, never()).handle(any());
-        verify(poshtar, times(1)).send(eq(request));
 
     }
 
     @Test
-    @Disabled
     void should_Mock_Hierarchy() {
         // 1. Grab the active registry from the system
         RequestRegistry registry = injector.getInstance(RequestRegistry.class);

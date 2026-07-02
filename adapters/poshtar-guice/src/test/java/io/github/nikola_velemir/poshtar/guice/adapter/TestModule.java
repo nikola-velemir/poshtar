@@ -24,6 +24,9 @@ import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.google.inject.persist.jpa.JpaPersistOptions;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adatper.module.PoshtarGuiceModule;
@@ -34,6 +37,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderS
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationBehaviour;
+import jakarta.persistence.Basic;
 
 public class TestModule extends AbstractModule {
     @Override
@@ -47,7 +51,10 @@ public class TestModule extends AbstractModule {
                 .add(SpecificPipeline.class)
                 .add(DeadPipeline.class)
                 .add(TransactionalPipeline.class)
-                .add(FailTransactionalPipeline.class);
+                .add(FailTransactionalPipeline.class)
+                .add(BasicMockPipeline.class)
+                .add(HierarchyFirstBehaviour.class)
+                .add(HierarchySecondBehaviour.class);
         install(new PoshtarGuiceModule(configuration, "io.github.nikola_velemir.poshtar.guice.adapter"));
         JpaPersistOptions options = JpaPersistOptions.builder()
                 .setAutoBeginWorkOnEntityManagerCreation(true)
