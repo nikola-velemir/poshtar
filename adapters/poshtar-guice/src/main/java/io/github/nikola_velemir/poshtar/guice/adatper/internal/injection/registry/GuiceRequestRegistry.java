@@ -40,7 +40,7 @@ import java.util.List;
  * @version ${project.version}
  * @since 1.0.0
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "UnstableApiUsage"})
 public class GuiceRequestRegistry extends AbstractRequestRegistry {
     private final PipelineConfiguration pipelineConfiguration;
 

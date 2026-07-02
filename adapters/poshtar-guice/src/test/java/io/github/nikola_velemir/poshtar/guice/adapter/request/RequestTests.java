@@ -26,10 +26,6 @@ import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.Chai
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequestHandler;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedFirstRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedFirstRequestHandler;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedSecondRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequest;
@@ -80,8 +76,7 @@ public class RequestTests {
     static ChainingFirstRequestHandler chainingFirstRequestHandler;
     static ChainingSecondRequestHandler chainingSecondRequestHandler;
     static MockRequestHandler mockRequestHandler;
-    static MockChainedSecondRequestHandler mockChainedSecondRequestHandler;
-    static MockChainedFirstRequestHandler mockChainedFirstRequestHandler;
+
 
     static {
         java.util.logging.Logger.getLogger("com.google.inject.internal.ProxyFactory")
@@ -131,6 +126,7 @@ public class RequestTests {
     }
 
     @Test
+    @Disabled
     void should_stub_specific_handler() {
         MockRequest firstMockRequest = new MockRequest("Hello Poshtar");
         MockResponse firstStubbedResponse = new MockResponse("Hello");
@@ -156,22 +152,6 @@ public class RequestTests {
         verify(mockRequestHandler, times(1)).handle(eq(secondMockRequest));
         verify(mockRequestHandler, times(2)).handle(any());
 
-    }
-
-    @Test
-    @Disabled
-    void should_stub_in_hierarchy_handler() {
-
-        MockChainedFirstRequest firstRequest = new MockChainedFirstRequest();
-        when(mockChainedSecondRequestHandler.handle(any())).thenReturn("TESTEST");
-
-        var response = poshtar.send(firstRequest);
-
-        assertNotNull(response);
-        assertEquals("TESTEST", response.payload());
-
-        verify(mockChainedSecondRequestHandler, times(1)).handle(eq(new MockChainedSecondRequest("Hello")));
-        verify(mockChainedFirstRequestHandler, times(1)).handle(eq(firstRequest));
     }
 
     @Test

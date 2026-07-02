@@ -3,12 +3,8 @@ package io.github.nikola_velemir.poshtar.guice.adapter.request;
 import com.google.inject.*;
 import com.google.inject.util.Modules;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.request.Request;
-import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.*;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedFirstRequestHandler;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.mock.MockChainedSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequestHandler;
@@ -34,12 +30,10 @@ class RequestTestsUtils {
         RequestTests.failForTransactionalRequestHandler = Mockito.spy(injector.getInstance(FailForTransactionalRequestHandler.class));
         RequestTests.chainingFirstRequestHandler = Mockito.spy(injector.getInstance(ChainingFirstRequestHandler.class));
         RequestTests.chainingSecondRequestHandler = Mockito.spy(injector.getInstance(ChainingSecondRequestHandler.class));
-        RequestTests.mockChainedFirstRequestHandler = Mockito.spy(injector.getInstance(MockChainedFirstRequestHandler.class));
     }
 
     static void createMocks() {
         RequestTests.mockRequestHandler = Mockito.mock(MockRequestHandler.class);
-        RequestTests.mockChainedSecondRequestHandler = Mockito.mock(MockChainedSecondRequestHandler.class);
     }
 
     static Injector buildTestInjector() {
@@ -60,8 +54,6 @@ class RequestTestsUtils {
                 bind(ChainingFirstRequestHandler.class).toInstance(RequestTests.chainingFirstRequestHandler);
                 bind(ChainingSecondRequestHandler.class).toInstance(RequestTests.chainingSecondRequestHandler);
 
-                bind(MockChainedFirstRequestHandler.class).toInstance(RequestTests.mockChainedFirstRequestHandler);
-                bind(MockChainedSecondRequestHandler.class).toInstance(RequestTests.mockChainedSecondRequestHandler);
 
             }
 
