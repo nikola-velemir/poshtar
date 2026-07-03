@@ -12,14 +12,33 @@ import java.util.Map;
 
 import static io.github.nikola.velemir.poshtar.quarkus.deployment.ProcessorConstants.PIPELINE_BEHAVIOUR_CLASS_NAME;
 
+/**
+ * Helper class that is used to create handler and behaviour mappings.
+ *
+ * <p>
+ * Class provides mechanisms to map notification/request types to their handlers, as well as bind behaviours to handlers creating request chains.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 class MappingResolver {
+    /**
+     * Create handler to behaviour mappings, later used to build full {@link io.github.nikola_velemir.poshtar.core.request.RequestInvocationChain}.
+     *
+     * @param handlerToRequest   handler to request mappings map
+     * @param behaviourToRequest behaviour to request mappings map
+     * @param idx                JBoss index
+     * @return full map of handler to behaviour bindings.
+     */
     public static @NonNull Map<String, List<String>> mapHandlerToBehaviours(Map<String, String> handlerToRequest, Map<String, String> behaviourToRequest, IndexView idx) {
         Map<String, List<String>> handlerToBehaviours = new LinkedHashMap<>();
         handlerToRequest.forEach((handlerName, requestName) -> {
             List<String> matching = behaviourToRequest.entrySet().stream()
                     .filter(e -> {
                         String supportedRequest = e.getValue();
-                        if (supportedRequest == null) return true; // global
+                        if (supportedRequest == null) return true;
                         return isAssignableFrom(idx, supportedRequest, requestName);
                     })
                     .map(Map.Entry::getKey)
@@ -33,13 +52,17 @@ class MappingResolver {
         if (superName.equals(subName)) return true;
         ClassInfo ci = idx.getClassByName(DotName.createSimple(subName));
         if (ci == null) return false;
-        // Check superclass
         if (ci.superName() != null && isAssignableFrom(idx, superName, ci.superName().toString())) return true;
-        // Check interfaces
         return ci.interfaceNames().stream()
                 .anyMatch(iface -> isAssignableFrom(idx, superName, iface.toString()));
     }
 
+    /**
+     * Resolves request to behaviour mapping
+     *
+     * @param idx JBoss index
+     * @return request to behaviour map
+     */
     public static Map<String, String> resolveBehaviourMap(IndexView idx) {
         Map<String, String> result = new LinkedHashMap<>();
 
@@ -62,6 +85,13 @@ class MappingResolver {
         return result;
     }
 
+    /**
+     * Maps requests/notifcations to their designated handlers
+     * @param idx              JBoss index
+     * @param handlerInterface Handler interface FQN ({@link io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler}/{@link io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler}
+     * @param markerInterface  Marker interface of a request/notification ({@link io.github.nikola_velemir.poshtar.core.request.Request}/{@link io.github.nikola_velemir.poshtar.core.notification.Notification})
+     * @return Request/Notification to designated handler map
+     */
     public static Map<String, String> resolveHandlerMap(IndexView idx, String handlerInterface, String markerInterface) {
         Map<String, String> result = new LinkedHashMap<>();
 

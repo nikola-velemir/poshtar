@@ -10,12 +10,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 
+/**
+ * Producer class, containing base bindings for PoshtaR components
+ */
 @Singleton
 public class QuarkusPoshtarProducer {
 
     /**
-     * Default PipelineConfiguration — user can override by declaring
-     * their own @Produces PipelineConfiguration bean.
+     * Default {@link PipelineConfiguration} — user can override by declaring
+     * their own @Produces {@link PipelineConfiguration} bean.
      */
     @Produces
     @DefaultBean
@@ -25,8 +28,11 @@ public class QuarkusPoshtarProducer {
     }
 
     /**
-     * Wires the Poshtar mediator from the two registries.
-     * Equivalent to PoshtarSpringAutoConfiguration#configurePoshtar.
+     * Wires the Poshtar mediator from the two registries, to be provided as CDI bean.
+     *
+     * @param requestRegistry      Request registry bean
+     * @param notificationRegistry Notification registry
+     * @return Concrete {@link Poshtar} implementation (instance of {@link QuarkusPoshtarImpl})
      */
     @Produces
     @DefaultBean
