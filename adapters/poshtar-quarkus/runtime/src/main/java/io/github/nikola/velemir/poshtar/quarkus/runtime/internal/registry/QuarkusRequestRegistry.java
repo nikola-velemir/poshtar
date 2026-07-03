@@ -11,6 +11,18 @@ import jakarta.enterprise.inject.spi.BeanManager;
 
 import java.util.List;
 
+/**
+ * Quarkus-specific implementation of the request registry that integrates
+ * request processing with the active CDI container.
+ *
+ * <p>
+ * This class translates build-time discovered handler metadata into proxy-managed,
+ * CDI bean references and binds them with pipeline behaviours.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @since 1.0.0
+ */
 @ApplicationScoped
 public class QuarkusRequestRegistry extends AbstractRequestRegistry {
 

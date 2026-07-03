@@ -61,20 +61,28 @@ public class GuiceRequestRegistry extends AbstractRequestRegistry {
         List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(injector);
         List<RequestHandler> allHandlers = provideHandlers(injector);
         for (RequestHandler<?, ?> handler : allHandlers) {
-            TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(handler));
-
-            TypeToken<?> superType = typeToken.getSupertype((Class) RequestHandler.class);
-
-            Class<?> requestType = superType.resolveType(RequestHandler.class.getTypeParameters()[0]).getRawType();
+            Class<?> requestType = resolveRequestType(handler);
             if (!Request.class.isAssignableFrom(requestType)) continue;
 
             List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
 
-            Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
-            RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
-
-            register(castedRequest, castedHandler, filteredBehaviours);
+            registerAsCasted(handler, requestType, filteredBehaviours);
         }
+    }
+
+    private static @NonNull Class<?> resolveRequestType(RequestHandler<?, ?> handler) {
+        TypeToken<?> typeToken = TypeToken.of(GuiceProxyUtils.resolveTargetClass(handler));
+
+        TypeToken<?> superType = typeToken.getSupertype((Class) RequestHandler.class);
+
+        return superType.resolveType(RequestHandler.class.getTypeParameters()[0]).getRawType();
+    }
+
+    private void registerAsCasted(RequestHandler<?, ?> handler, Class<?> requestType, List<PipelineBehaviour<?, ?>> filteredBehaviours) {
+        Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
+        RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
+
+        register(castedRequest, castedHandler, filteredBehaviours);
     }
 
     private @NonNull List<? extends PipelineBehaviour<?, ?>> provideBehaviours(Injector injector) {

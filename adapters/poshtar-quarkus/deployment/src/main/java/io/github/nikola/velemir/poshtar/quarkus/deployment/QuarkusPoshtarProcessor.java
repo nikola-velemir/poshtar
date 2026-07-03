@@ -23,17 +23,34 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.nikola.velemir.poshtar.quarkus.deployment.ProcessorConstants.*;
-
-class PoshtarQuarkusProcessor {
+/**
+ * Processor class that discovers and registers PoshtaR components as beans.
+ *
+ * <p>
+ * Class discovers Poshtar components through their annotations,
+ * as well as making bindings and wrappings that will be delivered to runtime to finalize the wiring.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
+class QuarkusPoshtarProcessor {
     public static final DotName APPLICATION_SCOPED_DOTNAME = DotName.createSimple(ApplicationScoped.class.getName());
     public static final DotName HANDLER_ANNOTATION_DOT_NAME = DotName.createSimple(Handler.class.getName());
     public static final DotName BEHAVIOUR_ANNOTATION_DOT_NAME = DotName.createSimple(Behaviour.class.getName());
-
+    /**
+     * Creates a Quarkus feature named "poshtar-quarkus".
+     */
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
     }
-
+    /**
+     * Registers Quarkus-specific registries and providers as additional CDI beans.
+     *
+     * @return the additional bean build item containing the PoshtaR runtime classes
+     */
     @BuildStep
     AdditionalBeanBuildItem runtimeBeans() {
         return AdditionalBeanBuildItem.builder()
@@ -45,7 +62,13 @@ class PoshtarQuarkusProcessor {
                         QuarkusNotificationRegistry.class.getName()
                 ).build();
     }
-
+    /**
+     * Discovers all request handlers, notification handlers, and behaviours within the application
+     * index, maps their relationships, and records their initialization for runtime registry setup.
+     *
+     * @param index The combined Jandex index containing application classes and dependencies
+     * @param recorder The runtime recorder used to pass initialization data to the execution context
+     */
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     void registerHandlers(
@@ -65,7 +88,12 @@ class PoshtarQuarkusProcessor {
         recorder.initRegistries(handlerToRequest, notificationHandlerToNotification, handlerToBehaviours);
     }
 
-
+    /**
+     * Defines core PoshtaR annotations as bean-defining annotations, ensuring that any class
+     * marked with them automatically becomes a CDI bean scoped to the application.
+     *
+     * @return A list of bean-defining annotation build items mapping PoshtaR targets to {@link ApplicationScoped}
+     */
     @BuildStep
     List<BeanDefiningAnnotationBuildItem> defineBeans() {
         return List.of(
