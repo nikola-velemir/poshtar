@@ -58,7 +58,6 @@ class RequestTestsUtils {
             }
 
         }));
-        rewirePoshtarProvider(injector, RequestTests.chainingFirstRequestHandler);
 
         return injector;
     }
