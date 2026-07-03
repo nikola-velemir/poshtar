@@ -26,8 +26,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
+import org.springframework.lang.Nullable;
 
 import java.util.Map;
+
 /**
  * Class maps specific notification type to its designated handler class, including Spring proxies.
  *
@@ -42,6 +44,7 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
 
     /**
      * Instantiates the registry, with the provided Spring context.
+     *
      * @param context Spring context, used for Posthar component discovery.
      */
     public SpringNotificationRegistry(ApplicationContext context) {
@@ -50,15 +53,12 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void init(ApplicationContext context) {
-        Map<String, NotificationHandler> allHandlers  = context.getBeansOfType(NotificationHandler.class);
+        Map<String, NotificationHandler> allHandlers = context.getBeansOfType(NotificationHandler.class);
 
         for (NotificationHandler<Notification> handler : allHandlers.values()) {
 
 
-            Class<?> targetClass = AopUtils.getTargetClass(handler);
-            Class<?> notificationType = ResolvableType.forClass(targetClass)
-                    .as(NotificationHandler.class)
-                    .getGeneric(0).resolve();
+            Class<?> notificationType = resolveRequestType(handler);
 
             if (notificationType != null && Notification.class.isAssignableFrom(notificationType)) {
                 @SuppressWarnings("unchecked")
@@ -67,6 +67,14 @@ public class SpringNotificationRegistry extends AbstractNotificationRegistry imp
             }
 
         }
+    }
+
+    @Nullable
+    private static Class<?> resolveRequestType(NotificationHandler<Notification> handler) {
+        Class<?> targetClass = AopUtils.getTargetClass(handler);
+        return ResolvableType.forClass(targetClass)
+                .as(NotificationHandler.class)
+                .getGeneric(0).resolve();
     }
 
     /**

@@ -24,6 +24,7 @@ import com.google.inject.Key;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +59,7 @@ public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
                 if (NotificationHandler.class.isAssignableFrom(rawType) && !rawType.isInterface()) {
                     NotificationHandler handler = (NotificationHandler) current.getInstance(key);
 
-                    TypeToken<?> typeToken = TypeToken.of(rawType);
-                    TypeToken<?> superType = typeToken.getSupertype((Class) NotificationHandler.class);
-                    Class<?> notificationType = superType.resolveType(NotificationHandler.class.getTypeParameters()[0]).getRawType();
+                    Class<?> notificationType = resolveNotificationType(rawType);
 
                     if (Notification.class.isAssignableFrom(notificationType)) {
                         register((Class<? extends Notification>) notificationType, handler);
@@ -69,5 +68,11 @@ public class GuiceNotificationRegistry extends AbstractNotificationRegistry {
             }
             current = current.getParent();
         }
+    }
+
+    private static @NonNull Class<?> resolveNotificationType(Class<?> rawType) {
+        TypeToken<?> typeToken = TypeToken.of(rawType);
+        TypeToken<?> superType = typeToken.getSupertype((Class) NotificationHandler.class);
+        return superType.resolveType(NotificationHandler.class.getTypeParameters()[0]).getRawType();
     }
 }

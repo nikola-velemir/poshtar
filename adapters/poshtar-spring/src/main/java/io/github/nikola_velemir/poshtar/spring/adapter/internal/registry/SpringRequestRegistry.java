@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.*;
 
@@ -41,6 +42,7 @@ import java.util.*;
  * @version ${project.version}
  * @since 1.0.0
  */
+@SuppressWarnings("unchecked")
 public class SpringRequestRegistry extends AbstractRequestRegistry implements ApplicationListener<ContextRefreshedEvent> {
     private final ApplicationContext context;
     private final PipelineConfiguration pipelineConfiguration;
@@ -48,7 +50,8 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
 
     /**
      * Instantiates the registry, with the provided Spring context.
-     * @param context Spring context, used for Posthar component discovery.
+     *
+     * @param context               Spring context, used for Posthar component discovery.
      * @param pipelineConfiguration Provided order of behavior execution.
      */
     public SpringRequestRegistry(ApplicationContext context, PipelineConfiguration pipelineConfiguration) {
@@ -56,27 +59,36 @@ public class SpringRequestRegistry extends AbstractRequestRegistry implements Ap
         this.pipelineConfiguration = pipelineConfiguration;
     }
 
-    @SuppressWarnings("unchecked")
     private void init(ApplicationContext context) {
         @SuppressWarnings("rawtypes") Map<String, RequestHandler> allHandlers = context.getBeansOfType(RequestHandler.class);
         List<? extends PipelineBehaviour<?, ?>> orderedBehaviours = provideBehaviours(context);
 
         for (RequestHandler<?, ?> handler : allHandlers.values()) {
-            Class<?> targetClass = AopUtils.getTargetClass(handler);
-            Class<?> requestType = ResolvableType.forClass(targetClass)
-                    .as(RequestHandler.class)
-                    .getGeneric(0).resolve();
+            Class<?> requestType = resolveRequestType(handler);
 
             if (requestType == null || !Request.class.isAssignableFrom(requestType)) continue;
 
             List<PipelineBehaviour<?, ?>> filteredBehaviours = filterBehaviours((List<PipelineBehaviour<?, ?>>) orderedBehaviours, requestType);
 
-            Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
-            RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
-
-            register(castedRequest, castedHandler, filteredBehaviours);
+            registerAsCasted(handler, requestType, filteredBehaviours);
         }
 
+    }
+
+    @Nullable
+    private static Class<?> resolveRequestType(RequestHandler<?, ?> handler) {
+        Class<?> targetClass = AopUtils.getTargetClass(handler);
+        Class<?> requestType = ResolvableType.forClass(targetClass)
+                .as(RequestHandler.class)
+                .getGeneric(0).resolve();
+        return requestType;
+    }
+
+    private void registerAsCasted(RequestHandler<?, ?> handler, Class<?> requestType, List<PipelineBehaviour<?, ?>> filteredBehaviours) {
+        Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
+        RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
+
+        register(castedRequest, castedHandler, filteredBehaviours);
     }
 
     @NonNull

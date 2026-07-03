@@ -12,11 +12,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Concrete Guice implementation to satisfy bridge pattern.
+ *
+ * <p>Implementation extends the {@link PoshtarBase} to satisfy Guice async implementation for notification dispatching</p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
+ */
 public final class GuicePoshtar extends PoshtarBase {
     public GuicePoshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
         super(requestRegistry, notificationRegistry);
     }
 
+    /**
+     * Override of dispatch method, aiming to wrap individual handler executions as concurrent tasks.
+     *
+     * @param notification Notification type to dispatch.
+     * @param handlers List of handlers satisfying the notification type.
+     */
     @SuppressWarnings("unchecked")
     @Override
     protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {
