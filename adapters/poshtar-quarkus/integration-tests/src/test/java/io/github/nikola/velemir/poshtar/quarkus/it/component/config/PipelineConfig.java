@@ -16,9 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.config;
 
-import groovy.lang.Singleton;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.global.GlobalTestPipeline;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.basic.BasicMockPipeline;
@@ -35,6 +34,7 @@ import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.valid
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class PipelineConfig {

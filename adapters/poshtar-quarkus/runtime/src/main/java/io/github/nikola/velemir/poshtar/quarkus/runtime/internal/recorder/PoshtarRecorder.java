@@ -10,6 +10,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 
+import java.nio.channels.Pipe;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +54,11 @@ public class PoshtarRecorder {
         PipelineConfiguration pipelineConfiguration = Arc.container()
                 .instance(PipelineConfiguration.class).get();
 
-        List<Class<? extends PipelineBehaviour<?, ?>>> orderedBehaviourClasses = pipelineConfiguration.getBehaviourClasses();
+        List<Class<? extends PipelineBehaviour<?, ?>>> behaviourClasses = Collections.emptyList();
+        if (pipelineConfiguration != null)
+            behaviourClasses = pipelineConfiguration.getBehaviourClasses();
+
+        List<Class<? extends PipelineBehaviour<?, ?>>> orderedBehaviourClasses = behaviourClasses;
         Map<String, PipelineBehaviour<?, ?>> behaviourProxies = ProxyUtility.extractBehaviourProxies(orderedBehaviourClasses, bm);
 
 

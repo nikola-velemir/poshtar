@@ -10,6 +10,7 @@ import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
@@ -99,6 +100,12 @@ class QuarkusPoshtarProcessor {
         return List.of(
                 new BeanDefiningAnnotationBuildItem(HANDLER_ANNOTATION_DOT_NAME, APPLICATION_SCOPED_DOTNAME),
                 new BeanDefiningAnnotationBuildItem(BEHAVIOUR_ANNOTATION_DOT_NAME, APPLICATION_SCOPED_DOTNAME)
+        );
+    }
+    @BuildStep
+    UnremovableBeanBuildItem keepPipelineConfigurationUnremovable() {
+        return UnremovableBeanBuildItem.beanTypes(
+                DotName.createSimple(PIPELINE_CONFIGURATION_CLASS_NAME)
         );
     }
 
