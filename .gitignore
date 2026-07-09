@@ -1,5 +1,8 @@
 **/.idea/
-
+.quarkus
+.quarkus/
+.vscode/
+.vscode
 # --- Dependencies (Matches any folder named node_modules) ---
 node_modules/
 **/node_modules/
