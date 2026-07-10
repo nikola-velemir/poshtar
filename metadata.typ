@@ -1,4 +1,5 @@
 #let format_strane = "a4"         // могуће вредности: iso-b5, a4
+#let outline_num = 3
 #let naslov = "ПоштаР"
 #let autor = "Никола Велемир"
 

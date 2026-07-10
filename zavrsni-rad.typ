@@ -50,7 +50,7 @@
     v(1em)
 }
 
-#outline(title: [Садржај], depth: 2)
+#outline(title: [Садржај], depth: outline_num)
 
 #set page(header: context {
      // Хедери са текућим секцијама не иду на страницу са поглављима
