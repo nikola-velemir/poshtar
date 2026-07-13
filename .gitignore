@@ -1,5 +1,5 @@
-zavrsni-rad.pdf
-./zavrsni-rad.pdf
+./*.pdf
+/*.pdf
 ./poglavlja/**.pdf
 /poglavlja/**.pdf
 /poglavlja/*.pdf
