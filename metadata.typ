@@ -1,10 +1,10 @@
 #let format_strane = "a4"         // могуће вредности: iso-b5, a4
 #let outline_num = 3
-#let naslov = "ПоштаР"
+#let naslov = "Имплементација Mediator софверског обрасца за Java екосистеме"
 #let autor = "Никола Велемир"
 
 // На енглеском
-#let naslov_eng = "PoshtaR"
+#let naslov_eng = "Implementation of Mediator design pattern for Java ecosystems"
 #let autor_eng = "Nikola Velemir"
 
 #let indeks = "SV 8/2022"
