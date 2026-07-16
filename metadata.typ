@@ -1,5 +1,5 @@
 #let format_strane = "a4"         // могуће вредности: iso-b5, a4
-#let outline_num = 3
+#let outline_num = 4
 #let naslov = "Имплементација Mediator софверског обрасца за Java екосистеме"
 #let autor = "Никола Велемир"
 
