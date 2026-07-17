@@ -24,7 +24,7 @@
 ) <fig-poshtar-module-organization>
 
 #pagebreak()
-#include "3-arhitektura-resenja/jezgro.typ"
+#include "3-arhitektura-resenja/jezgro/jezgro.typ"
 #include "3-arhitektura-resenja/spring.typ"
 #include "3-arhitektura-resenja/guice.typ"
 #include "3-arhitektura-resenja/quarkus.typ"
