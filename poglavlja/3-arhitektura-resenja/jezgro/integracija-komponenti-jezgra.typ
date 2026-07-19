@@ -24,3 +24,4 @@
   image("../../../slike/PoshtarCore.svg", width: 90%),
   caption: [Класни дијаграм језгра библиотеке _PoshtaR_],
 ) <fig-poshtar-core-class-diagram>
+=== Регистрација обрађивача захтева
