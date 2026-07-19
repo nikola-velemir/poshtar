@@ -25,7 +25,7 @@
 
 #pagebreak()
 #include "3-arhitektura-resenja/jezgro/jezgro.typ"
-#include "3-arhitektura-resenja/spring.typ"
-#include "3-arhitektura-resenja/guice.typ"
-#include "3-arhitektura-resenja/quarkus.typ"
-#include "3-arhitektura-resenja/validator.typ"
+#include "3-arhitektura-resenja/spring/spring.typ"
+#include "3-arhitektura-resenja/guice/guice.typ"
+#include "3-arhitektura-resenja/quarkus/quarkus.typ"
+#include "3-arhitektura-resenja/validator/validator.typ"
