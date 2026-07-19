@@ -24,4 +24,10 @@
   image("../../../slike/PoshtarCore.svg", width: 90%),
   caption: [Класни дијаграм језгра библиотеке _PoshtaR_],
 ) <fig-poshtar-core-class-diagram>
+
 === Регистрација обрађивача захтева
+<регистрација-обрађивача-захтева>
+#figure(
+  image("../../../slike/RequestRegistration.svg", width: 90%),
+  caption: [Дијаграм секвенце регистрације захтева],
+) <fig-poshtar-request-registration-sequence>
