@@ -1,6 +1,4 @@
 ./*.pdf
 /*.pdf
-./poglavlja/**.pdf
-/poglavlja/**.pdf
-/poglavlja/*.pdf
-./poglavlja/*.pdf
+./poglavlja/**/*.pdf
+/poglavlja/**/*.pdf
