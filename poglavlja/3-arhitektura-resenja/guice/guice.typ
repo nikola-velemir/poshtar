@@ -1,5 +1,7 @@
 #import "../../../funkcije.typ": todo, hint
 
+#pagebreak()
+
 == _Guice_ адаптер
 <guice-адаптер>
 
