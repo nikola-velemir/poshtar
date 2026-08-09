@@ -58,7 +58,6 @@ class QuarkusPoshtarProcessor {
                 .setUnremovable()
                 .addBeanClasses(
                         QuarkusPoshtarProducer.class.getName(),
-
                         QuarkusRequestRegistry.class.getName(),
                         QuarkusNotificationRegistry.class.getName()
                 ).build();
@@ -72,7 +71,7 @@ class QuarkusPoshtarProcessor {
      */
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    void registerHandlers(
+    void registerComponents(
             CombinedIndexBuildItem index,
             PoshtarRecorder recorder) {
 
@@ -86,6 +85,7 @@ class QuarkusPoshtarProcessor {
 
         Map<String, String> behaviourToRequest = MappingResolver.resolveBehaviourMap(idx);
         Map<String, List<String>> handlerToBehaviours = MappingResolver.mapHandlerToBehaviours(handlerToRequest, behaviourToRequest, idx);
+      
         recorder.initRegistries(handlerToRequest, notificationHandlerToNotification, handlerToBehaviours);
     }
 

@@ -6,12 +6,8 @@ import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviou
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.annotations.Recorder;
-import jakarta.annotation.Nonnull;
-import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import java.nio.channels.Pipe;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +34,6 @@ public class PoshtarRecorder {
      * @param notificationHandlerToNotification map linking notification handler class names to their corresponding notification class names
      * @param handlerToBehaviours               map linking request handler class names to their behaviour class names
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRegistries(
             Map<String, String> handlerToRequest,
             Map<String, String> notificationHandlerToNotification,
