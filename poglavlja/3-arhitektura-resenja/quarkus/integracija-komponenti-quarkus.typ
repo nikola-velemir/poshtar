@@ -17,3 +17,28 @@
   image("../../../slike/PoshtarQuarkus.svg", width: 90%),
   caption:  [Дијаграм класа _Quarkus_ адаптерског модула],
 ) <fig-poshtar-quarkus-class-diagram>
+
+
+=== Иницијализација и проналазак компоненти
+<quarkus-иницијализација-и-проналазак-компоненти>
+
+#figure(
+  image("../../../slike/QuarkusInitAndBeanDiscovery.svg", width: 90%),
+  caption:  [Дијаграм секвенци иницијализације и проналаска компоненти _Quarkus_ адаптерског модула],
+) <fig-poshtar-quarkus-initialization-and-bean-discovery>
+
+=== Снимање пронађених компоненти
+<quarkus-иницијализација-и-проналазак-компоненти>
+
+#figure(
+  image("../../../slike/QuarkusComponentScanAndRecord.svg", width: 90%),
+  caption:  [Дијаграм секвенце снимања компоненти _Quarkus_ адаптерског модула],
+) <fig-poshtar-quarkus-component-record>
+
+=== Почетак извршавања апликације
+<quarkus-почетак-извршавања-апликације>
+
+#figure(
+  image("../../../slike/QuarkusApplicationStartup.svg", width: 90%),
+  caption:  [Дијаграм секвенце почетка извршавања апликације _Quarkus_ адаптерског модула],
+) <fig-poshtar-quarkus-app-startup>
