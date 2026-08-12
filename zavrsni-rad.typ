@@ -74,6 +74,8 @@
 #include "poglavlja/1-uvod.typ"
 #include "poglavlja/2-resenja.typ"
 #include "poglavlja/3-arhitektura-resenja.typ"
+
+#include "poglavlja/4-pregled-projektantskih-sablona.typ"
 #include "poglavlja/7-zakljucak.typ"
 
 
