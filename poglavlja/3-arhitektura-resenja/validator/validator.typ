@@ -21,3 +21,4 @@
 
 #include "pravila-validator.typ"
 #include "integracija-komponenti-validator.typ"
+#include "dokumentacija-validator.typ"
