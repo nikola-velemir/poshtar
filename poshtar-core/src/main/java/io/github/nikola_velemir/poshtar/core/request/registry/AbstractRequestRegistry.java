@@ -18,7 +18,6 @@
 
 package io.github.nikola_velemir.poshtar.core.request.registry;
 
-import jdk.jshell.spi.ExecutionControl;
 import io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException;
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;

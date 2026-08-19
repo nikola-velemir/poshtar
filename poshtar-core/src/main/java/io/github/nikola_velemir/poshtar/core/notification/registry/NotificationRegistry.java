@@ -20,7 +20,6 @@ package io.github.nikola_velemir.poshtar.core.notification.registry;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.github.nikola_velemir.poshtar.core.request.RequestInvocationChain;
 
 import java.util.List;
 
