@@ -79,7 +79,7 @@ public class PipelineFactory {
      * @param behaviour   The behavior to be applied at this step.
      * @return A new {@link RequestDelegate} that executes the behavior.
      */
-    public static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> createNextNode(RequestDelegate<TRequest, TResponse> nextNode, PipelineBehaviour<TRequest, TResponse> behaviour) {
+    private static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> createNextNode(RequestDelegate<TRequest, TResponse> nextNode, PipelineBehaviour<TRequest, TResponse> behaviour) {
         return (request) -> behaviour.handle(request, nextNode);
     }
 }

@@ -24,12 +24,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 
 class InjectionBypassChecker {
     private static final String BYPASS_ANNOTATION_FQN = OverruleNoInjection.class.getName();
