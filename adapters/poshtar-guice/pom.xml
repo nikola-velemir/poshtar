@@ -18,8 +18,7 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
@@ -102,12 +101,12 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-validator</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -137,14 +136,18 @@
                     <annotationProcessorPaths>
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
-                            <artifactId>poshtar-validator</artifactId>
-
+                            <artifactId>poshtar-arch-validator</artifactId>
+                            <version>${project.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.github.nikola-velemir</groupId>
+                            <artifactId>poshtar-semantics-validator</artifactId>
                             <version>${project.version}</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
                         <arg>-processor</arg>
-                        <arg>io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor</arg>
+                        <arg>io.github.nikola_velemir.poshtar.validator.architecture.processor.ArchValidationProcessor,io.github.nikola_velemir.poshtar.validator.semantics.processor.SemanticsValidationProcessor</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

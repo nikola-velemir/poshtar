@@ -56,9 +56,10 @@
         <module>poshtar-core</module>
         <!-- <module>poshtar-adapter</module> -->
         <module>validation/poshtar-validator-api</module>
-        <module>validation/poshtar-validator</module>
         <module>validation/poshtar-validator-base</module>
-
+        <module>validation/poshtar-arch-validator</module>
+        <module>validation/poshtar-semantics-validator</module>
+        
         <module>adapters/poshtar-spring</module>
         <module>adapters/poshtar-guice</module>
         <module>adapters/poshtar-quarkus</module>

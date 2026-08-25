@@ -129,7 +129,13 @@
                     <annotationProcessorPaths>
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
-                            <artifactId>poshtar-validator</artifactId>
+                            <artifactId>poshtar-arch-validator</artifactId>
+                            <version>${project.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.github.nikola-velemir</groupId>
+                            <artifactId>poshtar-semantics-validator</artifactId>
+
                             <version>${project.version}</version>
                         </path>
                     </annotationProcessorPaths>
