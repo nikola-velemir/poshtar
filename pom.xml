@@ -57,6 +57,8 @@
         <!-- <module>poshtar-adapter</module> -->
         <module>validation/poshtar-validator-api</module>
         <module>validation/poshtar-validator</module>
+        <module>validation/poshtar-validator-base</module>
+
         <module>adapters/poshtar-spring</module>
         <module>adapters/poshtar-guice</module>
         <module>adapters/poshtar-quarkus</module>
@@ -120,7 +122,7 @@
                         <configLocation>google_checks.xml</configLocation>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
-                        
+
                     </configuration>
                     <executions>
                         <execution>

@@ -18,7 +18,8 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.finality;
 
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 
 import java.util.Set;
 

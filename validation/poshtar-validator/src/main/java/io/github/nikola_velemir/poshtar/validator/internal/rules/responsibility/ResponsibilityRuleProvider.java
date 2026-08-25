@@ -18,7 +18,7 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.responsibility;
 
-import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.base.internal.rules.Rule;
 
 import java.util.List;
 

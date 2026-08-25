@@ -20,7 +20,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.wiring;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

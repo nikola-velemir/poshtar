@@ -18,11 +18,12 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.registration;
 
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.registry.RegistryEntry;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.logger.Logger;
+import io.github.nikola_velemir.poshtar.validator.base.internal.logger.LoggerProvider;
+import io.github.nikola_velemir.poshtar.validator.base.internal.registry.RegistryEntry;
+import io.github.nikola_velemir.poshtar.validator.base.internal.rules.Rule;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.HashMap;

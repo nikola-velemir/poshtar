@@ -19,7 +19,7 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection;
 
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;

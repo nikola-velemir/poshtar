@@ -21,7 +21,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;

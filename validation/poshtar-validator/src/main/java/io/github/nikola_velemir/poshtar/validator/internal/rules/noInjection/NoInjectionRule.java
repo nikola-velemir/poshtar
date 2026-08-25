@@ -19,8 +19,8 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection;
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.rules.Rule;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;

@@ -20,9 +20,9 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection;
 
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.logger.Logger;
+import io.github.nikola_velemir.poshtar.validator.base.internal.logger.LoggerProvider;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;

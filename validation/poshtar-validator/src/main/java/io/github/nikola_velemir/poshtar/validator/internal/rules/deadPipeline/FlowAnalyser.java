@@ -19,7 +19,7 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline;
 
 import com.sun.source.tree.MethodTree;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 
 import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
