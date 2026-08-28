@@ -1,5 +1,6 @@
 package io.github.nikola_velemir.poshtar.validator.architecture.internal.rules;
 
+import io.github.nikola_velemir.poshtar.validator.architecture.internal.rules.finality.FinalityRuleProvider;
 import io.github.nikola_velemir.poshtar.validator.base.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.base.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.base.internal.rules.RuleValidator;
@@ -27,6 +28,7 @@ public class ValidatorRuleProvider implements RuleValidatorProvider {
 
         private static List<Rule> provideRules() {
             return Stream.of(
+                    FinalityRuleProvider.provide(),
                     DeadPipelineRuleProvider.provide(),
                     NoInjectionRuleProvider.provide(),
                     RegistrationRuleProvider.provide()

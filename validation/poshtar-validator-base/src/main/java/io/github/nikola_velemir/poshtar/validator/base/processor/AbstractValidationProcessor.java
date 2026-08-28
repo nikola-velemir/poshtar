@@ -93,9 +93,6 @@ public abstract class AbstractValidationProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return false;
-        }
 
         RuleValidator validator = this.provideRuleValidatorProvider().provideValidator();
         ProcessorContext ctx = new ProcessorContext(processingEnv, trees);

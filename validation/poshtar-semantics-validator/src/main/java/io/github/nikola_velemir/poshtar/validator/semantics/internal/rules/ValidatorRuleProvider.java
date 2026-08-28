@@ -1,6 +1,5 @@
 package io.github.nikola_velemir.poshtar.validator.semantics.internal.rules;
 
-import io.github.nikola_velemir.poshtar.validator.semantics.internal.rules.finality.FinalityRuleProvider;
 import io.github.nikola_velemir.poshtar.validator.semantics.internal.rules.responsibility.ResponsibilityRuleProvider;
 import io.github.nikola_velemir.poshtar.validator.semantics.internal.rules.returnTypes.ReturnTypesRuleProvider;
 import io.github.nikola_velemir.poshtar.validator.semantics.internal.rules.wiring.WiringRuleProvider;
@@ -26,7 +25,6 @@ public class ValidatorRuleProvider implements RuleValidatorProvider {
 
         private static List<Rule> provideRules(){
             return Stream.of(
-                    FinalityRuleProvider.provide(),
                     ResponsibilityRuleProvider.provide(),
                     ReturnTypesRuleProvider.provide(),
                     WiringRuleProvider.provide()

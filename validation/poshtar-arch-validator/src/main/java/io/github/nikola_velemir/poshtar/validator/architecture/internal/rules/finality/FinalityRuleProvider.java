@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.semantics.internal.rules.finality;
+package io.github.nikola_velemir.poshtar.validator.architecture.internal.rules.finality;
 
 import io.github.nikola_velemir.poshtar.validator.base.internal.rules.Rule;
 
