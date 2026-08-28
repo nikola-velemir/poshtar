@@ -23,9 +23,11 @@ import com.sun.source.util.Trees;
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.options.OptionsResolver;
 import io.github.nikola_velemir.poshtar.validator.internal.registry.scanner.RegistryScanner;
 
 import io.github.nikola_velemir.poshtar.validator.internal.registry.scanner.RegistryScannerProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleValidator;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleValidatorProvider;
 import io.github.nikola_velemir.poshtar.validator.internal.unwrapper.IdeUnwrapper;
@@ -33,6 +35,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.unwrapper.IdeUnwrappe
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -61,19 +66,18 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
     /**
      * The set of annotations this processor is interested in monitoring.
      */
-    private static final String[] ANNOTATIONS = {
-            Handler.class.getName(),
-            Behaviour.class.getName()
-    };
+
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
     }
 
+    private Set<RuleKind> enabledRuleKinds;
     private Trees trees;
-    private final RuleValidator validator = RuleValidatorProvider.provideValidator();
+    private RuleValidator validator;
     private final RegistryScanner scanner = RegistryScannerProvider.provideScanner();
+
     /**
      * Processes a round of annotation discovery.
      * <p>
@@ -95,6 +99,7 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
 
         return false;
     }
+
     /**
      * Returns the names of the annotation types supported by this processor.
      *
@@ -102,8 +107,9 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
      */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(ANNOTATIONS);
+        return Set.of(ProcessorConstants.ANNOTATIONS);
     }
+
     /**
      * Initializes the processor with the processing environment.
      * <p>
@@ -117,8 +123,17 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
+
+        enabledRuleKinds = OptionsResolver.resolveEnabledRuleKinds(processingEnv);
+        validator = RuleValidatorProvider.provideValidator(enabledRuleKinds);
         ProcessingEnvironment unwrapped = IdeUnwrapper.unwrap(ProcessingEnvironment.class, processingEnv);
         this.trees = Trees.instance(unwrapped);
     }
 
+    @Override
+    public Set<String> getSupportedOptions() {
+        Set<String> options = new HashSet<>(super.getSupportedOptions());
+        Collections.addAll(options, ProcessorConstants.OPTIONS.values().toArray(String[]::new));
+        return options;
+    }
 }
