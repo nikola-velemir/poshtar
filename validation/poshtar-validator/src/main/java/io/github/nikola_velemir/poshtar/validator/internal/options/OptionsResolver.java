@@ -1,7 +1,6 @@
 package io.github.nikola_velemir.poshtar.validator.internal.options;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
-import io.github.nikola_velemir.poshtar.validator.processor.ProcessorConstants;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
@@ -11,8 +10,8 @@ import java.util.Locale;
 import java.util.Set;
 
 public class OptionsResolver {
-    public static Set<RuleKind> resolveEnabledRuleKinds(ProcessingEnvironment env) {
-        String opt = env.getOptions().get(ProcessorConstants.OPTIONS.get(ProcessorConstants.OptionKey.RULES));
+    public static Set<RuleKind> resolveEnabledRuleKinds(String optionName,ProcessingEnvironment env) {
+        String opt = env.getOptions().get(optionName);
 
         if (opt == null || opt.isBlank()) {
             return EnumSet.allOf(RuleKind.class);

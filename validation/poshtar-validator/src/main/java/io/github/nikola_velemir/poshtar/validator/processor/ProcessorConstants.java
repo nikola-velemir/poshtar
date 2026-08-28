@@ -5,7 +5,7 @@ import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 
 import java.util.Map;
 
-public class ProcessorConstants {
+class ProcessorConstants {
     public static final String[] ANNOTATIONS = {
             Handler.class.getName(),
             Behaviour.class.getName()

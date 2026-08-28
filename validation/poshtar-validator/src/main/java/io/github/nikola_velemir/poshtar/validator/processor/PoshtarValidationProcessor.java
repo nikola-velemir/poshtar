@@ -124,7 +124,8 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
 
-        enabledRuleKinds = OptionsResolver.resolveEnabledRuleKinds(processingEnv);
+        String ruleOptionName = ProcessorConstants.OPTIONS.get(ProcessorConstants.OptionKey.RULES);
+        enabledRuleKinds = OptionsResolver.resolveEnabledRuleKinds(ruleOptionName, processingEnv);
         validator = RuleValidatorProvider.provideValidator(enabledRuleKinds);
         ProcessingEnvironment unwrapped = IdeUnwrapper.unwrap(ProcessingEnvironment.class, processingEnv);
         this.trees = Trees.instance(unwrapped);
