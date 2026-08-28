@@ -87,10 +87,6 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return false;
-        }
-
 
         ProcessorContext ctx = new ProcessorContext(processingEnv, trees);
         scanner.scanRegistry(roundEnv, ctx);

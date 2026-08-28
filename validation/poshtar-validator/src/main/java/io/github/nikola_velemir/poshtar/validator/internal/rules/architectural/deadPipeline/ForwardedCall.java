@@ -16,26 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.deadPipeline;
 
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-
-import javax.annotation.processing.RoundEnvironment;
-import java.util.List;
+import com.sun.source.tree.MethodInvocationTree;
 
 /**
- * Interface defines a validator of the architectural rules, specified by the library.
+ * Record models forwarded call metadata, used by a {@link FlowAnalyser}.
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
  */
-public interface RuleValidator {
-    /**
-     * Method validates all rules provided to the implementation of this interface.
-     *
-     * @param roundEnv The environment providing access to elements in the current processing round.
-     * @param ctx      Instance of context containing all.
-     */
-    void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
-
-    static List<Rule> provideRules() {
-        return List.of();
-    }
+record ForwardedCall(MethodInvocationTree node, int delegateArgIndex) {
 }
