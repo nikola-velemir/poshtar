@@ -16,26 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.responsibility;
 
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
-import javax.annotation.processing.RoundEnvironment;
 import java.util.List;
 
-/**
- * Interface defines a validator of the architectural rules, specified by the library.
- */
-public interface RuleValidator {
-    /**
-     * Method validates all rules provided to the implementation of this interface.
-     *
-     * @param roundEnv The environment providing access to elements in the current processing round.
-     * @param ctx      Instance of context containing all.
-     */
-    void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
-
-    static List<Rule> provideRules() {
-        return List.of();
+public class ResponsibilityRuleProvider implements RuleProvider {
+    public static List<Rule> provide(){
+        return List.of(
+                new SingleResponsibilityHandlerRule()
+        );
     }
 }

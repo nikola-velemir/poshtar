@@ -16,26 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality;
 
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
-import javax.annotation.processing.RoundEnvironment;
-import java.util.List;
+import java.util.Set;
 
-/**
- * Interface defines a validator of the architectural rules, specified by the library.
- */
-public interface RuleValidator {
-    /**
-     * Method validates all rules provided to the implementation of this interface.
-     *
-     * @param roundEnv The environment providing access to elements in the current processing round.
-     * @param ctx      Instance of context containing all.
-     */
-    void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
+class NotificationFinalityRule extends FinalityRule {
+    @Override
+    protected String getViolationMessage(String fqn) {
+        String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Notification '%s' must be final or a record!";
+        return String.format(FINALITY_VIOLATED_MESSAGE, fqn);
+    }
 
-    static List<Rule> provideRules() {
-        return List.of();
+    @Override
+    protected Set<String> getFQNs(ProcessorContext ctx) {
+        return ctx.getKnownNotifications();
     }
 }

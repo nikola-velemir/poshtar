@@ -20,13 +20,8 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules;
 
 
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.deadPipeline.DeadPipelineRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.finality.FinalityRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.noInjection.NoInjectionRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.registration.RegistrationRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.responsibility.ResponsibilityRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.returnTypes.ReturnTypesRuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.wiring.WiringRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.ArchitecturalRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.SemanticalRuleProvider;
 
 import javax.annotation.processing.RoundEnvironment;
 import java.util.List;
@@ -41,17 +36,12 @@ import java.util.stream.Stream;
 class RuleValidatorImpl implements RuleValidator {
     private static final List<Rule> RULES = provideRules();
 
-    private static List<Rule> provideRules(){
-       return Stream.of(
-                DeadPipelineRuleProvider.provide(),
-                FinalityRuleProvider.provide(),
-                NoInjectionRuleProvider.provide(),
-                RegistrationRuleProvider.provide(),
-                ResponsibilityRuleProvider.provide(),
-                ReturnTypesRuleProvider.provide(),
-                WiringRuleProvider.provide()
-        ).flatMap(List::stream
-        ).toList();
+    private static List<Rule> provideRules() {
+        return Stream.of(
+                        ArchitecturalRuleProvider.provide(),
+                        SemanticalRuleProvider.provide()
+                ).flatMap(List::stream)
+                .toList();
     }
 
     public void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx) {

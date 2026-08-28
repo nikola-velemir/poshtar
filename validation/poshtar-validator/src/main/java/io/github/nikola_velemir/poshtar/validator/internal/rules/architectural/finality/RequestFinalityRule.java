@@ -16,26 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality;
 
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
-import javax.annotation.processing.RoundEnvironment;
-import java.util.List;
+import java.util.Set;
 
 /**
- * Interface defines a validator of the architectural rules, specified by the library.
+ * Rule that prevents the developer from creating request class inheritance.
+ *
+ * <p>
+ * Rule disallows the inheritance between classes that extend
+ * {@link io.github.nikola_velemir.poshtar.core.request.Request},
+ * by forcing such classes to be records or declared final.
+ * </p>
+ *
+ * @author Nikola Velemir
+ * @version ${project.version}
+ * @since 1.0.0
  */
-public interface RuleValidator {
-    /**
-     * Method validates all rules provided to the implementation of this interface.
-     *
-     * @param roundEnv The environment providing access to elements in the current processing round.
-     * @param ctx      Instance of context containing all.
-     */
-    void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
+class RequestFinalityRule extends FinalityRule {
 
-    static List<Rule> provideRules() {
-        return List.of();
+    @Override
+    protected String getViolationMessage(String fqn) {
+        String FINALITY_VIOLATED_MESSAGE = "PoshtaR: Finality Violated! Request '%s' must be final or a record!";
+        return String.format(FINALITY_VIOLATED_MESSAGE, fqn);
+    }
+
+    @Override
+    protected Set<String> getFQNs(ProcessorContext ctx) {
+        return ctx.getKnownRequests();
     }
 }
