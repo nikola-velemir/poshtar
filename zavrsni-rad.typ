@@ -28,9 +28,8 @@
 #show ref: set text(blue)
 #show heading: set text(hyphenate: false)
 
-#show figure.where(
-  kind: table
-): set figure.caption(position: top)
+#show figure.where(kind: table): set figure.caption(position: top)
+#show figure.where(kind: table): set block(breakable: true)
 #show figure.where(kind: raw): set figure(supplement: [Листинг])
 #set ref(supplement: none)
 
