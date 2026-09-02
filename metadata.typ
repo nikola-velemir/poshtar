@@ -22,23 +22,25 @@
 
 #let godina = [#datetime.today().year()]
 
-#let kljucne_reci = "Шаблон, завршни рад, упутство"
+#let kljucne_reci = "апликације, софтверски обрасци, архитектура софтвера, софтверска библиотека, Mediator, дизајн, Java, Spring Framework, Google Guice, Quarkus Framework"
 #let apstrakt = [
-  Овај документ представља упутство за писање завршних радова на Факултету
-  техничких наука Универзитета у Новом Саду. У исто време је и шаблон за Typst.
+  Рад се бави проблемом архитектуре апликација пословног домена унутар _Java_ екосистема. У раду је представљен софтверски образац _Mediator_ који омогућава лакше одржавање и проширивање апликација, који је срж библиотеке у питању. У раду је представљена имплементација и архитектура библиотеке, као и начини на које се она интегрише у постојеће алате унутар _Java_ екосистема. Резултат је софтверско решење које унапређује архитектуру апликација пословног домена и омогућава лакше одржавање и проширивање апликација, путем униформног начина коришћења који библиотека диктира.
 ]
 
 // На енглеском
-#let kljucne_reci_eng = "Template, thesis, tutorial"
+#let kljucne_reci_eng = "applications, software patterns, software architecture, software library, Mediator, design, Java, Spring Framework, Google Guice, Quarkus Framework"
 #let apstrakt_eng = [
-  This document provides guidelines for writing final theses at the Faculty
-  of Technical Sciences, University of Novi Sad. At the same time, it serves
-  as a Typst template.
+ This thesis addresses the problem of business domain application architecture within the _Java_ ecosystem. It presents the _Mediator_ software pattern, which facilitates easier maintenance and extension of applications and forms the core of the library in question. The paper covers the implementation and architecture of the library, as well as the ways it integrates into existing tools within the _Java_ ecosystem. The result is a software solution that enhances business domain application architecture and enables easier application maintenance and expansion through a uniform usage model dictated by the library.
 ]
 
 // TODO: Текст задатка добијате од ментора. Заменити доле #lorem(100) са текстом задатка.
 #let zadatak = [
-  #lorem(100)
+1. Изучити постојеће архитектуре апликација унутар _Java_ екосистема и идентификовати проблеме у њиховом одржавању и проширивању.
+2. Истражити софтверски образац _Mediator_ и његову примену у архитектури апликација.
+4. Упознати се са постојећим решењима и библиотекама које користе _Mediator_ образац у _Java_ екосистему, као и са њиховим предностима и манама.
+3. Дизајнирати и имплементирати софтверску библиотеку која користи _Mediator_ образац за побољшање архитектуре апликација унутар _Java_ екосистема.
+5. Адресирати проблеме и изазове постојећих решења, те наћи начин да се они реше у оквиру нове библиотеке.
+6. Документовати пројектантксе шаблоне и представити како су они интегрисани у библиотеку.
 ]
 
 // TODO: Датум одбране и чланове комисије добијате од ментора
