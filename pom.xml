@@ -36,20 +36,9 @@
         <tag>HEAD</tag>
     </scm>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-RC3</version>
 
     <packaging>pom</packaging>
     <modules>
@@ -63,7 +52,6 @@
     </modules>
 
     <properties>
-        <poshtar.root>${project.basedir}</poshtar.root>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -84,35 +72,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.8.6.1</version>
-                    <configuration>
-                        <effort>Max</effort>
-                        <threshold>Medium</threshold>
-                        <xmlOutput>true</xmlOutput>
-                        <htmlOutput>true</htmlOutput>
-                        <failOnError>true</failOnError>
-                        <excludeFilterFile>${spotbugs.excludeFilterFile}</excludeFilterFile>
-                        <plugins>
-                            <plugin>
-                                <groupId>com.h3xstream.findsecbugs</groupId>
-                                <artifactId>findsecbugs-plugin</artifactId>
-                                <version>1.13.0</version>
-                            </plugin>
-                        </plugins>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>scan</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.3.1</version>
@@ -120,7 +79,6 @@
                         <configLocation>google_checks.xml</configLocation>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
-                        
                     </configuration>
                     <executions>
                         <execution>
@@ -182,7 +140,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.11.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -193,15 +151,10 @@
     </build>
 
     <profiles>
-
         <profile>
             <id>validate</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs-maven-plugin</artifactId>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -233,6 +186,19 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.11.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <excludeArtifacts>
+                                <excludeArtifact>poshtar-quarkus-integration-tests</excludeArtifact>
+                            </excludeArtifacts>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
