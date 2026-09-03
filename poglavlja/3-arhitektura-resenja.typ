@@ -26,3 +26,4 @@
 #include "3-arhitektura-resenja/guice/guice.typ"
 #include "3-arhitektura-resenja/quarkus/quarkus.typ"
 #include "3-arhitektura-resenja/validator/validator.typ"
+#include "3-arhitektura-resenja/deployment/deployment.typ"
