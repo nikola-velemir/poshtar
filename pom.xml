@@ -38,7 +38,7 @@
 
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar</artifactId>
-    <version>1.0.0-RC3</version>
+    <version>1.0.0</version>
 
     <packaging>pom</packaging>
     <modules>
