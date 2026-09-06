@@ -1,0 +1,20 @@
+name: PoshtaR Quarkus
+#description: Do something useful.
+artifact: "io.github.nikola-velemir:poshtar-quarkus-runtime::jar:1.0.0-SNAPSHOT"
+deployment-artifact: "io.github.nikola-velemir:poshtar-quarkus-runtime-deployment::jar:1.0.0-SNAPSHOT"
+metadata:
+  keywords:
+    - poshtar
+  cdi-bean-defining-annotations:
+    - "io.github.nikola_velemir.poshtar.core.annotations.Handler"
+    - "io.github.nikola_velemir.poshtar.core.annotations.Behaviour"
+  categories:
+    - "integration"
+  status: "stable"
+#  keywords:
+#    - poshtar-quarkus
+#  guide: ... # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+#  categories:
+#    - "miscellaneous"
+#  status: "preview"
+
