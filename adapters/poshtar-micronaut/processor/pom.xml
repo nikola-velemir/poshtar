@@ -5,7 +5,7 @@
   <groupId>io.github.nikolavelemir.poshtar.micronaut</groupId>
   <artifactId>processor</artifactId>
   <version>0.1</version>
-  <packaging>${packaging}</packaging>
+  <packaging>jar</packaging>
 
   <parent>
     <groupId>io.micronaut.platform</groupId>
@@ -14,53 +14,32 @@
   </parent>
 
   <properties>
-    <packaging>jar</packaging>
     <jdk.version>25</jdk.version>
     <release.version>25</release.version>
     <micronaut.version>5.1.2</micronaut.version>
-    <micronaut.runtime>netty</micronaut.runtime>
-    <micronaut.aot.enabled>false</micronaut.aot.enabled>
-    <micronaut.aot.packageName>io.github.nikolavelemir.poshtar.micronaut.aot.generated</micronaut.aot.packageName>
-    <exec.mainClass>io.github.nikolavelemir.poshtar.micronaut.Application</exec.mainClass>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-  </repositories>
-
 
   <dependencies>
 
+    <!-- The SPI this module implements: TypeElementVisitor and friends -->
     <dependency>
       <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-http-server-netty</artifactId>
+      <artifactId>micronaut-inject-java</artifactId>
       <scope>compile</scope>
     </dependency>
 
+    <!-- Needs to see @Handler/@Behaviour/HandlerRegistration etc. to reference
+         them when emitting generated code -->
     <dependency>
-      <groupId>io.micronaut.serde</groupId>
-      <artifactId>micronaut-serde-jackson</artifactId>
+      <groupId>io.github.nikolavelemir.poshtar.micronaut</groupId>
+      <artifactId>runtime</artifactId>
+      <version>0.1</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-http-client</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.micronaut.test</groupId>
-      <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -77,65 +56,5 @@
     </dependency>
 
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>io.micronaut.maven</groupId>
-        <artifactId>micronaut-maven-plugin</artifactId>
-        <configuration>
-          <configFile>aot-${packaging}.properties</configFile>
-<configurationValidation>
-    <enabled>false</enabled>
-
-    <suppressions>
-        <suppression>datasources.default.db-type</suppression>
-    </suppressions>
-    <failOnNotPresent>true</failOnNotPresent>
-    <validateDependencyInjection>false</validateDependencyInjection>
-    <cacheEnabled>true</cacheEnabled>
-
-</configurationValidation>
-
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!-- Uncomment to enable incremental compilation -->
-          <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
-
-          <annotationProcessorPaths combine.children="append">
-            <path>
-              <groupId>io.micronaut</groupId>
-              <artifactId>micronaut-http-validation</artifactId>
-              <version>${micronaut.core.version}</version>
-            </path>
-            <path>
-              <groupId>io.micronaut.serde</groupId>
-              <artifactId>micronaut-serde-processor</artifactId>
-              <version>${micronaut.serialization.version}</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>io.micronaut</groupId>
-                  <artifactId>micronaut-inject</artifactId>
-                </exclusion>
-              </exclusions>
-            </path>
-          </annotationProcessorPaths>
-          <compilerArgs>
-            <arg>-Amicronaut.processing.group=io.github.nikolavelemir.poshtar.micronaut</arg>
-            <arg>-Amicronaut.processing.module=processor</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 
 </project>
