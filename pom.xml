@@ -60,7 +60,7 @@
         <module>adapters/poshtar-spring</module>
         <module>adapters/poshtar-guice</module>
         <module>adapters/poshtar-quarkus</module>
-        <!-- <module>adapters/poshtar-micronaut</module> -->
+        <module>adapters/poshtar-micronaut</module>
 
     </modules>
 
