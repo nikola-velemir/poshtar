@@ -24,7 +24,7 @@
     <parent>
         <groupId>io.github.nikola-velemir</groupId>
         <artifactId>poshtar-quarkus-parent</artifactId>
-        <version>1.0.0-RC3</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>poshtar-quarkus-integration-tests</artifactId>
     <name>PoshtaR Quarkus - Integration Tests</name>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-validator-api</artifactId>
-            <version>1.0.0-RC3</version>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -99,7 +99,7 @@
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
                             <artifactId>poshtar-validator</artifactId>
-                            <version>1.0.0-RC3</version>
+                            <version>1.0.0</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

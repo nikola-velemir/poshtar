@@ -24,7 +24,7 @@
     <parent>
         <groupId>io.github.nikola-velemir</groupId>
         <artifactId>poshtar-quarkus-parent</artifactId>
-        <version>1.0.0-RC3</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>poshtar-quarkus-deployment</artifactId>
     <name>PoshtaR Quarkus - Deployment</name>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-core</artifactId>
-            <version>1.0.0-RC3</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
