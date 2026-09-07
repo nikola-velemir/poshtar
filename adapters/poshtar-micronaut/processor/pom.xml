@@ -28,7 +28,6 @@
       <artifactId>micronaut-inject-java</artifactId>
       <scope>compile</scope>
     </dependency>
-
     <!-- Needs to see @Handler/@Behaviour/HandlerRegistration etc. to reference
          them when emitting generated code -->
     <dependency>
@@ -37,7 +36,11 @@
       <version>1.0.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
-
+    <dependency>
+      <groupId>io.github.nikola-velemir</groupId>
+      <artifactId>poshtar-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
