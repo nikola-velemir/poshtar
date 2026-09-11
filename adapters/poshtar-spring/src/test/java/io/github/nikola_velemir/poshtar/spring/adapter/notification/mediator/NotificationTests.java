@@ -16,24 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.notification.publisher;
+package io.github.nikola_velemir.poshtar.spring.adapter.notification.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
+import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncFirstHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncNotification;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncSecondHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncThirdHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotification;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.injection.*;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.mock.*;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.noneRegistered.NoneRegisteredNotification;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.nullNotification.NullNotification;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.nullNotification.NullNotificationHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingFirstHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingNotification;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingSecondHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotification;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotificationSecondHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.mandatory.MandatoryNotification;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.mandatory.MandatoryNotificationHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -41,17 +51,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
-import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
-import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.nullNotification.NullNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.infrastructure.FailedExecutionNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.noneRegistered.NoneRegisteredNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingFirstHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.ping.PingSecondHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.mandatory.MandatoryNotification;
-import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.transactional.basic.TransactionalNotification;
 
 import java.util.List;
 

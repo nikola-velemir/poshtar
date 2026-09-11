@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.request.sender.deps.infrastructure.ambiguity;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.ambiguity;
 
 //@Handler
 //public class AmbiguousRequestHandler1 implements RequestHandler<AmbiguousRequest, Unit> {

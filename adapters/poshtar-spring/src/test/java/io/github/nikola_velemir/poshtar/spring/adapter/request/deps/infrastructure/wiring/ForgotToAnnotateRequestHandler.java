@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.request.sender.deps.infrastructure.wiring;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.wiring;
 
 
 //public class ForgotToAnnotateRequestHandler implements RequestHandler<ForgotToAnnotateRequest, Unit> {

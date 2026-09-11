@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.request;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;

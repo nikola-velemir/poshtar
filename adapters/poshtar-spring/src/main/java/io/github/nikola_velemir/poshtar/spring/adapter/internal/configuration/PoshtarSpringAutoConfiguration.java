@@ -19,6 +19,8 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.internal.configuration;
 
 
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
+import io.github.nikola_velemir.poshtar.core.mediator.Sender;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
@@ -106,5 +108,15 @@ public class PoshtarSpringAutoConfiguration {
     @ConditionalOnMissingBean
     public Poshtar configurePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
         return new SpringPoshtar(handlerRegistry, notificationRegistry);
+    }
+    @Bean
+    @ConditionalOnMissingBean(Sender.class)
+    public Sender configureSender(Poshtar poshtar){
+        return poshtar;
+    }
+    @Bean
+    @ConditionalOnMissingBean(Publisher.class)
+    public Publisher configurePublisher(Poshtar poshtar){
+        return poshtar;
     }
 }
