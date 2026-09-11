@@ -1,5 +1,6 @@
 package io.github.nikola_velemir.poshtar.micronaut.processor.internal.request;
 
+import com.google.auto.service.AutoService;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
@@ -8,6 +9,7 @@ import jakarta.inject.Singleton;
 
 import java.util.Collections;
 import java.util.List;
+@AutoService(TypedAnnotationMapper.class)
 
 public class HandlerAnnotationMapper implements TypedAnnotationMapper<Handler> {
     @Override

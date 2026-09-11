@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.github.nikolavelemir.poshtar.micronaut</groupId>
-  <artifactId>processor</artifactId>
+  <groupId>io.github.nikola-velemir</groupId>
+  <artifactId>poshtar-micronaut-processor</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>jar</packaging>
   <name>Poshtar Micronaut - Processor</name>
@@ -30,18 +30,22 @@
       <artifactId>micronaut-inject-java</artifactId>
       <scope>compile</scope>
     </dependency>
-    <!-- Needs to see @Handler/@Behaviour/HandlerRegistration etc. to reference
-         them when emitting generated code -->
     <dependency>
-      <groupId>io.github.nikolavelemir.poshtar.micronaut</groupId>
-      <artifactId>runtime</artifactId>
+      <groupId>io.github.nikola-velemir</groupId>
+      <artifactId>poshtar-micronaut-runtime</artifactId>
       <version>${revision}${changelist}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
       <groupId>io.github.nikola-velemir</groupId>
       <artifactId>poshtar-core</artifactId>
-      <version>${revision}${changelist}</version>
+      <version>1.0.0</version>
+      <!--      <version>${revision}${changelist}</version>-->
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
