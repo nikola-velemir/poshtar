@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.mediator;
+package io.github.nikola_velemir.poshtar.guice.adapter.internal.injection.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarBase;

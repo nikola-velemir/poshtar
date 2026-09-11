@@ -16,10 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.request;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.request.sender;
 
-import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.basic.BasicMockRequest;
-import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.mock.hierarchy.HierarchyRequest;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chaining.base.*;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chaining.mock.MockChainedFirstRequest;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chaining.mock.MockChainedFirstRequestHandler;
@@ -42,7 +40,7 @@ import io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transa
 import io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transactional.mandatory.MandatoryRequestHandler;
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.core.mediator.Sender;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.quarkus.arc.Arc;
@@ -64,7 +62,7 @@ public class RequestTests {
 
 
     @InjectSpy
-    Poshtar poshtar;
+    Sender sender;
 
     @Test
     void should_Register_And_Execute_Handler_Automatically() {
@@ -74,14 +72,14 @@ public class RequestTests {
         );
 
         PingRequest pingRequest = new PingRequest("Hello Poshtar");
-        String response = poshtar.send(pingRequest);
+        String response = sender.send(pingRequest);
 
         assertEquals("Pong: Hello Poshtar", response, "Wrong response!");
         System.out.println(">>> TEST PASSED: " + response);
 
 
         verify(pingRequestHandler, times(1)).handle(eq(pingRequest));
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
     }
 
     @Test
@@ -90,11 +88,11 @@ public class RequestTests {
         TransactionalRequest transactionalRequest = new TransactionalRequest("Hello Poshtar");
 
         assertDoesNotThrow(() -> {
-            String response = poshtar.send(transactionalRequest);
+            String response = sender.send(transactionalRequest);
             assert response.equals("Request with Hello Poshtar") : "Response is incorrect";
         });
         verify(transactionalRequestHandler, times(1)).handle(eq(transactionalRequest));
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
 
         System.out.println(">>> TEST PASSED: ");
 
@@ -103,7 +101,7 @@ public class RequestTests {
     @Test
     void should_Fail_For_Mandatory_Propagation() {
         var request = new MandatoryRequest("Payload");
-        Exception ex = assertThrowsExactly(TransactionalException.class, () -> poshtar.send(request));
+        Exception ex = assertThrowsExactly(TransactionalException.class, () -> sender.send(request));
         assertInstanceOf(TransactionalException.class, ex);
         String expectedMessage = "ARJUNA016110: Transaction is required for invocation";
         String actualMessage = ex.getMessage();
@@ -111,7 +109,7 @@ public class RequestTests {
 
         verify(mandatoryRequestHandler, times(1)).handle(eq(request));
         verify(mandatoryRequestHandler, times(1)).handle(any());
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
 
 
     }
@@ -120,12 +118,12 @@ public class RequestTests {
     void should_Chain_Accordingly() {
         var request = new ChainingFirstRequest();
         assertDoesNotThrow(() -> {
-            ChainedResponse response = poshtar.send(request);
+            ChainedResponse response = sender.send(request);
             assertEquals("Hello from second", response.getResponse());
         });
         verify(chainingFirstRequestHandler, times(1)).handle(any(ChainingFirstRequest.class));
         verify(chainingSecondRequestHandler, times(1)).handle(eq(new ChainingSecondRequest(1)));
-        verify(poshtar, times(2)).send(any());
+        verify(sender, times(2)).send(any());
 
     }
 
@@ -135,14 +133,14 @@ public class RequestTests {
         MockChainedFirstRequest firstRequest = new MockChainedFirstRequest();
         when(mockChainedSecondRequestHandler.handle(any())).thenReturn("TESTEST");
 
-        var response = poshtar.send(firstRequest);
+        var response = sender.send(firstRequest);
 
         assertNotNull(response);
         assertEquals("TESTEST", response.payload());
 
         verify(mockChainedSecondRequestHandler, times(1)).handle(eq(new MockChainedSecondRequest("Hello")));
         verify(mockChainedfirstRequestHandler, times(1)).handle(eq(firstRequest));
-        verify(poshtar, times(2)).send(any());
+        verify(sender, times(2)).send(any());
     }
 
     @Test
@@ -154,24 +152,24 @@ public class RequestTests {
         );
 
         InjectionRequest injectionRequest = new InjectionRequest("Hello Poshtar");
-        String response = poshtar.send(injectionRequest);
+        String response = sender.send(injectionRequest);
 
         assert response.equals("Request with Logged: Hello Poshtar") : "Incorrect response!";
         verify(injectionRequestHandler, times(1)).handle(eq(injectionRequest));
         verify(dummyLoggingService, times(1)).log(any());
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
         System.out.println(">>> TEST PASSSED: " + response);
     }
 
     @Test
     void should_fail_for_unregistered_handler() {
         NotFoundRequest request = new NotFoundRequest();
-        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> poshtar.send(request));
+        Exception ex = assertThrowsExactly(HandlerNotFoundException.class, () -> sender.send(request));
         assertInstanceOf(HandlerNotFoundException.class, ex);
         String expectedMessage = "[PoshtaR] No handler found for type: [NotFoundRequest].";
         String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
 
     }
 
@@ -185,12 +183,12 @@ public class RequestTests {
         when(mockRequestHandler.handle(eq(secondMockRequest))).thenReturn(stubbedResponse);
         when(mockRequestHandler.handle(eq(firstMockRequest))).thenReturn(firstStubbedResponse);
 
-        MockResponse response = poshtar.send(firstMockRequest);
+        MockResponse response = sender.send(firstMockRequest);
 
         assertNotNull(response);
         assertEquals("Hello", response.response());
 
-        response = poshtar.send(secondMockRequest);
+        response = sender.send(secondMockRequest);
 
         assertNotNull(response);
         assertEquals("Author", response.response());
@@ -200,7 +198,7 @@ public class RequestTests {
 
         verify(mockRequestHandler, times(1)).handle(eq(secondMockRequest));
         verify(mockRequestHandler, times(2)).handle(any());
-        verify(poshtar, times(2)).send(any());
+        verify(sender, times(2)).send(any());
 
     }
 
@@ -208,14 +206,14 @@ public class RequestTests {
     void handles_Null_Send() {
         System.out.println(RequestHandler.class.getSimpleName());
         NullRequest request = null;
-        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.send(request));
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> sender.send(request));
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
         String actual = ex.getMessage();
         assertEquals(expected, actual);
 
         verify(nullRequestHandler, never()).handle(any());
-        verify(poshtar, times(1)).send(any());
+        verify(sender, times(1)).send(any());
     }
 
     @InjectSpy

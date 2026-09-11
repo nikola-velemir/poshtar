@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.sender;
 
 import io.github.nikola.velemir.poshtar.quarkus.it.component.TestRepository;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead.DeadRequest;
@@ -38,7 +38,7 @@ import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.trans
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.validate.ValidationBehaviour;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.validate.ValidationRequest;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.validate.ValidationRequestHandler;
-import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.mediator.Sender;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.quarkus.test.InjectMock;
@@ -59,14 +59,14 @@ import static org.mockito.Mockito.times;
 public class PipelineTests {
 
     @InjectSpy
-    Poshtar poshtar;
+    Sender sender;
     @Inject
     TestRepository testRepository;
 
     @Test
     void should_Call_Global_Pipeline() {
         assertDoesNotThrow(() -> {
-            poshtar.send(new GlobalPipelineTestRequest());
+            sender.send(new GlobalPipelineTestRequest());
 
         });
     }
@@ -75,7 +75,7 @@ public class PipelineTests {
     void should_Respect_Order() {
         var orderRequest = new OrderRequest();
         assertDoesNotThrow(() -> {
-            poshtar.send(orderRequest);
+            sender.send(orderRequest);
 
         });
         assertEquals(3, orderRequest.payload);
@@ -84,11 +84,11 @@ public class PipelineTests {
     @Test
     void should_Call_Specific_Pipeline() {
         var specificRequest = new SpecificRequest();
-        poshtar.send(specificRequest);
+        sender.send(specificRequest);
         assertEquals(1, specificRequest.payload);
 
         var notSpecificRequest = new NotSpecificRequest();
-        poshtar.send(notSpecificRequest);
+        sender.send(notSpecificRequest);
         assertEquals(0, notSpecificRequest.payload);
     }
 
@@ -100,7 +100,7 @@ public class PipelineTests {
 //        System.out.println("Bean Class Name: " + bean.getClass().getName());
         var transactionalRequest = new FailTransactionalRequest("Fail transactional");
         Exception ex = assertThrowsExactly(RuntimeException.class, () -> {
-            poshtar.send(transactionalRequest);
+            sender.send(transactionalRequest);
 
         });
         String expected = "Failing on purpose";
@@ -115,7 +115,7 @@ public class PipelineTests {
     void should_call_Dead_Pipeline() {
         var deadRequest = new DeadRequest();
         assertDoesNotThrow(() -> {
-            var result = poshtar.send(deadRequest);
+            var result = sender.send(deadRequest);
             assertNull(result);
         });
     }
@@ -128,7 +128,7 @@ public class PipelineTests {
 //        System.out.println("Bean Class Name: " + bean.getClass().getName());
         var transactionalRequest = new TransactionalRequest();
         assertDoesNotThrow(() -> {
-            poshtar.send(transactionalRequest);
+            sender.send(transactionalRequest);
 
         });
         System.out.println(testRepository.findAll());
@@ -146,7 +146,7 @@ public class PipelineTests {
 
         var failMandatoryRequest = new FailMandatoryRequest();
         Exception ex = assertThrowsExactly(TransactionalException.class, () -> {
-            poshtar.send(failMandatoryRequest);
+            sender.send(failMandatoryRequest);
 
         });
         String expectedMessage = "ARJUNA016110: Transaction is required for invocation";
@@ -166,7 +166,7 @@ public class PipelineTests {
 //        System.out.println("Bean Class Name: " + handler.getClass().getName());
         var succeedForMandatoryRequest = new SucceedForMandatoryRequest();
         assertDoesNotThrow(() -> {
-            poshtar.send(succeedForMandatoryRequest);
+            sender.send(succeedForMandatoryRequest);
         });
         assertEquals(1, succeedForMandatoryRequest.payload);
     }
@@ -179,12 +179,12 @@ public class PipelineTests {
 //        );
         var goodValidationRequest = new ValidationRequest(1);
         assertDoesNotThrow(() -> {
-            var response = poshtar.send(goodValidationRequest);
+            var response = sender.send(goodValidationRequest);
             assertEquals(2, response);
         });
         var badValidationRequest = new ValidationRequest(0);
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.send(badValidationRequest);
+            sender.send(badValidationRequest);
         });
         assertEquals(0, badValidationRequest.payload());
         String actual = ex.getMessage();
@@ -198,10 +198,10 @@ public class PipelineTests {
         verify(validationRequestHandler, never()).handle(eq(badValidationRequest));
         verify(validationBehaviour, times(1)).handle(eq(badValidationRequest), any(RequestDelegate.class));
 
-        verify(poshtar, times(1)).send(eq(goodValidationRequest));
-        verify(poshtar, times(1)).send(eq(badValidationRequest));
+        verify(sender, times(1)).send(eq(goodValidationRequest));
+        verify(sender, times(1)).send(eq(badValidationRequest));
 
-        verify(poshtar, times(2)).send(any());
+        verify(sender, times(2)).send(any());
     }
 
     @Test
@@ -209,13 +209,13 @@ public class PipelineTests {
         var request = new BasicMockRequest();
         when(basicMockPipeline.handle(eq(request), any(RequestDelegate.class))).thenReturn("Did not pass");
         assertDoesNotThrow(() -> {
-            var response = poshtar.send(request);
+            var response = sender.send(request);
             assertEquals("Did not pass", response);
         });
         verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
         verify(basicMockrequestHandler, times(0)).handle(eq(request));
         verify(basicMockrequestHandler, never()).handle(any());
-        verify(poshtar, times(1)).send(eq(request));
+        verify(sender, times(1)).send(eq(request));
 
     }
 
@@ -224,7 +224,7 @@ public class PipelineTests {
         var request = new HierarchyRequest();
         when(hierarchySecondBehaviour.handle(eq(request), any(RequestDelegate.class))).thenReturn("I miss the handler :(");
         assertDoesNotThrow(() -> {
-            var response = poshtar.send(request);
+            var response = sender.send(request);
             assertEquals("I miss the handler :(", response);
         });
         verify(hierarchyFirstBehaviour, times(1)).handle(eq(request), any(RequestDelegate.class));
@@ -232,7 +232,7 @@ public class PipelineTests {
 
         verify(hierarchyRequestHandler, never()).handle(eq(request));
         verify(hierarchyRequestHandler, never()).handle(any());
-        verify(poshtar, times(1)).send(eq(request));
+        verify(sender, times(1)).send(eq(request));
     }
 
     @InjectSpy
