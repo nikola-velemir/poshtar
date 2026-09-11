@@ -106,6 +106,7 @@ public class RequestTests {
         String actualMessage = ex.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
+        
         verify(mandatoryRequestHandler, times(1)).handle(eq(request));
         verify(mandatoryRequestHandler, times(1)).handle(any());
         verify(poshtar, times(1)).send(any());
