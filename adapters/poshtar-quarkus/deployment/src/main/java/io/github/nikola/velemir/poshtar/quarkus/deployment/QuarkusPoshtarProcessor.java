@@ -51,7 +51,7 @@ import static io.github.nikola.velemir.poshtar.quarkus.deployment.ProcessorConst
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class QuarkusPoshtarProcessor {

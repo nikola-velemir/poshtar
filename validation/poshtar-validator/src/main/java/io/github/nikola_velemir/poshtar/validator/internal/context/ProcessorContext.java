@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class ProcessorContext {

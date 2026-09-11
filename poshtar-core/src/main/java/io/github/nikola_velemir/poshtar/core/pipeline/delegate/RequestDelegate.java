@@ -31,7 +31,7 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
  * @param <TRequest>  The type of the request being handled.
  * @param <TResponse> The type of the response returned by the handler.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface RequestDelegate<TRequest extends Request<TResponse>, TResponse> {

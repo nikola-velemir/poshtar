@@ -38,7 +38,7 @@ import java.util.List;
  * </ol>
  * </p>
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class FlowScanner extends TreeScanner<Void, Void> {

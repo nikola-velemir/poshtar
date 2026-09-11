@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * so discovery logic may find it and integrate it into its dependency context</p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @Target(ElementType.TYPE)

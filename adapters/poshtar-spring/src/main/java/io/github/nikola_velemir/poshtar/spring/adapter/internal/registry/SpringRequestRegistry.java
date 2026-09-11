@@ -39,7 +39,7 @@ import java.util.*;
  * Note that behavior and handler classes can be Spring proxies.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")

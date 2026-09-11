@@ -38,7 +38,7 @@ import java.util.Objects;
  * Classes annotated with {@link Handler} and {@link Behaviour} are introduced into Spring context as singleton spring beans.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class PoshtarSpringRegistrar implements ImportBeanDefinitionRegistrar {

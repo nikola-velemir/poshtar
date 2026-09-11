@@ -32,7 +32,7 @@ import java.util.List;
  * Implementation of {@link Poshtar} interface. Class is the core logic to dispatching requests and notifications, routing them to designated handlers or behaviors.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public abstract class PoshtarBase implements Poshtar {
