@@ -16,13 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.pipeline;
+package io.github.nikola_velemir.poshtar.spring.adapter.pipeline.mediator;
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
+import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadPipelineCatcher;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalTestPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic.BasicMockRequest;
@@ -32,19 +36,31 @@ import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierar
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderFirstPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderSecondPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.specific.NotSpecificRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.specific.SpecificPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.specific.SpecificRequest;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalRequestHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequestHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequestHandler;
-import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
-import org.junit.jupiter.api.Test;
-import io.github.nikola_velemir.poshtar.spring.adapter.MockTransactionConfig;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequestHandler;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequest;
+import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequestHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.repository.TestRepository;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -52,21 +68,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.IllegalTransactionStateException;
-import io.github.nikola_velemir.poshtar.spring.adapter.TestApplication;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.dead.DeadRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.order.OrderRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.specific.NotSpecificRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.specific.SpecificRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryPipeline;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.fail.FailMandatoryRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryPipeline;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequest;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success.SucceedForMandatoryRequestHandler;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationBehaviour;
-import io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate.ValidationRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,7 +87,10 @@ public class PipelineTests {
 
     @Autowired
     private TestRepository repository;
-
+    @AfterEach
+    public void clearDb(){
+        repository.deleteAll();
+    }
 
     @Test
     void should_Call_Global_Pipeline_Exactly_Once() {

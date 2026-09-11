@@ -16,16 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.guice.adapter.pipeline;
+package io.github.nikola_velemir.poshtar.guice.adapter.pipeline.mediator;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
+import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipelineCatcher;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalPipelineTestRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
@@ -37,81 +38,92 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarc
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderFirstPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderSecondPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.NotSpecificRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationBehaviour;
+import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
-import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.NotSpecificRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalRequest;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequest;
-
 
 import java.util.List;
 
-import static io.github.nikola_velemir.poshtar.guice.adapter.pipeline.PipelineTestsUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
+/**
+ * Exercises the {@link Poshtar} mediator directly (as opposed to the
+ * narrower {@link io.github.nikola_velemir.poshtar.core.mediator.Sender}
+ * in the sibling {@code sender} test class). Both resolve to the same
+ * {@code GuicePoshtar} singleton (see {@code PoshtarGuiceModule}).
+ */
 @SuppressWarnings("rawtypes")
 @OverruleNoInjection
 public class PipelineTests {
-    static FailTransactionalPipeline failTransactionalPipeline;
-    static FailTransactionalRequestHandler failTransactionalHandler;
-    static TransactionalPipeline transactionalPipeline;
-    static TransactionalRequestHandler transactionalHandler;
+    public static FailTransactionalPipeline failTransactionalPipeline;
+    public static FailTransactionalRequestHandler failTransactionalHandler;
+    public static TransactionalPipeline transactionalPipeline;
+    public static TransactionalRequestHandler transactionalHandler;
     private Poshtar poshtar;
     private Injector injector;
-    static GlobalTestPipeline globalPipeline;
-    static SpecificPipeline specificPipeline;
-    static DeadPipeline deadPipeline;
-    static DeadPipelineCatcher deadPipelineCatcher;
-    static DeadRequestHandler deadRequestHandler;
-    static OrderFirstPipeline orderFirstPipeline;
-    static OrderSecondPipeline orderSecondPipeline;
-    static OrderRequestHandler orderRequestHandler;
-    static ValidationRequestHandler validationRequestHandler;
-    static ValidationBehaviour validationBehaviour;
-    static BasicMockRequestHandler basicMockrequestHandler;
-    static BasicMockPipeline basicMockPipeline;
-    static HierarchyFirstBehaviour hierarchyFirstBehaviour;
-    static HierarchySecondBehaviour hierarchySecondBehaviour;
-    static HierarchyRequestHandler hierarchyRequestHandler;
+    public static GlobalTestPipeline globalPipeline;
+    public static SpecificPipeline specificPipeline;
+    public static DeadPipeline deadPipeline;
+    public static DeadPipelineCatcher deadPipelineCatcher;
+    public static DeadRequestHandler deadRequestHandler;
+    public static OrderFirstPipeline orderFirstPipeline;
+    public static OrderSecondPipeline orderSecondPipeline;
+    public static OrderRequestHandler orderRequestHandler;
+    public static ValidationRequestHandler validationRequestHandler;
+    public static ValidationBehaviour validationBehaviour;
+    public static BasicMockRequestHandler basicMockrequestHandler;
+    public static BasicMockPipeline basicMockPipeline;
+    public static HierarchyFirstBehaviour hierarchyFirstBehaviour;
+    public static HierarchySecondBehaviour hierarchySecondBehaviour;
+    public static HierarchyRequestHandler hierarchyRequestHandler;
 
     @BeforeEach
     void initTestContainer() {
-        createMocks();
+        PipelineTestsUtils.Mocks mocks = PipelineTestsUtils.createMocks();
+        basicMockPipeline = mocks.basicMockPipeline;
+        hierarchySecondBehaviour = mocks.hierarchySecondBehaviour;
 
-        Injector behaviourInjector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind(BasicMockPipeline.class).toInstance(PipelineTests.basicMockPipeline);
+        Injector behaviourInjector = PipelineTestsUtils.buildBehaviourInjector(mocks);
+        PipelineTestsUtils.Spies spies = PipelineTestsUtils.createSpies(behaviourInjector);
+        globalPipeline = spies.globalPipeline;
+        specificPipeline = spies.specificPipeline;
+        deadPipeline = spies.deadPipeline;
+        deadPipelineCatcher = spies.deadPipelineCatcher;
+        deadRequestHandler = spies.deadRequestHandler;
+        orderFirstPipeline = spies.orderFirstPipeline;
+        orderSecondPipeline = spies.orderSecondPipeline;
+        orderRequestHandler = spies.orderRequestHandler;
+        validationRequestHandler = spies.validationRequestHandler;
+        validationBehaviour = spies.validationBehaviour;
+        failTransactionalPipeline = spies.failTransactionalPipeline;
+        failTransactionalHandler = spies.failTransactionalHandler;
+        transactionalPipeline = spies.transactionalPipeline;
+        transactionalHandler = spies.transactionalHandler;
+        basicMockrequestHandler = spies.basicMockrequestHandler;
+        hierarchyFirstBehaviour = spies.hierarchyFirstBehaviour;
+        hierarchyRequestHandler = spies.hierarchyRequestHandler;
 
-                bind(HierarchySecondBehaviour.class).toInstance(PipelineTests.hierarchySecondBehaviour);
-            }
-        }));
-        createSpies(behaviourInjector);
-
-        injector = buildTestInjector();
+        injector = PipelineTestsUtils.buildTestInjector(mocks, spies);
         poshtar = injector.getInstance(Poshtar.class);
 
         EntityManager em = injector.getInstance(EntityManager.class);
@@ -120,11 +132,24 @@ public class PipelineTests {
         em.getTransaction().commit();
     }
 
-
     @AfterEach
     void tearDown() {
+        if (injector == null) return;
+
         EntityManager em = injector.getInstance(EntityManager.class);
-        if (em.isOpen()) em.close();
+        var tx = em.getTransaction();
+        try {
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            em.createQuery("DELETE FROM TestEntity").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -164,20 +189,15 @@ public class PipelineTests {
         verify(basicMockPipeline, times(1)).handle(eq(request), any(RequestDelegate.class));
         verify(basicMockrequestHandler, times(0)).handle(eq(request));
         verify(basicMockrequestHandler, never()).handle(any());
-
     }
 
     @Test
     void should_Mock_Hierarchy() {
-        // 1. Grab the active registry from the system
         RequestRegistry registry = injector.getInstance(RequestRegistry.class);
-
-        // Print out the exact object classes inside your registry to see if it's a Mockito mock or a real object
         System.out.println("REGISTRY TYPE: " + registry.getClass().getName());
 
         var request = new HierarchyRequest();
 
-        // 2. STUBBING WITH THE PURE MOCK
         when(hierarchySecondBehaviour.handle(eq(request), any()))
                 .thenReturn("I miss the handler :(");
 
@@ -186,6 +206,7 @@ public class PipelineTests {
             assertEquals("I miss the handler :(", response);
         });
     }
+
     @Test
     void should_Call_Dead_Pipeline() {
         var deadRequest = new DeadRequest();
@@ -228,7 +249,6 @@ public class PipelineTests {
 
         verify(validationRequestHandler, never()).handle(eq(badValidationRequest));
         verify(validationBehaviour, times(1)).handle(eq(badValidationRequest), any(RequestDelegate.class));
-
     }
 
     @Test

@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.notification;
+package io.github.nikola_velemir.poshtar.spring.adapter.notification.publisher;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
-import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncFirstHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncSecondHandler;
 import io.github.nikola_velemir.poshtar.spring.adapter.notification.deps.async.FailForAsyncThirdHandler;
@@ -65,14 +65,14 @@ import static org.mockito.Mockito.*;
 public class NotificationTests {
     @Autowired
     @MockitoSpyBean
-    private Poshtar poshtar;
+    private Publisher publisher;
     @Autowired
     private ApplicationContext context;
 
     @Test
     void should_Not_Fail_For_None_Registered() {
         var noneNotification = new NoneRegisteredNotification();
-        assertDoesNotThrow(() -> poshtar.publish(noneNotification));
+        assertDoesNotThrow(() -> publisher.publish(noneNotification));
         assertEquals(0, noneNotification.payload);
     }
 
@@ -80,7 +80,7 @@ public class NotificationTests {
     void handles_Null_Send() {
         NullNotification notification = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
-            poshtar.publish(notification);
+            publisher.publish(notification);
         });
         assertInstanceOf(IllegalArgumentException.class, ex);
         String expected = "Request cannot be null";
@@ -89,8 +89,8 @@ public class NotificationTests {
 
         verify(nullNotificationHandler, never()).handle(eq(notification));
 
-        verify(poshtar, times(1)).publish(eq(notification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
+        verify(publisher, times(1)).publish(any());
     }
 
     @Test
@@ -101,15 +101,15 @@ public class NotificationTests {
         assert secondBeanExists : "Handler bean not registered thru @NotificationHandler!";
 
         PingNotification notification = new PingNotification();
-        poshtar.publish(notification);
+        publisher.publish(notification);
 
         assert notification.payload == 2;
         System.out.println(">>> TEST PASSED <<<");
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
 
-        verify(poshtar, times(1)).publish(eq(notification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
+        verify(publisher, times(1)).publish(any());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class NotificationTests {
         assert thirdBeanExists : "Handler bean not registered thru @NotificationHandler!";
 
         InjectionNotification notification = new InjectionNotification();
-        poshtar.publish(notification);
+        publisher.publish(notification);
 
         assert notification.value == 3;
         System.out.println(">>> TEST PASSED <<<");
@@ -132,19 +132,19 @@ public class NotificationTests {
         verify(injectionNotificationThirdHandler, times(1)).handle(any());
         verify(dummyIncrementService, times(3)).inc(anyInt());
 
-        verify(poshtar, times(1)).publish(eq(notification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
+        verify(publisher, times(1)).publish(any());
     }
 
     @Test
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
-        assertDoesNotThrow(() -> poshtar.publish(transactionNotification));
+        assertDoesNotThrow(() -> publisher.publish(transactionNotification));
         verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
         verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
 
-        verify(poshtar, times(1)).publish(eq(transactionNotification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(transactionNotification));
+        verify(publisher, times(1)).publish(any());
         System.out.println(">>> TEST PASSED <<<");
 
     }
@@ -153,7 +153,7 @@ public class NotificationTests {
     void should_Fail_For_Mandatory() {
         var mandatoryNotification = new MandatoryNotification();
         AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class, () -> {
-            poshtar.publish(mandatoryNotification);
+            publisher.publish(mandatoryNotification);
         });
         Exception ex = (Exception) mainEx.getErrors().get(0);
         System.out.println(mainEx.toString());
@@ -165,8 +165,8 @@ public class NotificationTests {
         verify(mandatoryNotificationHandler, never()).handle(eq(mandatoryNotification));
         verify(mandatoryNotificationHandler, never()).handle(any());
 
-        verify(poshtar, times(1)).publish(eq(mandatoryNotification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(mandatoryNotification));
+        verify(publisher, times(1)).publish(any());
 
         System.out.println(">>> TEST PASSED <<<");
 
@@ -179,12 +179,12 @@ public class NotificationTests {
 
         when(mockService.getHello()).thenReturn("Bye");
 
-        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertDoesNotThrow(() -> publisher.publish(mockNotification));
         assertEquals("Bye", mockNotification.getPayload());
 
         verify(mockService, times(1)).getHello();
         verify(basicMockHandler, times(1)).handle(eq(mockNotification));
-        verify(poshtar, times(1)).publish(eq(mockNotification));
+        verify(publisher, times(1)).publish(eq(mockNotification));
     }
 
     @Test
@@ -193,13 +193,13 @@ public class NotificationTests {
 
         when(mockServiceDeep.getHi()).thenReturn("Ciao");
         when(mockService.getHi()).then(i -> mockServiceDeep.getHi());
-        assertDoesNotThrow(() -> poshtar.publish(mockNotification));
+        assertDoesNotThrow(() -> publisher.publish(mockNotification));
         assertEquals("Ciao", mockNotification.getPayload());
 
         verify(mockService, times(1)).getHi();
         verify(mockServiceDeep, times(1)).getHi();
         verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
-        verify(poshtar, times(1)).publish(eq(mockNotification));
+        verify(publisher, times(1)).publish(eq(mockNotification));
     }
 
     @Test
@@ -207,7 +207,7 @@ public class NotificationTests {
         var failNotification = new FailedExecutionNotification();
 
         AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> {
-            poshtar.publish(failNotification);
+            publisher.publish(failNotification);
         });
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
@@ -219,8 +219,8 @@ public class NotificationTests {
         verify(failedExecutionNotificationFineHandler, times(1)).handle(eq(failNotification));
         verify(failedExecutionNotificationFineHandler, times(1)).handle(any());
 
-        verify(poshtar, times(1)).publish(eq(failNotification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(failNotification));
+        verify(publisher, times(1)).publish(any());
         System.out.println(">>> TEST PASSED <<<");
     }
 
@@ -229,7 +229,7 @@ public class NotificationTests {
         var failAsyncNotification = new FailForAsyncNotification();
         AggregateNotificationException ex = assertThrowsExactly(
                 AggregateNotificationException.class, () -> {
-                    poshtar.publish(failAsyncNotification);
+                    publisher.publish(failAsyncNotification);
 
                 });
         List<Throwable> errors = ex.getErrors();
@@ -242,8 +242,8 @@ public class NotificationTests {
         verify(failForAsyncThirdHandler, never()).handle(any());
 
 
-        verify(poshtar, times(1)).publish(eq(failAsyncNotification));
-        verify(poshtar, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(failAsyncNotification));
+        verify(publisher, times(1)).publish(any());
     }
 
     @MockitoSpyBean
