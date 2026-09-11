@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.mediator;
 
 import io.github.nikola.velemir.poshtar.quarkus.it.component.TestRepository;
 import io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead.DeadRequest;
@@ -52,7 +52,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @OverruleNoInjection
