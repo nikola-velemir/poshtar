@@ -34,7 +34,7 @@ import java.util.List;
  *                        requiring further recursive analysis.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 record ScanResult(boolean directCallFound, boolean throwFound, List<ForwardedCall> forwardedCalls) {

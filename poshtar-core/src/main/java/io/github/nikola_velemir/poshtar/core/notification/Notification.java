@@ -27,7 +27,7 @@ package io.github.nikola_velemir.poshtar.core.notification;
  * <p>Notifications are considered "fire-and-forget".</p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface Notification {

@@ -38,7 +38,7 @@
 
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}${changelist}</version>
 
     <packaging>pom</packaging>
     <modules>
@@ -49,12 +49,16 @@
         <module>adapters/poshtar-spring</module>
         <module>adapters/poshtar-guice</module>
         <module>adapters/poshtar-quarkus</module>
+        <module>adapters/poshtar-micronaut</module>
+
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>1.0.0</revision>
+        <changelist>-SNAPSHOT</changelist>
     </properties>
 
     <dependencyManagement>

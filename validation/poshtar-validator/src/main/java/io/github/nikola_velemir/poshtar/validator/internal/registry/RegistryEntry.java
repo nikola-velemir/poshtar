@@ -37,7 +37,7 @@ import javax.lang.model.element.Element;
  *                         found on the element.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public record RegistryEntry(

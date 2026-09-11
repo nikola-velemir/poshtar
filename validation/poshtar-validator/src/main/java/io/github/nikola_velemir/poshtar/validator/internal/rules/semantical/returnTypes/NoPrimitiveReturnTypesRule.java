@@ -46,7 +46,7 @@ import java.util.Map;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class NoPrimitiveReturnTypesRule implements Rule {

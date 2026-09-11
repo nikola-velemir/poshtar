@@ -35,7 +35,7 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
  * @param <TRequest>  The type of the request being intercepted.
  * @param <TResponse> The type of the response returned by the pipeline.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate
  * @since 1.0.0
  */

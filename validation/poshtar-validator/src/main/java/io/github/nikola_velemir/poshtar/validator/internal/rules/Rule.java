@@ -32,7 +32,7 @@ import javax.annotation.processing.RoundEnvironment;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface Rule {

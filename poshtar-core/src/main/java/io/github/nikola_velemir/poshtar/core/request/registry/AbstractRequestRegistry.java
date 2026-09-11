@@ -34,7 +34,7 @@ import java.util.Map;
  * Base class implementing {@link RequestRegistry}, modeling standard behavior of registering and resolving request types.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public abstract class AbstractRequestRegistry implements RequestRegistry {
