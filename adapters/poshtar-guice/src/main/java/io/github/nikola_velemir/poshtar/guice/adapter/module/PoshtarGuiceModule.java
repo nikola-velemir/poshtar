@@ -149,18 +149,30 @@ public class PoshtarGuiceModule extends AbstractModule {
      *
      * @param handlerRegistry      The registry for request handling.
      * @param notificationRegistry The registry for notification broadcasting.
-     * @return The singleton Poshtar implementation.
+     * @return The singleton {@link Poshtar} implementation.
      */
     @Provides
     @Singleton
     public Poshtar providePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
         return new GuicePoshtar(handlerRegistry, notificationRegistry);
     }
+    /**
+     * Provides the designated sender instance.
+     *
+     * @param poshtar      Poshtar instance to derive the binding from.
+     * @return The singleton {@link Sender} implementation.
+     */
     @Provides
     @Singleton
     public Sender provideSender(Poshtar poshtar) {
         return poshtar;
     }
+    /**
+     * Provides the designated publisher instance.
+     *
+     * @param poshtar      Poshtar instance to derive the binding from.
+     * @return The singleton {@link Publisher} implementation.
+     */
     @Provides
     @Singleton
     public Publisher providePublisher(Poshtar poshtar) {
