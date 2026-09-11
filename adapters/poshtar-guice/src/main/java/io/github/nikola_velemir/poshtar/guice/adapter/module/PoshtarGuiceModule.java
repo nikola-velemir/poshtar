@@ -79,7 +79,7 @@ import org.reflections.Reflections;
  * </pre>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class PoshtarGuiceModule extends AbstractModule {

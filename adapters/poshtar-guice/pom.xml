@@ -18,8 +18,7 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
@@ -30,7 +29,7 @@
     <parent>
         <groupId>io.github.nikola-velemir</groupId>
         <artifactId>poshtar</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}${changelist}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>poshtar-guice</artifactId>
@@ -47,7 +46,7 @@
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-core</artifactId>
 
-            <version>${project.version}</version>
+            <version>${revision}${changelist}</version>
         </dependency>
 
         <dependency>
@@ -94,7 +93,7 @@
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-validator-api</artifactId>
 
-            <version>${project.version}</version>
+            <version>${revision}${changelist}</version>
         </dependency>
 
         <dependency>
@@ -105,7 +104,7 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-validator</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}${changelist}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -138,8 +137,7 @@
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
                             <artifactId>poshtar-validator</artifactId>
-
-                            <version>${project.version}</version>
+                            <version>${revision}${changelist}</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>

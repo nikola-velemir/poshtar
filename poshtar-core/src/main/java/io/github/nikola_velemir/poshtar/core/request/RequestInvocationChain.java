@@ -36,7 +36,7 @@ package io.github.nikola_velemir.poshtar.core.request;
  * @param <TRequest>  Type of request chain handles.
  * @param <TResponse> Expected response type after processing the request.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @FunctionalInterface

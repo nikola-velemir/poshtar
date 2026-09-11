@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * <p>Implementation extends the {@link PoshtarBase} to satisfy Guice async implementation for notification dispatching</p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public final class GuicePoshtar extends PoshtarBase {

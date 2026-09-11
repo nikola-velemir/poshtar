@@ -33,7 +33,7 @@ import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class ProcessorConstants {

@@ -45,7 +45,7 @@ import org.springframework.context.annotation.Configuration;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @Configuration

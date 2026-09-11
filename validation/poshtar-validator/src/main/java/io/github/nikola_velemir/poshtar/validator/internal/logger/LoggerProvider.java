@@ -28,7 +28,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class LoggerProvider {

@@ -30,7 +30,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.unwrapper.IdeUnwrappe
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see IdeUnwrapper
  * @since 1.0.0
  */
