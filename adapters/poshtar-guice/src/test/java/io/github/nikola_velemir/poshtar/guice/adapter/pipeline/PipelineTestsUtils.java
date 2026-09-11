@@ -10,7 +10,6 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPip
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockPipeline;
-import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequest;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.basic.BasicMockRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyFirstBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchyRequestHandler;
@@ -27,58 +26,115 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.Val
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationRequestHandler;
 import org.mockito.Mockito;
 
-class PipelineTestsUtils {
-    static void createSpies(Injector injector) {
-        PipelineTests.globalPipeline = Mockito.spy(injector.getInstance(GlobalTestPipeline.class));
-        PipelineTests.specificPipeline = Mockito.spy(injector.getInstance(SpecificPipeline.class));
-        PipelineTests.deadPipeline = Mockito.spy(injector.getInstance(DeadPipeline.class));
-        PipelineTests.deadPipelineCatcher = Mockito.spy(injector.getInstance(DeadPipelineCatcher.class));
-        PipelineTests.deadRequestHandler = Mockito.spy(injector.getInstance(DeadRequestHandler.class));
-        PipelineTests.orderFirstPipeline = Mockito.spy(injector.getInstance(OrderFirstPipeline.class));
-        PipelineTests.orderSecondPipeline = Mockito.spy(injector.getInstance(OrderSecondPipeline.class));
-        PipelineTests.orderRequestHandler = Mockito.spy(injector.getInstance(OrderRequestHandler.class));
-        PipelineTests.validationRequestHandler = Mockito.spy(injector.getInstance(ValidationRequestHandler.class));
-        PipelineTests.validationBehaviour = Mockito.spy(injector.getInstance(ValidationBehaviour.class));
-        PipelineTests.failTransactionalPipeline = Mockito.spy(injector.getInstance(FailTransactionalPipeline.class));
-        PipelineTests.failTransactionalHandler = Mockito.spy(injector.getInstance(FailTransactionalRequestHandler.class));
-        PipelineTests.transactionalPipeline = Mockito.spy(injector.getInstance(TransactionalPipeline.class));
-        PipelineTests.transactionalHandler = Mockito.spy(injector.getInstance(TransactionalRequestHandler.class));
+/**
+ * Shared test bootstrap helpers for the Poshtar pipeline test suites.
+ * <p>
+ * IMPORTANT: this class is intentionally NOT coupled to any specific
+ * {@code PipelineTests} class. Earlier versions wrote directly to static
+ * fields on one hardcoded {@code PipelineTests} class, which silently broke
+ * any *other* test class reusing these helpers - their fields were never
+ * populated and Guice failed with "Binding to null instances is not allowed".
+ * <p>
+ * Instead, {@link #createMocks()} and {@link #createSpies(Injector)} return
+ * plain holder objects. Each calling test class copies the fields it needs
+ * into its own static fields.
+ */
+public class PipelineTestsUtils {
 
-        PipelineTests.basicMockrequestHandler = Mockito.spy(injector.getInstance(BasicMockRequestHandler.class));
-        PipelineTests.hierarchyFirstBehaviour = Mockito.spy(injector.getInstance(HierarchyFirstBehaviour.class));
-        PipelineTests.hierarchyRequestHandler = Mockito.spy(injector.getInstance(HierarchyRequestHandler.class));
+    /** Plain Mockito mocks shared by a single test run. */
+    public static class Mocks {
+        public BasicMockPipeline basicMockPipeline;
+        public HierarchySecondBehaviour hierarchySecondBehaviour;
     }
-    static void createMocks(){
-        PipelineTests.basicMockPipeline = Mockito.mock(BasicMockPipeline.class);
-        PipelineTests.hierarchySecondBehaviour = Mockito.mock(HierarchySecondBehaviour.class);
 
+    /** Mockito spies wrapping real Guice-created pipeline/handler instances. */
+    public static class Spies {
+        public GlobalTestPipeline globalPipeline;
+        public SpecificPipeline specificPipeline;
+        public DeadPipeline deadPipeline;
+        public DeadPipelineCatcher deadPipelineCatcher;
+        public DeadRequestHandler deadRequestHandler;
+        public OrderFirstPipeline orderFirstPipeline;
+        public OrderSecondPipeline orderSecondPipeline;
+        public OrderRequestHandler orderRequestHandler;
+        public ValidationRequestHandler validationRequestHandler;
+        public ValidationBehaviour validationBehaviour;
+        public FailTransactionalPipeline failTransactionalPipeline;
+        public FailTransactionalRequestHandler failTransactionalHandler;
+        public TransactionalPipeline transactionalPipeline;
+        public TransactionalRequestHandler transactionalHandler;
+        public BasicMockRequestHandler basicMockrequestHandler;
+        public HierarchyFirstBehaviour hierarchyFirstBehaviour;
+        public HierarchyRequestHandler hierarchyRequestHandler;
     }
-    static Injector buildTestInjector() {
+
+    public static Mocks createMocks() {
+        Mocks mocks = new Mocks();
+        mocks.basicMockPipeline = Mockito.mock(BasicMockPipeline.class);
+        mocks.hierarchySecondBehaviour = Mockito.mock(HierarchySecondBehaviour.class);
+        return mocks;
+    }
+
+    /**
+     * Bootstrap injector used only to resolve real instances to wrap as spies.
+     * Only the plain mocks are bound here (mirrors the original two-phase setup).
+     */
+    public static Injector buildBehaviourInjector(Mocks mocks) {
         return Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(BasicMockRequestHandler.class).toInstance(PipelineTests.basicMockrequestHandler);
-                bind(HierarchySecondBehaviour.class).toInstance(PipelineTests.hierarchySecondBehaviour);
+                bind(BasicMockPipeline.class).toInstance(mocks.basicMockPipeline);
+                bind(HierarchySecondBehaviour.class).toInstance(mocks.hierarchySecondBehaviour);
+            }
+        }));
+    }
 
+    public static Spies createSpies(Injector behaviourInjector) {
+        Spies spies = new Spies();
+        spies.globalPipeline = Mockito.spy(behaviourInjector.getInstance(GlobalTestPipeline.class));
+        spies.specificPipeline = Mockito.spy(behaviourInjector.getInstance(SpecificPipeline.class));
+        spies.deadPipeline = Mockito.spy(behaviourInjector.getInstance(DeadPipeline.class));
+        spies.deadPipelineCatcher = Mockito.spy(behaviourInjector.getInstance(DeadPipelineCatcher.class));
+        spies.deadRequestHandler = Mockito.spy(behaviourInjector.getInstance(DeadRequestHandler.class));
+        spies.orderFirstPipeline = Mockito.spy(behaviourInjector.getInstance(OrderFirstPipeline.class));
+        spies.orderSecondPipeline = Mockito.spy(behaviourInjector.getInstance(OrderSecondPipeline.class));
+        spies.orderRequestHandler = Mockito.spy(behaviourInjector.getInstance(OrderRequestHandler.class));
+        spies.validationRequestHandler = Mockito.spy(behaviourInjector.getInstance(ValidationRequestHandler.class));
+        spies.validationBehaviour = Mockito.spy(behaviourInjector.getInstance(ValidationBehaviour.class));
+        spies.failTransactionalPipeline = Mockito.spy(behaviourInjector.getInstance(FailTransactionalPipeline.class));
+        spies.failTransactionalHandler = Mockito.spy(behaviourInjector.getInstance(FailTransactionalRequestHandler.class));
+        spies.transactionalPipeline = Mockito.spy(behaviourInjector.getInstance(TransactionalPipeline.class));
+        spies.transactionalHandler = Mockito.spy(behaviourInjector.getInstance(TransactionalRequestHandler.class));
+        spies.basicMockrequestHandler = Mockito.spy(behaviourInjector.getInstance(BasicMockRequestHandler.class));
+        spies.hierarchyFirstBehaviour = Mockito.spy(behaviourInjector.getInstance(HierarchyFirstBehaviour.class));
+        spies.hierarchyRequestHandler = Mockito.spy(behaviourInjector.getInstance(HierarchyRequestHandler.class));
+        return spies;
+    }
 
-                bind(GlobalTestPipeline.class).toInstance(PipelineTests.globalPipeline);
-                bind(SpecificPipeline.class).toInstance(PipelineTests.specificPipeline);
-                bind(DeadPipeline.class).toInstance(PipelineTests.deadPipeline);
-                bind(DeadPipelineCatcher.class).toInstance(PipelineTests.deadPipelineCatcher);
-                bind(DeadRequestHandler.class).toInstance(PipelineTests.deadRequestHandler);
-                bind(OrderRequestHandler.class).toInstance(PipelineTests.orderRequestHandler);
-                bind(OrderSecondPipeline.class).toInstance(PipelineTests.orderSecondPipeline);
-                bind(OrderFirstPipeline.class).toInstance(PipelineTests.orderFirstPipeline);
-                bind(ValidationBehaviour.class).toInstance(PipelineTests.validationBehaviour);
-                bind(ValidationRequestHandler.class).toInstance(PipelineTests.validationRequestHandler);
-                bind(FailTransactionalRequestHandler.class).toInstance(PipelineTests.failTransactionalHandler);
-                bind(FailTransactionalPipeline.class).toInstance(PipelineTests.failTransactionalPipeline);
-                bind(TransactionalRequestHandler.class).toInstance(PipelineTests.transactionalHandler);
-                bind(TransactionalPipeline.class).toInstance(PipelineTests.transactionalPipeline);
-                bind(HierarchyFirstBehaviour.class).toInstance(PipelineTests.hierarchyFirstBehaviour);
-                bind(BasicMockPipeline.class).toInstance(PipelineTests.basicMockPipeline);
+    public static Injector buildTestInjector(Mocks mocks, Spies spies) {
+        return Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(BasicMockRequestHandler.class).toInstance(spies.basicMockrequestHandler);
+                bind(HierarchySecondBehaviour.class).toInstance(mocks.hierarchySecondBehaviour);
 
-                bind(HierarchyRequestHandler.class).toInstance(PipelineTests.hierarchyRequestHandler);
+                bind(GlobalTestPipeline.class).toInstance(spies.globalPipeline);
+                bind(SpecificPipeline.class).toInstance(spies.specificPipeline);
+                bind(DeadPipeline.class).toInstance(spies.deadPipeline);
+                bind(DeadPipelineCatcher.class).toInstance(spies.deadPipelineCatcher);
+                bind(DeadRequestHandler.class).toInstance(spies.deadRequestHandler);
+                bind(OrderRequestHandler.class).toInstance(spies.orderRequestHandler);
+                bind(OrderSecondPipeline.class).toInstance(spies.orderSecondPipeline);
+                bind(OrderFirstPipeline.class).toInstance(spies.orderFirstPipeline);
+                bind(ValidationBehaviour.class).toInstance(spies.validationBehaviour);
+                bind(ValidationRequestHandler.class).toInstance(spies.validationRequestHandler);
+                bind(FailTransactionalRequestHandler.class).toInstance(spies.failTransactionalHandler);
+                bind(FailTransactionalPipeline.class).toInstance(spies.failTransactionalPipeline);
+                bind(TransactionalRequestHandler.class).toInstance(spies.transactionalHandler);
+                bind(TransactionalPipeline.class).toInstance(spies.transactionalPipeline);
+                bind(HierarchyFirstBehaviour.class).toInstance(spies.hierarchyFirstBehaviour);
+                bind(BasicMockPipeline.class).toInstance(mocks.basicMockPipeline);
+                bind(HierarchyRequestHandler.class).toInstance(spies.hierarchyRequestHandler);
             }
         }));
     }

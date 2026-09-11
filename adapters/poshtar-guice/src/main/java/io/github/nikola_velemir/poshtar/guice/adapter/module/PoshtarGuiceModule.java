@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.guice.adatper.module;
+package io.github.nikola_velemir.poshtar.guice.adapter.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -26,13 +26,15 @@ import com.google.inject.Singleton;
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
+import io.github.nikola_velemir.poshtar.core.mediator.Sender;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.mediator.GuicePoshtar;
-import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry.GuiceNotificationRegistry;
-import io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry.GuiceRequestRegistry;
+import io.github.nikola_velemir.poshtar.guice.adapter.internal.injection.mediator.GuicePoshtar;
+import io.github.nikola_velemir.poshtar.guice.adapter.internal.injection.registry.GuiceNotificationRegistry;
+import io.github.nikola_velemir.poshtar.guice.adapter.internal.injection.registry.GuiceRequestRegistry;
 
 import org.reflections.Reflections;
 
@@ -154,7 +156,16 @@ public class PoshtarGuiceModule extends AbstractModule {
     public Poshtar providePoshtar(RequestRegistry handlerRegistry, NotificationRegistry notificationRegistry) {
         return new GuicePoshtar(handlerRegistry, notificationRegistry);
     }
-
+    @Provides
+    @Singleton
+    public Sender provideSender(Poshtar poshtar) {
+        return poshtar;
+    }
+    @Provides
+    @Singleton
+    public Publisher providePublisher(Poshtar poshtar) {
+        return poshtar;
+    }
     private void bindBehaviours(Reflections reflections) {
         var behaviourClasses = reflections.getTypesAnnotatedWith(Behaviour.class);
         for (Class<?> behaviourClass : behaviourClasses) {
