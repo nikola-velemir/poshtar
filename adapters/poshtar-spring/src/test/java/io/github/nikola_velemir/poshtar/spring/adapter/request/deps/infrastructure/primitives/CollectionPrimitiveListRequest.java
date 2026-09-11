@@ -16,9 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.primitives;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.sender.deps.infrastructure.primitives;
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+
 import java.util.List;
 
 public record CollectionPrimitiveListRequest() implements Request<List<CollectionPrimitiveListResponse>>{}

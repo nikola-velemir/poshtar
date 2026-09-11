@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.sender.deps.chaining.mock;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;

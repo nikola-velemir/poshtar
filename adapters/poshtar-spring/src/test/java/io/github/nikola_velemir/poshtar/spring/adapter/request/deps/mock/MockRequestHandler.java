@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.mock;
+package io.github.nikola_velemir.poshtar.spring.adapter.request.sender.deps.mock;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
