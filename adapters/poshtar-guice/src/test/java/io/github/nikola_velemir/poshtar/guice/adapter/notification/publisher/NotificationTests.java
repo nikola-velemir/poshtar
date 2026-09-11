@@ -16,101 +16,140 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.guice.adapter.notification;
+package io.github.nikola_velemir.poshtar.guice.adapter.notification.publisher;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.util.Modules;
+import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
+import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
+import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotificationHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.injection.*;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.mock.*;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.noneRegistered.NoneRegisteredNotification;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotificationHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingFirstHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingSecondHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotificationSecondHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotification;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationFirstHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotificationSecondHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
-import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
-import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
-import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.infrastructure.FailedExecutionNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.noneRegistered.NoneRegisteredNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.nullNotification.NullNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.ping.PingNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.fail.FailTransactionalNotification;
-import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transactional.sucess.TransactionalNotification;
 import org.mockito.Mockito;
-
 
 import java.util.List;
 
-import static io.github.nikola_velemir.poshtar.guice.adapter.notification.NotificationTestsUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/**
+ * Exercises the {@link Publisher} interface specifically (as opposed to
+ * {@link io.github.nikola_velemir.poshtar.core.mediator.Poshtar} in the
+ * sibling {@code mediator} test class). Both are backed by the same
+ * {@code GuicePoshtar} singleton (see {@code PoshtarGuiceModule}), so this
+ * class verifies the narrower {@code Publisher} contract behaves the same way.
+ */
 @OverruleNoInjection
-class NotificationTests {
-    private static Poshtar poshtar;
+public class NotificationTests {
+    private static Publisher poshtar;
     private static Injector injector;
-    static FailedExecutionNotificationHandler failedExecutionHandler;
-    static FailedExecutionNotificationFineHandler failedExecutionFineHandler;
-    static InjectionNotificationFirstHandler injectionFirstHandler;
-    static InjectionNotificationSecondHandler injectionSecondHandler;
-    static InjectionNotificationThirdHandler injectionThirdHandler;
-    static DummyIncrementService dummyIncrementService;
-    static NullNotificationHandler nullHandler;
-    static PingFirstHandler pingFirstHandler;
-    static PingSecondHandler pingSecondHandler;
-    static FailTransactionalNotificationFirstHandler failTransactionalFirst;
-    static FailTransactionalNotificationSecondHandler failTransactionalSecond;
-    static TransactionalNotificationFirstHandler transactionalNotificationFirstHandler;
-    static TransactionalNotificationSecondHandler transactionalNotificationSecondHandler;
-    static MockService mockService;
-    static BasicMockNotificationHandler basicMockHandler;
-    static MockServiceDeep mockServiceDeep;
-    static MockHierarchyNotificationHandler hierarchyNotificationHandler;
+    public static FailedExecutionNotificationHandler failedExecutionHandler;
+    public static FailedExecutionNotificationFineHandler failedExecutionFineHandler;
+    public static InjectionNotificationFirstHandler injectionFirstHandler;
+    public static InjectionNotificationSecondHandler injectionSecondHandler;
+    public static InjectionNotificationThirdHandler injectionThirdHandler;
+    public static DummyIncrementService dummyIncrementService;
+    public static NullNotificationHandler nullHandler;
+    public static PingFirstHandler pingFirstHandler;
+    public static PingSecondHandler pingSecondHandler;
+    public static FailTransactionalNotificationFirstHandler failTransactionalFirst;
+    public static FailTransactionalNotificationSecondHandler failTransactionalSecond;
+    public static TransactionalNotificationFirstHandler transactionalNotificationFirstHandler;
+    public static TransactionalNotificationSecondHandler transactionalNotificationSecondHandler;
+    public static MockService mockService;
+    public static BasicMockNotificationHandler basicMockHandler;
+    public static MockServiceDeep mockServiceDeep;
+    public static MockHierarchyNotificationHandler hierarchyNotificationHandler;
 
     @BeforeEach
     void initTestContainer() {
         DummyIncrementService realIncrementService = new DummyIncrementService();
         dummyIncrementService = Mockito.spy(realIncrementService);
 
-        createMocks();
+        NotificationTestsUtils.Mocks mocks = NotificationTestsUtils.createMocks();
+        mockService = mocks.mockService;
+        mockServiceDeep = mocks.mockServiceDeep;
 
         Injector bootstrapInjector = Guice.createInjector(
-                Modules.override(new TestModule()).with(new AbstractModule() {
+                com.google.inject.util.Modules.override(new TestModule()).with(new com.google.inject.AbstractModule() {
                     @Override
                     protected void configure() {
                         bind(DummyIncrementService.class).toInstance(dummyIncrementService);
-                        bind(MockService.class).toInstance(NotificationTests.mockService);
-                        bind(MockServiceDeep.class).toInstance(NotificationTests.mockServiceDeep);
+                        bind(MockService.class).toInstance(mockService);
+                        bind(MockServiceDeep.class).toInstance(mockServiceDeep);
                     }
                 })
         );
 
-        createSpies(bootstrapInjector);
+        NotificationTestsUtils.Spies spies = NotificationTestsUtils.createSpies(bootstrapInjector);
+        failedExecutionHandler = spies.failedExecutionHandler;
+        failedExecutionFineHandler = spies.failedExecutionFineHandler;
+        injectionFirstHandler = spies.injectionFirstHandler;
+        injectionSecondHandler = spies.injectionSecondHandler;
+        injectionThirdHandler = spies.injectionThirdHandler;
+        nullHandler = spies.nullHandler;
+        pingFirstHandler = spies.pingFirstHandler;
+        pingSecondHandler = spies.pingSecondHandler;
+        failTransactionalFirst = spies.failTransactionalFirst;
+        failTransactionalSecond = spies.failTransactionalSecond;
+        transactionalNotificationFirstHandler = spies.transactionalNotificationFirstHandler;
+        transactionalNotificationSecondHandler = spies.transactionalNotificationSecondHandler;
+        basicMockHandler = spies.basicMockHandler;
+        hierarchyNotificationHandler = spies.hierarchyNotificationHandler;
 
-        Injector injector = buildTestInjector();
+        Injector testInjector = NotificationTestsUtils.buildTestInjector(dummyIncrementService, mocks, spies);
 
-        poshtar = injector.getInstance(Poshtar.class);
+        poshtar = testInjector.getInstance(Publisher.class);
     }
+    @AfterEach
+    void tearDown() {
+        if (injector == null) return;
 
+        EntityManager em = injector.getInstance(EntityManager.class);
+        var tx = em.getTransaction();
+        try {
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            em.createQuery("DELETE FROM TestEntity").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
+    }
 
     @BeforeAll
     static void setUp() {
         injector = Guice.createInjector(new TestModule());
-
-        poshtar = injector.getInstance(Poshtar.class);
+        poshtar = injector.getInstance(Publisher.class);
     }
 
     @Test
@@ -150,11 +189,7 @@ class NotificationTests {
     @Test
     void should_Fail_For_Transactional() {
         var transactionNotification = new FailTransactionalNotification("Fail Pass");
-        Exception ex = assertThrowsExactly(AggregateNotificationException.class, () -> {
-            poshtar.publish(transactionNotification);
-
-
-        });
+        assertThrowsExactly(AggregateNotificationException.class, () -> poshtar.publish(transactionNotification));
 
         EntityManager em = injector.getInstance(EntityManager.class);
         em.getTransaction().begin();
@@ -165,8 +200,6 @@ class NotificationTests {
 
         verify(failTransactionalFirst, times(1)).handle(eq(transactionNotification));
         verify(failTransactionalSecond, times(1)).handle(eq(transactionNotification));
-        System.out.println(">>> TEST PASSED <<<");
-
     }
 
     @Test
@@ -185,14 +218,10 @@ class NotificationTests {
             results = em.createQuery("SELECT d FROM TestEntity d where d.data = 'Second Pass'", TestEntity.class).getResultList();
             em.getTransaction().commit();
             assertFalse(results.isEmpty(), "Transaction did not commit!.");
-
         });
 
         verify(transactionalNotificationFirstHandler, times(1)).handle(eq(transactionNotification));
         verify(transactionalNotificationSecondHandler, times(1)).handle(eq(transactionNotification));
-
-        System.out.println(">>> TEST PASSED <<<");
-
     }
 
     @Test
@@ -200,47 +229,33 @@ class NotificationTests {
         NullNotification notification = null;
         Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> poshtar.publish(notification));
         assertInstanceOf(IllegalArgumentException.class, ex);
-        String expected = "Request cannot be null";
-        String actual = ex.getMessage();
-        assertEquals(expected, actual);
+        assertEquals("Request cannot be null", ex.getMessage());
         verify(nullHandler, never()).handle(eq(notification));
         verify(nullHandler, never()).handle(any());
     }
 
     @Test
     void should_Register_And_Execute_Handler_Automatically() {
-
-
         PingNotification notification = new PingNotification();
         poshtar.publish(notification);
 
-
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
-
-        System.out.println(">>> TEST PASSED <<<");
     }
 
     @Test
     void should_Inject_Service_Into_Handlers() {
-
         InjectionNotification notification = new InjectionNotification();
         assertDoesNotThrow(() -> {
-
             poshtar.publish(notification);
 
             assert notification.value == 3;
 
             verify(injectionFirstHandler, times(1)).handle(eq(notification));
-
             verify(injectionSecondHandler, times(1)).handle(eq(notification));
-
             verify(injectionThirdHandler, times(1)).handle(eq(notification));
-
-            System.out.println(">>> TEST PASSED <<<");
         });
     }
-
 
     @Test
     void should_Fail_Purposefully_On_Execution() {
@@ -251,9 +266,7 @@ class NotificationTests {
         assertEquals(1, errors.size());
         assertInstanceOf(RuntimeException.class, errors.get(0));
         assertEquals(1, failNotification.payload);
-        System.out.println(">>> TEST PASSED <<<");
         verify(failedExecutionHandler, times(1)).handle(eq(failNotification));
         verify(failedExecutionFineHandler, times(1)).handle(eq(failNotification));
     }
-
 }

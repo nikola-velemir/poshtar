@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola.velemir.poshtar.quarkus.it.component.notification;
+package io.github.nikola.velemir.poshtar.quarkus.it.component.notification.mediator;
 
 
 import io.github.nikola.velemir.poshtar.quarkus.it.component.notification.deps.async.FailForAsyncFirstHandler;

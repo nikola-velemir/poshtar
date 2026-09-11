@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.guice.adatper.internal.injection.registry;
+package io.github.nikola_velemir.poshtar.guice.adapter.internal.injection.registry;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Injector;
