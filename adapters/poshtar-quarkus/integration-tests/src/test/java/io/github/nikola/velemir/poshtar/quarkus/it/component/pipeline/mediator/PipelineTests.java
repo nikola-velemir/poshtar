@@ -157,12 +157,6 @@ public class PipelineTests {
     @Test
     void should_Pass_For_Mandatory() {
 
-//        boolean beanExists = context.containsBean(SucceedForMandatoryPipeline.class.getName());
-//        assert beanExists : "Pipeline bean has not been registered thru @PipelineBehaviour!";
-//        Object bean = context.getBean(SucceedForMandatoryPipeline.class);
-//        System.out.println("Bean Class Name: " + bean.getClass().getName());
-//        Object handler = context.getBean(SucceedForMandatoryRequestHandler.class);
-//        System.out.println("Bean Class Name: " + handler.getClass().getName());
         var succeedForMandatoryRequest = new SucceedForMandatoryRequest();
         assertDoesNotThrow(() -> {
             poshtar.send(succeedForMandatoryRequest);
@@ -172,10 +166,7 @@ public class PipelineTests {
 
     @Test
     void should_Work_For_Validation() {
-//        assertTrue(
-//                Arc.container().instance(ValidationBehaviour.class).isAvailable(),
-//                "Handler bean not registered through @Handler!"
-//        );
+
         var goodValidationRequest = new ValidationRequest(1);
         assertDoesNotThrow(() -> {
             var response = poshtar.send(goodValidationRequest);
