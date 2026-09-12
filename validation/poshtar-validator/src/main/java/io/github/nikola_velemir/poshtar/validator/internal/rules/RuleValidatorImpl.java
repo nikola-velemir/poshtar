@@ -24,7 +24,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.A
 import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.SemanticalRuleProvider;
 
 import javax.annotation.processing.RoundEnvironment;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -34,18 +36,21 @@ import java.util.stream.Stream;
  *
  */
 class RuleValidatorImpl implements RuleValidator {
-    private static final List<Rule> RULES = provideRules();
+    private final List<Rule> rules;
 
-    private static List<Rule> provideRules() {
+    RuleValidatorImpl(Set<RuleKind> kinds) {
+        this.rules = provideRules(kinds);
+    }
+
+    private List<Rule> provideRules(Set<RuleKind> enabledKinds) {
         return Stream.of(
-                        ArchitecturalRuleProvider.provide(),
-                        SemanticalRuleProvider.provide()
-                ).flatMap(List::stream)
-                .toList();
+                new ArchitecturalRuleProvider(),
+                new SemanticalRuleProvider())
+                .filter(p -> enabledKinds.contains(p.getKind())).flatMap(p -> p.provide().stream()).toList();
     }
 
     public void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        for (Rule rule : RULES) {
+        for (Rule rule : rules) {
             rule.validate(roundEnv, ctx);
         }
     }

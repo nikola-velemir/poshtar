@@ -34,10 +34,13 @@
     <artifactId>poshtar-spring</artifactId>
 
     <properties>
+        <poshtar.rules>SEMANTICAL,ARCHITECTURAL</poshtar.rules>
+
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
 
 
     <dependencies>
@@ -117,7 +120,6 @@
             <version>${revision}${changelist}</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -125,6 +127,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>-Aposhtar.rules=${poshtar.rules}</arg>
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
