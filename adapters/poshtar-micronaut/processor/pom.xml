@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.nikola-velemir</groupId>
   <artifactId>poshtar-micronaut-processor</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>Poshtar Micronaut - Processor</name>
 
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>io.github.nikola-velemir</groupId>
       <artifactId>poshtar-micronaut-runtime</artifactId>
-      <version>${revision}${changelist}</version>
+      <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -45,7 +45,7 @@
       <groupId>io.github.nikola-velemir</groupId>
       <artifactId>poshtar-core</artifactId>
       <version>1.0.0</version>
-      <!--      <version>${revision}${changelist}</version>-->
+      <!--      <version>1.0.0</version>-->
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>

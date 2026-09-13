@@ -1,0 +1,333 @@
+/*
+ * Copyright (C) 2026 Nikola (nvelem.nikola@gmail.com)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package io.github.nikola_velemir.poshtar.micronaut.it.notification.publisher;
+
+import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncFirstHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncSecondHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncThirdHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.infrastructure.FailedExecutionNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.injection.*;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.mock.*;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.noneRegistered.NoneRegisteredNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.nullNotification.NullNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.nullNotification.NullNotificationHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.ping.PingFirstHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.ping.PingNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.ping.PingSecondHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic.TransactionalNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.mandatory.MandatoryNotification;
+import io.micronaut.test.annotation.MockBean;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.transaction.exceptions.NoTransactionException;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * MOCKING STRATEGY IN THIS FILE
+ * <p>
+ * 1. Plain, non-AOP handlers/services below are mocked via a MANUALLY CONSTRUCTED raw instance
+ * ({@code new X(...)}), never via an injected {@code target} bean parameter. This guarantees the
+ * object {@code delegatesTo(...)} forwards to is a bare POJO that Micronaut's container has never
+ * seen — it never passes through {@code BeanContext} resolution, any generated dispatch class, or
+ * any interceptor chain. Accepting {@code target} as an injected parameter instead ties you to
+ * however Micronaut happened to construct that particular bean, which — as observed with
+ * {@code Publisher} in this suite, produced via a multi-argument {@code @Factory} method — can
+ * itself trigger generated dispatch machinery that recurses against the Mockito mock
+ * (StackOverflowError). Manual construction sidesteps that class of problem entirely.
+ * <p>
+ * 2. AOP-ADVISED HANDLERS (TransactionalNotificationFirstHandler, TransactionalNotificationSecondHandler,
+ * MandatoryNotificationHandler, FailedExecutionNotificationHandler) are NOT mocked at all, by either
+ * technique. Manual construction cannot be used for these: {@code new MandatoryNotificationHandler()}
+ * gives you the raw, un-intercepted class, silently skipping the real {@code @Transactional} advice
+ * that the test needs to exercise. These stay real, container-managed beans; behaviour is verified
+ * via Publisher's thrown exceptions / notification state, not via {@code verify(...)} on the handler.
+ * See: https://github.com/micronaut-projects/micronaut-core/discussions/11325
+ * <p>
+ * 3. {@code Publisher} itself is NOT mocked at all (see note above) — it's produced via a
+ * multi-argument {@code @Factory} method, a combination documented as incompatible with
+ * {@code @MockBean} overrides. It's injected directly as the real bean.
+ */
+@MicronautTest(rebuildContext = true)
+public class PublisherNotificationTests {
+
+    @Inject
+    Publisher publisher;
+
+    @Inject
+    MockService mockService;
+    @Inject
+    MockFirstNotificationHandler basicMockHandler;
+    @Inject
+    MockHierarchyNotificationHandler hierarchyNotificationHandler;
+    @Inject
+    MockServiceDeep mockServiceDeep;
+    @Inject
+    NullNotificationHandler nullNotificationHandler;
+    @Inject
+    PingFirstHandler pingFirstHandler;
+    @Inject
+    PingSecondHandler pingSecondHandler;
+    @Inject
+    InjectionNotificationFirstHandler injectionNotificationFirstHandler;
+    @Inject
+    InjectionNotificationSecondHandler injectionNotificationSecondHandler;
+    @Inject
+    InjectionNotificationThirdHandler injectionNotificationThirdHandler;
+    @Inject
+    DummyIncrementService dummyIncrementService;
+    @Inject
+    FailedExecutionNotificationFineHandler failedExecutionNotificationFineHandler;
+    @Inject
+    FailForAsyncFirstHandler failForAsyncFirstHandler;
+    @Inject
+    FailForAsyncSecondHandler failForAsyncSecondHandler;
+    @Inject
+    FailForAsyncThirdHandler failForAsyncThirdHandler;
+
+    // --- Manually constructed raw instances — no BeanContext resolution, no dispatch class involved. ---
+    // ASSUMPTION: no-arg constructors. Adjust if these classes actually take dependencies.
+
+    @MockBean(MockFirstNotificationHandler.class)
+    MockFirstNotificationHandler basicMockHandlerSpy(MockService mockService) {
+        return mock(MockFirstNotificationHandler.class, delegatesTo(new MockFirstNotificationHandler(mockService)));
+    }
+
+    @MockBean(MockHierarchyNotificationHandler.class)
+    MockHierarchyNotificationHandler hierarchyNotificationHandlerSpy(MockService mockService) {
+        return mock(MockHierarchyNotificationHandler.class, delegatesTo(new MockHierarchyNotificationHandler(mockService)));
+    }
+
+    @MockBean(NullNotificationHandler.class)
+    NullNotificationHandler nullNotificationHandlerSpy() {
+        return mock(NullNotificationHandler.class, delegatesTo(new NullNotificationHandler()));
+    }
+
+    @MockBean(PingFirstHandler.class)
+    PingFirstHandler pingFirstHandlerSpy() {
+        return mock(PingFirstHandler.class, delegatesTo(new PingFirstHandler()));
+    }
+
+    @MockBean(PingSecondHandler.class)
+    PingSecondHandler pingSecondHandlerSpy() {
+        return mock(PingSecondHandler.class, delegatesTo(new PingSecondHandler()));
+    }
+
+    @MockBean(FailedExecutionNotificationFineHandler.class)
+    FailedExecutionNotificationFineHandler failedExecutionNotificationFineHandlerSpy() {
+        return mock(FailedExecutionNotificationFineHandler.class, delegatesTo(new FailedExecutionNotificationFineHandler()));
+    }
+
+    @MockBean(FailForAsyncFirstHandler.class)
+    FailForAsyncFirstHandler failForAsyncFirstHandlerSpy() {
+        return mock(FailForAsyncFirstHandler.class, delegatesTo(new FailForAsyncFirstHandler()));
+    }
+
+    @MockBean(FailForAsyncSecondHandler.class)
+    FailForAsyncSecondHandler failForAsyncSecondHandlerSpy() {
+        return mock(FailForAsyncSecondHandler.class, delegatesTo(new FailForAsyncSecondHandler()));
+    }
+
+    @MockBean(FailForAsyncThirdHandler.class)
+    FailForAsyncThirdHandler failForAsyncThirdHandlerSpy() {
+        return mock(FailForAsyncThirdHandler.class, delegatesTo(new FailForAsyncThirdHandler()));
+    }
+
+    // --- Pure test doubles: no real target to delegate to at all. ---
+
+    @MockBean(MockService.class)
+    MockService mockServiceMock() {
+        return mock(MockService.class);
+    }
+
+    @MockBean(MockServiceDeep.class)
+    MockServiceDeep mockServiceDeepMock() {
+        return mock(MockServiceDeep.class);
+    }
+
+    // --- Manually constructed, but WITH a real dependency: resolve the dependency from the bean
+    // graph (picking up its own mock/spy override below if one exists), then build the handler by
+    // hand so the handler ITSELF never goes through BeanContext resolution.
+    // ASSUMPTION: each Injection*Handler takes a single DummyIncrementService constructor argument.
+
+    @MockBean(DummyIncrementService.class)
+    DummyIncrementService dummyIncrementServiceSpy() {
+        return mock(DummyIncrementService.class, delegatesTo(new DummyIncrementService()));
+    }
+
+    @MockBean(InjectionNotificationFirstHandler.class)
+    InjectionNotificationFirstHandler injectionNotificationFirstHandlerSpy(DummyIncrementService dummyIncrementService) {
+        return mock(InjectionNotificationFirstHandler.class,
+                delegatesTo(new InjectionNotificationFirstHandler(dummyIncrementService)));
+    }
+
+    @MockBean(InjectionNotificationSecondHandler.class)
+    InjectionNotificationSecondHandler injectionNotificationSecondHandlerSpy(DummyIncrementService dummyIncrementService) {
+        return mock(InjectionNotificationSecondHandler.class,
+                delegatesTo(new InjectionNotificationSecondHandler(dummyIncrementService)));
+    }
+
+    @MockBean(InjectionNotificationThirdHandler.class)
+    InjectionNotificationThirdHandler injectionNotificationThirdHandlerSpy(DummyIncrementService dummyIncrementService) {
+        return mock(InjectionNotificationThirdHandler.class,
+                delegatesTo(new InjectionNotificationThirdHandler(dummyIncrementService)));
+    }
+
+    // --------------------------------------------------------------------------------
+    // TransactionalNotificationFirstHandler, TransactionalNotificationSecondHandler,
+    // MandatoryNotificationHandler and FailedExecutionNotificationHandler are intentionally
+    // NOT injected/mocked here — AOP-advised, see class-level note. Publisher is also NOT
+    // mocked — multi-arg-factory-produced, see class-level note.
+    // --------------------------------------------------------------------------------
+
+    @Test
+    void should_Not_Fail_For_None_Registered() {
+        var noneNotification = new NoneRegisteredNotification();
+        assertDoesNotThrow(() -> publisher.publish(noneNotification));
+        assertEquals(0, noneNotification.payload);
+    }
+
+    @Test
+    void handles_Null_Send() {
+        NullNotification notification = null;
+        Exception ex = assertThrowsExactly(IllegalArgumentException.class, () -> publisher.publish(notification));
+        assertInstanceOf(IllegalArgumentException.class, ex);
+        assertEquals("Request cannot be null", ex.getMessage());
+        verify(nullNotificationHandler, never()).handle(eq(notification));
+    }
+
+    @Test
+    void should_Stub_Basic() {
+        var mockNotification = new MockNotification();
+
+        when(mockService.getHello()).thenReturn("Bye");
+
+        assertDoesNotThrow(() -> publisher.publish(mockNotification));
+        assertEquals("Bye", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHello();
+        verify(basicMockHandler, times(1)).handle(eq(mockNotification));
+    }
+
+    @Test
+    void should_Stub_Hierarchy() {
+        var mockNotification = new MockHierarchyNotification();
+
+        when(mockServiceDeep.getHi()).thenReturn("Ciao");
+        when(mockService.getHi()).then(i -> mockServiceDeep.getHi());
+        assertDoesNotThrow(() -> publisher.publish(mockNotification));
+        assertEquals("Ciao", mockNotification.getPayload());
+
+        verify(mockService, times(1)).getHi();
+        verify(mockServiceDeep, times(1)).getHi();
+        verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
+    }
+
+    @Test
+    void should_Register_And_Execute_Handler_Automatically() {
+        PingNotification notification = new PingNotification();
+        publisher.publish(notification);
+
+        assertEquals(2, notification.payload);
+        verify(pingFirstHandler, times(1)).handle(eq(notification));
+        verify(pingSecondHandler, times(1)).handle(eq(notification));
+    }
+
+    @Test
+    void should_Inject_Service_Into_Handlers() {
+        InjectionNotification notification = new InjectionNotification();
+        publisher.publish(notification);
+
+        verify(injectionNotificationFirstHandler, times(1)).handle(any());
+        verify(injectionNotificationSecondHandler, times(1)).handle(any());
+        verify(injectionNotificationThirdHandler, times(1)).handle(any());
+        verify(dummyIncrementService, times(3)).inc(anyInt());
+    }
+
+    /**
+     * OPTION A: TransactionalNotificationFirstHandler/SecondHandler are real, un-mocked beans
+     * (AOP-advised). We assert success via Publisher only — no verify(...) on the handlers.
+     */
+    @Test
+    void should_Pass_For_Transactional() {
+        var transactionNotification = new TransactionalNotification();
+        assertDoesNotThrow(() -> publisher.publish(transactionNotification));
+    }
+
+    /**
+     * OPTION A applied to MandatoryNotificationHandler: real bean, real @Transactional(MANDATORY)
+     * check runs for real; assert on the thrown exception rather than verify(...).
+     */
+    @Test
+    void should_Fail_For_Mandatory() {
+        var mandatoryNotification = new MandatoryNotification();
+        AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class,
+                () -> publisher.publish(mandatoryNotification));
+
+        Exception ex = (Exception) mainEx.getErrors().get(0);
+        assertInstanceOf(NoTransactionException.class, ex);
+    }
+
+    /**
+     * OPTION A applied to FailedExecutionNotificationHandler: real bean, no verify(...) on it.
+     * FailedExecutionNotificationFineHandler carries no AOP, so it's still mocked normally.
+     */
+    @Test
+    void should_Fail_Purposefully_On_Execution() {
+        var failNotification = new FailedExecutionNotification();
+
+        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class,
+                () -> publisher.publish(failNotification));
+
+        var errors = ex.getErrors();
+        assertEquals(1, errors.size());
+        assertInstanceOf(RuntimeException.class, errors.get(0));
+        assertEquals(1, failNotification.payload);
+
+        verify(failedExecutionNotificationFineHandler, times(1)).handle(eq(failNotification));
+        verify(failedExecutionNotificationFineHandler, times(1)).handle(any());
+    }
+
+    @Test
+    void should_Fail_For_Async() {
+        var failAsyncNotification = new FailForAsyncNotification();
+        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class,
+                () -> publisher.publish(failAsyncNotification));
+
+        List<Throwable> errors = ex.getErrors();
+        assertEquals(1, errors.size());
+        assertInstanceOf(RuntimeException.class, errors.get(0));
+
+        verify(failForAsyncSecondHandler, times(1)).handle(eq(failAsyncNotification));
+        verify(failForAsyncFirstHandler, times(1)).handle(eq(failAsyncNotification));
+        verify(failForAsyncThirdHandler, times(0)).handle(eq(failAsyncNotification));
+        verify(failForAsyncThirdHandler, times(0)).handle(any());
+    }
+}

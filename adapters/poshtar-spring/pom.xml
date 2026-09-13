@@ -28,7 +28,7 @@
     <parent>
         <groupId>io.github.nikola-velemir</groupId>
         <artifactId>poshtar</artifactId>
-        <version>${revision}${changelist}</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>poshtar-spring</artifactId>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-core</artifactId>
-            <version>${revision}${changelist}</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-validator-api</artifactId>
-            <version>${revision}${changelist}</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
@@ -129,7 +129,7 @@
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
                             <artifactId>poshtar-validator</artifactId>
-                            <version>${revision}${changelist}</version>
+                            <version>1.0.0</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
