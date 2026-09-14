@@ -16,20 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
-
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.mock.basic;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+public class BasicMockRequestHandler implements RequestHandler<BasicMockRequest,String> {
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    public String handle(BasicMockRequest basicMockRequest) {
+        return "Basic";
     }
 }

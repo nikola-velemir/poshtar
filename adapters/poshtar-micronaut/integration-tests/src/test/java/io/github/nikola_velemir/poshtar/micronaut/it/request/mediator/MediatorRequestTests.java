@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.request.sender;
+package io.github.nikola_velemir.poshtar.micronaut.it.request.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.HandlerNotFoundException;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
@@ -45,8 +45,10 @@ import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.mandatory.MandatoryRequest;
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.mandatory.MandatoryRequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
 import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -56,8 +58,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Mockito.*;
 
-
-@MicronautTest(rebuildContext = true)
+@MicronautTest(rebuildContext = true, transactional = false)
+@Property(name = "datasources.default.url", value = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
+@Property(name = "datasources.default.driver-class-name", value = "org.h2.Driver")
+@Property(name = "datasources.default.username", value = "sa")
+@Property(name = "datasources.default.password", value = "")
+@Property(name = "datasources.default.dialect", value = "H2")
+@Property(name = "jpa.default.packages-to-scan", value = "io.github.nikola_velemir.poshtar")
+@Property(name = "jpa.default.properties.hibernate.hbm2ddl.auto", value = "update")
 @OverruleNoInjection
 public class MediatorRequestTests {
 
@@ -182,8 +190,8 @@ public class MediatorRequestTests {
     @Test
     void should_Fail_For_Mandatory_Propagation() {
         var request = new MandatoryRequest("Payload");
-        Exception ex = assertThrows(NoTransactionException.class, () -> poshtar.send(request));
-        assertInstanceOf(NoTransactionException.class, ex);
+        Exception ex = assertThrows(IllegalTransactionStateException.class, () -> poshtar.send(request));
+        assertInstanceOf(IllegalTransactionStateException.class, ex);
 
     }
 

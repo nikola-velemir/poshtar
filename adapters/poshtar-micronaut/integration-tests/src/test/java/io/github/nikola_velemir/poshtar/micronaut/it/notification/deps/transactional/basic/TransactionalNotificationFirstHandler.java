@@ -21,7 +21,7 @@ package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transact
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import jakarta.transaction.Transactional;
+import io.micronaut.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -16,20 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.validate;
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+public class ValidationRequestHandler implements RequestHandler<ValidationRequest, Integer> {
+
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    public Integer handle(ValidationRequest request) {
+        return request.payload() + 1;
     }
 }

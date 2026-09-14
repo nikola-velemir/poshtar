@@ -39,8 +39,11 @@ import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.ping.Ping
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.ping.PingSecondHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic.TransactionalNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.mandatory.MandatoryNotification;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
 import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Disabled;
@@ -78,7 +81,15 @@ import static org.mockito.Mockito.*;
  * multi-argument {@code @Factory} method, a combination documented as incompatible with
  * {@code @MockBean} overrides. It's injected directly as the real bean.
  */
-@MicronautTest(rebuildContext = true)
+@MicronautTest(rebuildContext = true, transactional = false)
+@Property(name = "datasources.default.url", value = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
+@Property(name = "datasources.default.driver-class-name", value = "org.h2.Driver")
+@Property(name = "datasources.default.username", value = "sa")
+@Property(name = "datasources.default.password", value = "")
+@Property(name = "datasources.default.dialect", value = "H2")
+@Property(name = "jpa.default.packages-to-scan", value = "io.github.nikola_velemir.poshtar")
+@Property(name = "jpa.default.properties.hibernate.hbm2ddl.auto", value = "update")
+@OverruleNoInjection
 public class PublisherNotificationTests {
 
     @Inject
@@ -305,7 +316,7 @@ public class PublisherNotificationTests {
         AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class, () -> publisher.publish(mandatoryNotification));
 
         Exception ex = (Exception) mainEx.getErrors().get(0);
-        assertInstanceOf(NoTransactionException.class, ex);
+        assertInstanceOf(IllegalTransactionStateException.class, ex);
 
         verify(publisher, times(1)).publish(any());
         verify(publisher, times(1)).publish(mandatoryNotification);

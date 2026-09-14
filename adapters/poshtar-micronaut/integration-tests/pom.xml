@@ -12,7 +12,7 @@
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar-micronaut-integration-tests</artifactId>
     <version>1.0.0</version>
-    <name>Poshtar - Integration Tests</name>
+    <name>Poshtar Micronaut - Integration Tests</name>
 
     <properties>
         <revision>1.0.0</revision>
@@ -23,7 +23,7 @@
     </properties>
 
     <dependencies>
-        <!-- Added provided scope so IntelliJ recognizes the APT processor for tests -->
+        <!-- Micronaut Annotation Processor for IDEs -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject-java</artifactId>
@@ -36,6 +36,47 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+          =============================================
+          FIXED: Unified Micronaut Data Hibernate module
+          =============================================
+        -->
+
+
+        <!-- Provides the REAL SynchronousTransactionManager/TransactionOperations bean -->
+        <dependency>
+            <groupId>io.micronaut.data</groupId>
+            <artifactId>micronaut-data-tx-hibernate</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.data</groupId>
+            <artifactId>micronaut-data-hibernate-jpa</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.sql</groupId>
+            <artifactId>micronaut-jdbc-hikari</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- In-Memory Database for Testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Logback Implementation for Test Execution -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -43,7 +84,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Your Runtime Module -->
+        <!-- Poshtar Runtime Modules -->
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-core</artifactId>
@@ -57,19 +98,14 @@
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-runtime</artifactId>
-            <!-- Version tag removed: let parent POM manage this to stay at 4.10.9 -->
         </dependency>
         <dependency>
             <groupId>io.github.nikola-velemir</groupId>
             <artifactId>poshtar-micronaut-runtime</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>io.micronaut.data</groupId>
-            <artifactId>micronaut-data-tx</artifactId>
-        </dependency>
 
-        <!-- Core Mockito library -->
+        <!-- Testing Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -90,7 +126,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Optional: Micronaut Client for testing HTTP endpoints -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http-client</artifactId>
@@ -118,7 +153,14 @@
                             <version>${micronaut.version}</version>
                         </path>
 
-                        <!-- Your Custom Annotation Processor Module -->
+                        <!-- Micronaut Data APT Processor (Generates JPA Repositories) -->
+                        <path>
+                            <groupId>io.micronaut.data</groupId>
+                            <artifactId>micronaut-data-processor</artifactId>
+                            <version>${micronaut.data.version}</version>
+                        </path>
+
+                        <!-- Custom Poshtar Annotation Processor -->
                         <path>
                             <groupId>io.github.nikola-velemir</groupId>
                             <artifactId>poshtar-micronaut-processor</artifactId>
@@ -128,7 +170,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire Plugin to Run JUnit 5 Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

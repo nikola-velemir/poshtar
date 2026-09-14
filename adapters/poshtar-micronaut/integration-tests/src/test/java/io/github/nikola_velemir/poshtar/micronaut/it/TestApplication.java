@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.micronaut.it.request;
+package io.github.nikola_velemir.poshtar.micronaut.it;
 import io.micronaut.runtime.Micronaut; // Missing import
 
 public class TestApplication {

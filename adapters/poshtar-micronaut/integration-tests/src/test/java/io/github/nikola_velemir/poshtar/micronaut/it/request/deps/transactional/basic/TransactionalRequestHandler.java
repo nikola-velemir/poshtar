@@ -20,7 +20,8 @@ package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
-import jakarta.transaction.Transactional;
+import io.micronaut.transaction.annotation.Transactional;
+
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

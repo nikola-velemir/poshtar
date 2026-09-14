@@ -16,20 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.global;
 
 
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
+import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.core.request.Request;
 
-@Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+@Behaviour
+public class GlobalTestPipeline
+        implements PipelineBehaviour<Request<Object>, Object> {
+
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    public Object handle(Request<Object> request, RequestDelegate<Request<Object>, Object> requestDelegate) {
+        System.out.println("Global pipeline called");
+        return requestDelegate.handle(request);
     }
 }

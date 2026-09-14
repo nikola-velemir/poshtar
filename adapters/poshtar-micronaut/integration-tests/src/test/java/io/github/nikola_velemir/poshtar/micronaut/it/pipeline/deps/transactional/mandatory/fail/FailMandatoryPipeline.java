@@ -16,20 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.transactional.mandatory.fail;
 
-
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
+import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
+import io.micronaut.transaction.TransactionDefinition;
 import io.micronaut.transaction.annotation.Transactional;
 
-@Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+@Behaviour
+public class FailMandatoryPipeline implements PipelineBehaviour<FailMandatoryRequest, Unit> {
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    @Transactional(propagation = TransactionDefinition.Propagation.MANDATORY)
+    public Unit handle(FailMandatoryRequest request, RequestDelegate<FailMandatoryRequest, Unit> requestDelegate) {
+        System.out.println("Shouldn't call this");
+        request.payload += 1;
+        return requestDelegate.handle(request);
     }
 }

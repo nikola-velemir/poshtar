@@ -201,6 +201,7 @@
                             <autoPublish>false</autoPublish>
                             <excludeArtifacts>
                                 <excludeArtifact>poshtar-quarkus-integration-tests</excludeArtifact>
+                                <excludeArtifact>poshtar-micronaut-integration-tests</excludeArtifact>
                             </excludeArtifacts>
                         </configuration>
                     </plugin>

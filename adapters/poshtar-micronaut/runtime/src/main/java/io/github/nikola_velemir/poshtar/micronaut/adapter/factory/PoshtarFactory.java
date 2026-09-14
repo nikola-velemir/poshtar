@@ -28,7 +28,6 @@ import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.Micr
 import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry.MicronautNotificationRegistry;
 import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry.MicronautRequestRegistry;
 import io.micronaut.context.BeanContext;
-import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;

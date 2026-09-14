@@ -16,20 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.transactional.mandatory.success;
+import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
 
-
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
-
-@Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
-    @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
-    }
+public final class SucceedForMandatoryRequest implements Request<Unit> {
+    public int payload = 0;
 }

@@ -16,20 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.specific;
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+public class NotSpecificRequestHandler implements RequestHandler<NotSpecificRequest, Unit> {
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    public Unit handle(NotSpecificRequest request) {
+        return Unit.Value;
     }
 }

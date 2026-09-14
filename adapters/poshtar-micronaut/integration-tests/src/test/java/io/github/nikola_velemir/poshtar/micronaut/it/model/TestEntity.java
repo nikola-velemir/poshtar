@@ -16,20 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.basic;
+package io.github.nikola_velemir.poshtar.micronaut.it.model;
 
+import jakarta.persistence.*;
 
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
-import io.micronaut.transaction.annotation.Transactional;
+@Entity
+@Table(name = "test_entities")
+public class TestEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Handler
-public class TransactionalNotificationSecondHandler implements NotificationHandler<TransactionalNotification> {
+    private String data;
+
+    public TestEntity(){}
+
+    public TestEntity(String data){
+        this.data = data;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
     @Override
-    @Transactional
-    public void handle(TransactionalNotification transactionalNotification) {
-//        boolean isActive = QuarkusTransaction.getStatus() == Status.STATUS_ACTIVE;
-//        System.out.println("Is Transaction REALLY Active? " + isActive);
-//        assertTrue(isActive);
+    public String toString() {
+        return "TestEntity{" +
+                "id=" + id +
+                ", data='" + data + '\'' +
+                '}';
     }
 }
