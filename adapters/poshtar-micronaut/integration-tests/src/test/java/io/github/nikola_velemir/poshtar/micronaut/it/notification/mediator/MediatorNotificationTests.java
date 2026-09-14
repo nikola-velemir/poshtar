@@ -19,7 +19,10 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.notification.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
-import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
+import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
+import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.MicronautPoshtar;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncFirstHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncSecondHandler;
@@ -78,7 +81,7 @@ import static org.mockito.Mockito.*;
 public class MediatorNotificationTests {
 
     @Inject
-    Publisher publisher;
+    Poshtar publisher;
 
     @Inject
     MockService mockService;
@@ -111,8 +114,10 @@ public class MediatorNotificationTests {
     @Inject
     FailForAsyncThirdHandler failForAsyncThirdHandler;
 
-    // --- Manually constructed raw instances — no BeanContext resolution, no dispatch class involved. ---
-    // ASSUMPTION: no-arg constructors. Adjust if these classes actually take dependencies.
+    @MockBean(Poshtar.class)
+    Poshtar mockPoshtar(NotificationRegistry notificationRegistry, RequestRegistry requestRegistry) {
+        return mock(Poshtar.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry)));
+    }
 
     @MockBean(MockFirstNotificationHandler.class)
     MockFirstNotificationHandler basicMockHandlerSpy(MockService mockService) {
@@ -171,10 +176,6 @@ public class MediatorNotificationTests {
         return mock(MockServiceDeep.class);
     }
 
-    // --- Manually constructed, but WITH a real dependency: resolve the dependency from the bean
-    // graph (picking up its own mock/spy override below if one exists), then build the handler by
-    // hand so the handler ITSELF never goes through BeanContext resolution.
-    // ASSUMPTION: each Injection*Handler takes a single DummyIncrementService constructor argument.
 
     @MockBean(DummyIncrementService.class)
     DummyIncrementService dummyIncrementServiceSpy() {
@@ -183,34 +184,28 @@ public class MediatorNotificationTests {
 
     @MockBean(InjectionNotificationFirstHandler.class)
     InjectionNotificationFirstHandler injectionNotificationFirstHandlerSpy(DummyIncrementService dummyIncrementService) {
-        return mock(InjectionNotificationFirstHandler.class,
-                delegatesTo(new InjectionNotificationFirstHandler(dummyIncrementService)));
+        return mock(InjectionNotificationFirstHandler.class, delegatesTo(new InjectionNotificationFirstHandler(dummyIncrementService)));
     }
 
     @MockBean(InjectionNotificationSecondHandler.class)
     InjectionNotificationSecondHandler injectionNotificationSecondHandlerSpy(DummyIncrementService dummyIncrementService) {
-        return mock(InjectionNotificationSecondHandler.class,
-                delegatesTo(new InjectionNotificationSecondHandler(dummyIncrementService)));
+        return mock(InjectionNotificationSecondHandler.class, delegatesTo(new InjectionNotificationSecondHandler(dummyIncrementService)));
     }
 
     @MockBean(InjectionNotificationThirdHandler.class)
     InjectionNotificationThirdHandler injectionNotificationThirdHandlerSpy(DummyIncrementService dummyIncrementService) {
-        return mock(InjectionNotificationThirdHandler.class,
-                delegatesTo(new InjectionNotificationThirdHandler(dummyIncrementService)));
+        return mock(InjectionNotificationThirdHandler.class, delegatesTo(new InjectionNotificationThirdHandler(dummyIncrementService)));
     }
-
-    // --------------------------------------------------------------------------------
-    // TransactionalNotificationFirstHandler, TransactionalNotificationSecondHandler,
-    // MandatoryNotificationHandler and FailedExecutionNotificationHandler are intentionally
-    // NOT injected/mocked here — AOP-advised, see class-level note. Publisher is also NOT
-    // mocked — multi-arg-factory-produced, see class-level note.
-    // --------------------------------------------------------------------------------
 
     @Test
     void should_Not_Fail_For_None_Registered() {
         var noneNotification = new NoneRegisteredNotification();
         assertDoesNotThrow(() -> publisher.publish(noneNotification));
         assertEquals(0, noneNotification.payload);
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(noneNotification));
+
     }
 
     @Test
@@ -220,6 +215,9 @@ public class MediatorNotificationTests {
         assertInstanceOf(IllegalArgumentException.class, ex);
         assertEquals("Request cannot be null", ex.getMessage());
         verify(nullNotificationHandler, never()).handle(eq(notification));
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
     }
 
     @Test
@@ -233,6 +231,9 @@ public class MediatorNotificationTests {
 
         verify(mockService, times(1)).getHello();
         verify(basicMockHandler, times(1)).handle(eq(mockNotification));
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(mockNotification));
     }
 
     @Test
@@ -247,6 +248,9 @@ public class MediatorNotificationTests {
         verify(mockService, times(1)).getHi();
         verify(mockServiceDeep, times(1)).getHi();
         verify(hierarchyNotificationHandler, times(1)).handle(eq(mockNotification));
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(mockNotification));
     }
 
     @Test
@@ -257,6 +261,9 @@ public class MediatorNotificationTests {
         assertEquals(2, notification.payload);
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
     }
 
     @Test
@@ -268,6 +275,10 @@ public class MediatorNotificationTests {
         verify(injectionNotificationSecondHandler, times(1)).handle(any());
         verify(injectionNotificationThirdHandler, times(1)).handle(any());
         verify(dummyIncrementService, times(3)).inc(anyInt());
+
+        verify(publisher, times(1)).publish(any());
+
+        verify(publisher, times(1)).publish(eq(notification));
     }
 
     /**
@@ -278,6 +289,9 @@ public class MediatorNotificationTests {
     void should_Pass_For_Transactional() {
         var transactionNotification = new TransactionalNotification();
         assertDoesNotThrow(() -> publisher.publish(transactionNotification));
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(transactionNotification));
     }
 
     /**
@@ -287,11 +301,14 @@ public class MediatorNotificationTests {
     @Test
     void should_Fail_For_Mandatory() {
         var mandatoryNotification = new MandatoryNotification();
-        AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class,
-                () -> publisher.publish(mandatoryNotification));
+        AggregateNotificationException mainEx = assertThrowsExactly(AggregateNotificationException.class, () -> publisher.publish(mandatoryNotification));
 
         Exception ex = (Exception) mainEx.getErrors().get(0);
         assertInstanceOf(NoTransactionException.class, ex);
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(mandatoryNotification);
+
     }
 
     /**
@@ -302,8 +319,7 @@ public class MediatorNotificationTests {
     void should_Fail_Purposefully_On_Execution() {
         var failNotification = new FailedExecutionNotification();
 
-        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class,
-                () -> publisher.publish(failNotification));
+        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> publisher.publish(failNotification));
 
         var errors = ex.getErrors();
         assertEquals(1, errors.size());
@@ -312,13 +328,16 @@ public class MediatorNotificationTests {
 
         verify(failedExecutionNotificationFineHandler, times(1)).handle(eq(failNotification));
         verify(failedExecutionNotificationFineHandler, times(1)).handle(any());
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(failNotification));
+
     }
 
     @Test
     void should_Fail_For_Async() {
         var failAsyncNotification = new FailForAsyncNotification();
-        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class,
-                () -> publisher.publish(failAsyncNotification));
+        AggregateNotificationException ex = assertThrowsExactly(AggregateNotificationException.class, () -> publisher.publish(failAsyncNotification));
 
         List<Throwable> errors = ex.getErrors();
         assertEquals(1, errors.size());
@@ -328,5 +347,8 @@ public class MediatorNotificationTests {
         verify(failForAsyncFirstHandler, times(1)).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, times(0)).handle(eq(failAsyncNotification));
         verify(failForAsyncThirdHandler, times(0)).handle(any());
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(failAsyncNotification));
     }
 }
