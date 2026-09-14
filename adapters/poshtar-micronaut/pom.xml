@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.nikola-velemir</groupId>
         <artifactId>poshtar</artifactId>
-        <version>${revision}${changelist}</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -17,5 +17,6 @@
     <modules>
         <module>runtime</module>
         <module>processor</module>
+        <module>integration-tests</module>
     </modules>
 </project>

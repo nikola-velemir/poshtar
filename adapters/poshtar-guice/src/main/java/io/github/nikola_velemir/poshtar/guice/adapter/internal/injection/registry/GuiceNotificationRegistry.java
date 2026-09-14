@@ -35,7 +35,7 @@ import java.util.List;
  * <p>Registry checks injector bindings to resolve type mappings</p>
  *
  * @author Nikola Velemir
- * @version ${revision}${changelist}
+ * @version 1.0.0
  * @since 1.0.0
  */
 @SuppressWarnings({"rawtypes", "unchecked", "UnstableApiUsage"})

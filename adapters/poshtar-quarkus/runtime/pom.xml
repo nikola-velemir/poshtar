@@ -60,7 +60,7 @@
                             <goal>extension-descriptor</goal>
                         </goals>
                         <configuration>
-                            <deployment>${project.groupId}:${project.artifactId}-deployment:${revision}${changelist}</deployment>
+                            <deployment>${project.groupId}:${project.artifactId}-deployment:1.0.0</deployment>
                         </configuration>
                     </execution>
                 </executions>

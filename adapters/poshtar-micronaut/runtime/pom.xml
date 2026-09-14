@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.github.nikolavelemir.poshtar.micronaut</groupId>
-  <artifactId>runtime</artifactId>
-  <version>${revision}${changelist}</version>
+  <groupId>io.github.nikola-velemir</groupId>
+  <artifactId>poshtar-micronaut-runtime</artifactId>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>Poshtar Micronaut - Runtime</name>
@@ -23,7 +23,11 @@
     <micronaut.version>4.10.9</micronaut.version>
   </properties>
   <dependencies>
-
+    <dependency>
+      <groupId>io.github.nikola-velemir</groupId>
+      <artifactId>poshtar-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
@@ -68,8 +72,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
+          <useIncrementalCompilation>false</useIncrementalCompilation>
           <compilerArgs>
-            <arg>-Amicronaut.processing.group=io.github.nikolavelemir.poshtar.micronaut</arg>
+            <arg>-Amicronaut.processing.group=io.github.nikola_velemir.poshtar.micronaut</arg>
             <arg>-Amicronaut.processing.module=runtime</arg>
           </compilerArgs>
         </configuration>
