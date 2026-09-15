@@ -34,8 +34,4 @@ public interface RuleValidator {
      * @param ctx      Instance of context containing all.
      */
     void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
-
-    static List<Rule> provideRules() {
-        return List.of();
-    }
 }
