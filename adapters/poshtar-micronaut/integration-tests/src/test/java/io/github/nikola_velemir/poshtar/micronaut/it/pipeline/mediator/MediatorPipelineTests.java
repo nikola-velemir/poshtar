@@ -20,6 +20,7 @@ package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.mediator;
 
 
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
@@ -46,12 +47,16 @@ import io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.validate.Vali
 import io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.validate.ValidationRequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
 import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.delegatesTo;
@@ -274,8 +279,8 @@ public class MediatorPipelineTests {
     //   NOT themselves mocked, so resolving them normally as parameters is safe.
 
     @MockBean(Poshtar.class)
-    Poshtar poshtarSpy(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
-        return mock(Poshtar.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry)));
+    Poshtar poshtarSpy(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry,  @Named(TaskExecutors.IO) ExecutorService executorService ) {
+        return mock(Poshtar.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry, executorService)));
     }
 
     @MockBean(ValidationBehaviour.class)

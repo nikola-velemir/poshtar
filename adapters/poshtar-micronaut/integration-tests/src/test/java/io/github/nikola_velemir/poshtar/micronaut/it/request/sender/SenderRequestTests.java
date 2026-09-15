@@ -46,13 +46,17 @@ import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.mandatory.MandatoryRequestHandler;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
-import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Provider;
 import org.junit.jupiter.api.Test;
+
+
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.delegatesTo;
@@ -71,7 +75,7 @@ import static org.mockito.Mockito.*;
 public class SenderRequestTests {
 
     @Inject
-    private Sender poshtar;
+    Sender poshtar;
 
     @Inject
     NullRequestHandler nullRequestHandler;
@@ -235,9 +239,13 @@ public class SenderRequestTests {
         System.out.println(">>> TEST PASSED: " + response);
     }
 
+    @MockBean(Poshtar.class)
+    Poshtar mockPoshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry, @Named(TaskExecutors.IO) ExecutorService executorService ) {
+        return mock(Poshtar.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry, executorService)));
+    }
     @MockBean(Sender.class)
-    Sender mockPoshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
-        return mock(Sender.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry)));
+    Sender mockSender(Poshtar target) {
+        return mock(Sender.class, delegatesTo(target));
     }
 
     @MockBean(NullRequestHandler.class)
