@@ -27,6 +27,10 @@ import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.Fai
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncSecondHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncThirdHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.forget.FailForForgetFirstHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.forget.FailForForgetNotification;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.forget.FailForForgetSecondHandler;
+import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.forget.FailForForgetThirdHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.infrastructure.FailedExecutionNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.infrastructure.FailedExecutionNotificationFineHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.injection.*;
@@ -41,15 +45,18 @@ import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transacti
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.transactional.mandatory.MandatoryNotification;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
 import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.delegatesTo;
@@ -126,11 +133,18 @@ public class PublisherNotificationTests {
     @Inject
     FailForAsyncThirdHandler failForAsyncThirdHandler;
 
+    @Inject
+    FailForForgetFirstHandler failForForgetFirstHandler;
+    @Inject
+    FailForForgetSecondHandler failForForgetSecondHandler;
+    @Inject
+    FailForForgetThirdHandler failForForgetThirdHandler;
+
     // --- Manually constructed raw instances — no BeanContext resolution, no dispatch class involved. ---
     // ASSUMPTION: no-arg constructors. Adjust if these classes actually take dependencies.
     @MockBean(Publisher.class)
-    Publisher mockPublisher(NotificationRegistry notificationRegistry, RequestRegistry requestRegistry) {
-        return mock(Publisher.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry)));
+    Publisher mockPublisher(NotificationRegistry notificationRegistry, RequestRegistry requestRegistry, @Named(TaskExecutors.IO) ExecutorService executorService) {
+        return mock(Publisher.class, delegatesTo(new MicronautPoshtar(requestRegistry, notificationRegistry, executorService)));
     }
 
     @MockBean(MockFirstNotificationHandler.class)
@@ -209,6 +223,20 @@ public class PublisherNotificationTests {
         return mock(InjectionNotificationThirdHandler.class, delegatesTo(new InjectionNotificationThirdHandler(dummyIncrementService)));
     }
 
+    @MockBean(FailForForgetFirstHandler.class)
+    FailForForgetFirstHandler failForForgetFirstHandler() {
+        return mock(FailForForgetFirstHandler.class, delegatesTo(new FailForForgetFirstHandler()));
+    }
+
+    @MockBean(FailForForgetSecondHandler.class)
+    FailForForgetSecondHandler failForForgetSecondHandler() {
+        return mock(FailForForgetSecondHandler.class, delegatesTo(new FailForForgetSecondHandler()));
+    }
+
+    @MockBean(FailForForgetThirdHandler.class)
+    FailForForgetThirdHandler failForForgetThirdHandler() {
+        return mock(FailForForgetThirdHandler.class, delegatesTo(new FailForForgetThirdHandler()));
+    }
     @Test
     void should_Not_Fail_For_None_Registered() {
         var noneNotification = new NoneRegisteredNotification();
@@ -362,5 +390,20 @@ public class PublisherNotificationTests {
 
         verify(publisher, times(1)).publish(any());
         verify(publisher, times(1)).publish(eq(failAsyncNotification));
+    }
+    @Test
+    void should_Pass_For_Forget() throws InterruptedException {
+        var notification = new FailForForgetNotification();
+        assertDoesNotThrow(() -> publisher.publish(notification));
+
+        Thread.sleep(1000);
+
+        verify(failForForgetSecondHandler, times(1)).handle(eq(notification));
+        verify(failForForgetFirstHandler, times(1)).handle(eq(notification));
+        verify(failForForgetThirdHandler, times(0)).handle(eq(notification));
+        verify(failForForgetThirdHandler, times(0)).handle(any());
+
+        verify(publisher, times(1)).publish(any());
+        verify(publisher, times(1)).publish(eq(notification));
     }
 }

@@ -30,9 +30,12 @@ import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry.Micr
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.scheduling.TaskExecutors;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Produces the core Poshtar beans for a Micronaut application: the default pipeline
@@ -97,8 +100,13 @@ public class PoshtarFactory {
      * @return the constructed Poshtar facade.
      */
     @Singleton
-    public Poshtar poshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry) {
-        return new MicronautPoshtar(requestRegistry, notificationRegistry);
+    public Poshtar poshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry, @Named(TaskExecutors.IO) ExecutorService executorService) {
+        return new MicronautPoshtar(requestRegistry, notificationRegistry, executorService);
+    }
+    @Singleton
+    @Named("poshtar")
+    ExecutorService poshtarExecutorService(@Named(TaskExecutors.IO) ExecutorService ioExecutor) {
+        return ioExecutor;
     }
     @Singleton
     public Sender sender(Poshtar poshtar) {
