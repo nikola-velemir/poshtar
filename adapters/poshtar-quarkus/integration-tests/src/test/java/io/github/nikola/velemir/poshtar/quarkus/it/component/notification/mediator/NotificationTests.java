@@ -162,6 +162,7 @@ public class NotificationTests {
         PingNotification notification = new PingNotification();
         poshtar.publish(notification);
 
+        
         assert notification.payload == 2;
         verify(pingFirstHandler, times(1)).handle(eq(notification));
         verify(pingSecondHandler, times(1)).handle(eq(notification));
