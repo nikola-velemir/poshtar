@@ -9,7 +9,7 @@ import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
  * It is a provided implementation to client classes which use {@link io.github.nikola_velemir.poshtar.core.mediator.Poshtar} interface.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public final class SpringPoshtar extends PoshtarBase {

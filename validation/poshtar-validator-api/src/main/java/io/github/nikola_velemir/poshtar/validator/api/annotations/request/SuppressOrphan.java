@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @Target({ElementType.TYPE})

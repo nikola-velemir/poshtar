@@ -31,7 +31,7 @@ import io.github.nikola_velemir.poshtar.core.notification.Notification;
  *
  * @param <TNotification>>  The specific type of notification this handler processes.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface NotificationHandler<TNotification extends Notification> {

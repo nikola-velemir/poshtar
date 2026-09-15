@@ -26,7 +26,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.unwrapper.stategy;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class JetBrainsUnwrapStrategy implements UnwrapStrategy {

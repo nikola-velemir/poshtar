@@ -29,7 +29,7 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public final class Unit {

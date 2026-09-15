@@ -22,7 +22,7 @@ import javax.tools.Diagnostic;
 /**
  * Error logger class that dispatches messages that will prevent project compilation (high severity).
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class ErrorLogger extends CoreLogger {

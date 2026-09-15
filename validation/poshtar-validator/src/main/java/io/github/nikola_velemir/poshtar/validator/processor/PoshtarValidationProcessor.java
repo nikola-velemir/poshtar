@@ -58,7 +58,7 @@ import java.util.Set;
  * </ul>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 @AutoService(Processor.class)

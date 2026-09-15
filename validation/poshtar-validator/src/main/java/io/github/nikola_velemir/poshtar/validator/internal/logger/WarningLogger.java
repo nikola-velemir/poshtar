@@ -22,7 +22,7 @@ import javax.tools.Diagnostic;
 /**
  * Warning logger class that dispatches messages that will notify of violations which are not critical for library function.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class WarningLogger extends CoreLogger {

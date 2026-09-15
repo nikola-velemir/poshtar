@@ -21,7 +21,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.unwrapper.stategy;
  * Unwrapping strategy that is defaulted to if no previous strategies score a match.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 class DefaultUnwrapStrategy implements UnwrapStrategy {

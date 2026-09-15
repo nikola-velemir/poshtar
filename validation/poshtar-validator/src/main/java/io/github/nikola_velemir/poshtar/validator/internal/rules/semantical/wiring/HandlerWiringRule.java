@@ -42,7 +42,7 @@ import javax.lang.model.type.TypeMirror;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
  * @since 1.0.0
  */
