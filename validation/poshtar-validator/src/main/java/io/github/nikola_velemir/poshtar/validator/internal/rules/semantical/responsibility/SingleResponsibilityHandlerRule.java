@@ -57,7 +57,7 @@ class SingleResponsibilityHandlerRule implements Rule {
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        var entries = ctx.getHandlerRegistry();
+        var entries = ctx.getRequestHandlerRegistry();
         for (var entry : entries.values()) {
             var handlerElement = (TypeElement) entry.handlerElement();
             if (implementsMoreThanOne(ctx, handlerElement)) logError(ctx, handlerElement);

@@ -69,6 +69,7 @@ class HandlerNoInjectionRule extends NoInjectionRule {
         TypeMirror erasedReq = typeUtils.erasure(reqHandler);
         TypeMirror erasedNotif = typeUtils.erasure(notifHandler);
 
+        System.out.printf("%s, %s, %s%n", erasedType.toString(), erasedReq.toString(), erasedNotif.toString());
         return typeUtils.isAssignable(erasedType, erasedReq) ||
                 typeUtils.isAssignable(erasedType, erasedNotif);
     }

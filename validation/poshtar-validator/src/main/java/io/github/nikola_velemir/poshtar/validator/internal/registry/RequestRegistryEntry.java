@@ -40,7 +40,7 @@ import javax.lang.model.element.Element;
  * @version ${revision}
  * @since 1.0.0
  */
-public record RegistryEntry(
+public record RequestRegistryEntry(
         String requestFQN,
         String handlerFQN,
         Element handlerElement,
