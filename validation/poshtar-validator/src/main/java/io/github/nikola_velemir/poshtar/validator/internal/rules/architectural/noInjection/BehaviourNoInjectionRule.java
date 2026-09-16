@@ -26,6 +26,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Rule that validates behavior no-injection logic.
@@ -66,6 +67,11 @@ class BehaviourNoInjectionRule extends NoInjectionRule {
         return typeUtils.isAssignable(erasedType, erasedBehaviour);
     }
 
+
+    @Override
+    protected Set<String> provideForbiddenFQNS(ProcessorContext ctx) {
+        return ctx.getBehaviourFQNS();
+    }
 
     /**
      * Error logging logic.

@@ -52,12 +52,8 @@ abstract class NoInjectionRule implements Rule {
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        Set<String> reqHandlers = ctx.getRequestHandlerFQNS();
-        Set<String> notifHandlers = ctx.getNotificationHandlerFQNS();
-        System.out.println("Request Handlers: " + reqHandlers);
-        System.out.println("Notification Handlers: " + notifHandlers);
-        Set<String> forbidden = Stream.concat(reqHandlers.stream(), notifHandlers.stream())
-                .collect(Collectors.toSet());
+
+        Set<String> forbidden = provideForbiddenFQNS(ctx);
         if (forbidden.isEmpty()) return;
 
         for (Element root : roundEnv.getRootElements()) {
@@ -71,6 +67,8 @@ abstract class NoInjectionRule implements Rule {
             checkClassBody((TypeElement) root, forbidden, ctx);
         }
     }
+
+    protected abstract Set<String> provideForbiddenFQNS(ProcessorContext ctx);
 
     /**
      * Checks the body of a class in search for forbidden components that should not be injected or instantiated.

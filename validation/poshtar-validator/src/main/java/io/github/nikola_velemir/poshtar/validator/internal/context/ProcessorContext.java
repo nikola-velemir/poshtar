@@ -188,6 +188,15 @@ public class ProcessorContext {
      */
     public Set<String> getRequestHandlerFQNS() {
         return requestHandlerRegistry.values().stream()
+                .filter(s -> !s.isBehaviour())
+
+                .map(RequestRegistryEntry::handlerFQN)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getBehaviourFQNS() {
+        return requestHandlerRegistry.values().stream()
+                .filter(RequestRegistryEntry::isBehaviour)
                 .map(RequestRegistryEntry::handlerFQN)
                 .collect(Collectors.toSet());
     }
