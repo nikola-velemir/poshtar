@@ -99,7 +99,6 @@ abstract class NoInjectionRule implements Rule {
             ExecutableElement method = (ExecutableElement) enclosed;
             for (VariableElement param : method.getParameters()) {
                 var isForbidden = isForbiddenType(param.asType(), forbidden, ctx);
-                System.out.println(isForbidden);
                 if (isForbidden) {
                     logError(param, ctx);
                 }
@@ -119,7 +118,6 @@ abstract class NoInjectionRule implements Rule {
             ExecutableElement constructor = (ExecutableElement) enclosed;
             for (VariableElement param : constructor.getParameters()) {
                 var isForbidden = isForbiddenType(param.asType(), forbidden, ctx);
-                System.out.println(isForbidden);
                 if (isForbidden) {
                     logError(param, ctx);
                 }
@@ -146,7 +144,6 @@ abstract class NoInjectionRule implements Rule {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
             var isForbidden = isForbiddenType(field.asType(), forbidden, ctx);
-            System.out.println(isForbidden);
             if (isForbidden) {
                 logError(field, ctx);
             }
