@@ -29,6 +29,8 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,7 +46,7 @@ import java.util.stream.Stream;
  * @version ${revision}
  * @since 1.0.0
  */
-class SingleResponsibilityHandlerRule implements Rule {
+class SingleResponsibilityRule implements Rule {
 
     private static final String VIOLATION_MESSAGE = "PoshtaR VIOLATION: A class implementing %s or %s or %s may only implement one of given interfaces.";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
@@ -57,6 +59,19 @@ class SingleResponsibilityHandlerRule implements Rule {
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
+        validateRequestHandlers(ctx);
+        validateNotificationHandlers(ctx);
+    }
+
+    private static void validateNotificationHandlers(ProcessorContext ctx) {
+        var entries = ctx.getNotificationHandlerRegistry();
+        for (var entry : entries.values().stream().flatMap(List::stream).collect(Collectors.toSet())) {
+            var handlerElement = (TypeElement) entry.handlerElement();
+            if (implementsMoreThanOne(ctx, handlerElement)) logError(ctx, handlerElement);
+        }
+    }
+
+    private static void validateRequestHandlers(ProcessorContext ctx) {
         var entries = ctx.getRequestHandlerRegistry();
         for (var entry : entries.values()) {
             var handlerElement = (TypeElement) entry.handlerElement();
@@ -67,7 +82,7 @@ class SingleResponsibilityHandlerRule implements Rule {
     private static boolean implementsMoreThanOne(ProcessorContext ctx, TypeElement handlerElement) {
         return handlerElement.getInterfaces()
                 .stream()
-                .filter(t-> isOneOfTargetInterfaces(ctx, t))
+                .filter(t -> isOneOfTargetInterfaces(ctx, t))
                 .limit(2)
                 .count() > 1;
     }
@@ -80,6 +95,7 @@ class SingleResponsibilityHandlerRule implements Rule {
                 )
                 .anyMatch(fqn -> checkIfType(ctx, iface, fqn));
     }
+
     private static void logError(ProcessorContext ctx, TypeElement handlerElement) {
 
         String errorMessage = String.format(
