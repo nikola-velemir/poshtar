@@ -14,34 +14,34 @@ public class DeadPipelineTests {
 
     private static class Dead {
         static final JavaFileObject request =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/DeadPipelineRequest.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/dead/DeadPipelineRequest.java");
         static final JavaFileObject handler =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/DeadPipelineRequestHandler.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/dead/DeadPipelineRequestHandler.java");
         static final JavaFileObject behaviour =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/DeadPipelineBehaviour.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/dead/DeadPipelineBehaviour.java");
 
         static final JavaFileObject[] set = {request, handler, behaviour};
     }
 
     private static class Throwing {
         static final JavaFileObject request =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/ThrowingRequest.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/throw/ThrowingRequest.java");
         static final JavaFileObject handler =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/ThrowingHandler.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/throw/ThrowingHandler.java");
         static final JavaFileObject basicBehaviour =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/BasicThrowingBehaviour.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/throw/BasicThrowingBehaviour.java");
         static final JavaFileObject doubleBehaviour =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/DoubleThrowingBehaviour.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/throw/DoubleThrowingBehaviour.java");
         static final JavaFileObject[] set = {request, handler, basicBehaviour, doubleBehaviour};
     }
 
     private static class Alive {
         static final JavaFileObject request =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/AlivePipelineRequest.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/alive/AlivePipelineRequest.java");
         static final JavaFileObject handler =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/AlivePipelineHandler.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/alive/AlivePipelineHandler.java");
         static final JavaFileObject behaviour =
-                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/AlivePipelineBehaviour.java");
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/alive/AlivePipelineBehaviour.java");
 
         static final JavaFileObject[] set = {request, handler, behaviour};
     }
