@@ -46,6 +46,29 @@ public class DeadPipelineTests {
         static final JavaFileObject[] set = {request, handler, behaviour};
     }
 
+    private static class Shadow {
+        static class Dead {
+            static final JavaFileObject request =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/dead/ShadowDeadRequest.java");
+            static final JavaFileObject handler =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/dead/ShadowDeadHandler.java");
+            static final JavaFileObject behaviour =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/dead/ShadowDeadBehaviour.java");
+
+            static final JavaFileObject[] set = {request, handler, behaviour};
+        }
+
+        static class Alive {
+            static final JavaFileObject request =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/alive/ShadowAliveRequest.java");
+            static final JavaFileObject handler =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/alive/ShadowAliveHandler.java");
+            static final JavaFileObject behaviour =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/shadow/alive/ShadowAliveBehaviour.java");
+
+            static final JavaFileObject[] set = {request, handler, behaviour};
+        }
+    }
 
     @Test
     @DisplayName("Compilation warns when pipeline dead")
@@ -68,10 +91,31 @@ public class DeadPipelineTests {
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
     }
+
     @Test
     @DisplayName("Compilation does not warn when behaviours throw")
     void shouldNotWarn_whenBehavioursThrow() {
         Compilation compilation = compile(Throwing.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(0);
+    }
+
+    @Test
+    @DisplayName("Compilation warns when behaviours shadows")
+    void shouldWarn_whenShadows() {
+        Compilation compilation = compile(Shadow.Dead.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .hadWarningContaining("[PoshtaR] PoshtaR VIOLATION: Behaviour must either call 'next.handle(request)' or throw an exception.")
+                .inFile(Shadow.Dead.behaviour);
+    }
+
+    @Test
+    @DisplayName("Compilation does not warn when behaviours shadows")
+    void shouldNotWarn_whenShadows() {
+        Compilation compilation = compile(Shadow.Alive.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
