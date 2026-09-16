@@ -27,7 +27,7 @@ public class OrphanRequestTests {
     }
 
     @Test
-    @DisplayName("Compilation succeeds with no orphan requestsr")
+    @DisplayName("Compilation succeeds with no orphan request")
     void shouldPassCompilation_whenRequestNotOrphan() {
         Compilation compilation = compile(matched);
 
@@ -35,8 +35,20 @@ public class OrphanRequestTests {
 
     }
 
+    @Test
+    @DisplayName("Compilation succeeds with suppressed orphan")
+    void shouldPassCompilation_whenSuppressed() {
+        Compilation compilation = compile(suppressedRequest);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadErrorCount(0);
+    }
+
     private final JavaFileObject unhandledRequest =
             JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/UnhandledRequest.java");
+    private final JavaFileObject suppressedRequest =
+            JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/SuppressedOrphanRequest.java");
+
     private final JavaFileObject matchedRequest =
             JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/MatchedRequest.java");
     private final JavaFileObject matchedHandler =

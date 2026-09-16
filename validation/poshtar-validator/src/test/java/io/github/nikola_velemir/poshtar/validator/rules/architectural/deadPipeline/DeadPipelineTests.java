@@ -46,6 +46,15 @@ public class DeadPipelineTests {
         static final JavaFileObject[] set = {request, handler, behaviour};
     }
 
+    private static class Suppressed {
+        static final JavaFileObject request =
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/suppressed/SuppressedRequest.java");
+        static final JavaFileObject behaviour =
+                JavaFileObjects.forResource("test/fixtures/rules/architectural/deadPipeline/suppressed/SuppressedBehaviour.java");
+        static final JavaFileObject[] set = {request, behaviour};
+
+    }
+
     private static class Shadow {
         static class Dead {
             static final JavaFileObject request =
@@ -116,6 +125,14 @@ public class DeadPipelineTests {
     @DisplayName("Compilation does not warn when behaviours shadows")
     void shouldNotWarn_whenShadows() {
         Compilation compilation = compile(Shadow.Alive.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(0);
+    }
+    @Test
+    @DisplayName("Compilation does not warn when suppressed")
+    void shouldNotWarn_whenSuppressed() {
+        Compilation compilation = compile(Suppressed.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
