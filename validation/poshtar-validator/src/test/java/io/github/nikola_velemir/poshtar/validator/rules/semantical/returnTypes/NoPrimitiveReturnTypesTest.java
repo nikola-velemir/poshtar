@@ -2,6 +2,7 @@ package io.github.nikola_velemir.poshtar.validator.rules.semantical.returnTypes;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,56 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class NoPrimitiveReturnTypesTest extends PoshtarProcessorTestBed {
+    @Test
+    @DisplayName("Compilation does not warn when wrapping designated return type")
+    void shouldNotWarn_whenWrappingDesignatedReturnType() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Designated.Wraps.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(0);
+    }
+
+    @Test
+    @DisplayName("Compilation does not warn when designated return type")
+    void shouldNotWarn_whenDesignatedReturnType() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Designated.Basic.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(0);
+    }
+
+    @Test
+    @DisplayName("Compilation warns when wrapping primitive return type")
+    void shouldWarn_whenWrappingPrimitiveReturnType() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Primitive.Wraps.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(1);
+        assertThat(compilation).hadWarningContaining("[PoshtaR] Request return type 'java.lang.String' is a built-in Java type. It is advisable to use a custom DTO or Unit for better versioning safety.").inFile(Primitive.Wraps.request);
+    }
+
+    @Test
+    @DisplayName("Compilation warns when primitive return type")
+    void shouldWarn_whenPrimitiveReturnType() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Primitive.Basic.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(1);
+        assertThat(compilation).hadWarningContaining("[PoshtaR] Request return type 'java.lang.String' is a built-in Java type. It is advisable to use a custom DTO or Unit for better versioning safety.").inFile(Primitive.Basic.request);
+    }
+
     private static class Designated {
         static class Basic {
 
@@ -45,52 +96,10 @@ public class NoPrimitiveReturnTypesTest extends PoshtarProcessorTestBed {
             static final JavaFileObject[] set = {request, handler};
         }
     }
-    @Test
-    @DisplayName("Compilation does not warn when wrapping designated return type")
-    void shouldNotWarn_whenWrappingDesignatedReturnType() {
-        Compilation compilation =
-                createCompiler()
-                        .withDefaultProcessor()
-                        .compile(Designated.Wraps.set);
 
-        assertThat(compilation).succeeded();
-        assertThat(compilation).hadWarningCount(0);
-    }
-    @Test
-    @DisplayName("Compilation does not warn when designated return type")
-    void shouldNotWarn_whenDesignatedReturnType() {
-        Compilation compilation =
-                createCompiler()
-                        .withDefaultProcessor()
-                        .compile(Designated.Basic.set);
-
-        assertThat(compilation).succeeded();
-        assertThat(compilation).hadWarningCount(0);
+    private PoshtarValidationProcessor createProcessor() {
+        var validator = new RuleValidatorProvider.Primitives();
+        return new PoshtarValidationProcessor(validator);
     }
 
-    @Test
-    @DisplayName("Compilation warns when wrapping primitive return type")
-    void shouldWarn_whenWrappingPrimitiveReturnType() {
-        Compilation compilation =
-                createCompiler()
-                        .withDefaultProcessor()
-                        .compile(Primitive.Wraps.set);
-
-        assertThat(compilation).succeeded();
-        assertThat(compilation).hadWarningCount(1);
-        assertThat(compilation).hadWarningContaining("[PoshtaR] Request return type 'java.lang.String' is a built-in Java type. It is advisable to use a custom DTO or Unit for better versioning safety.").inFile(Primitive.Wraps.request);
-    }
-
-    @Test
-    @DisplayName("Compilation warns when primitive return type")
-    void shouldWarn_whenPrimitiveReturnType() {
-        Compilation compilation =
-                createCompiler()
-                        .withDefaultProcessor()
-                        .compile(Primitive.Basic.set);
-
-        assertThat(compilation).succeeded();
-        assertThat(compilation).hadWarningCount(1);
-        assertThat(compilation).hadWarningContaining("[PoshtaR] Request return type 'java.lang.String' is a built-in Java type. It is advisable to use a custom DTO or Unit for better versioning safety.").inFile(Primitive.Basic.request);
-    }
 }

@@ -16,11 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.behaviour;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.WiringRule;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

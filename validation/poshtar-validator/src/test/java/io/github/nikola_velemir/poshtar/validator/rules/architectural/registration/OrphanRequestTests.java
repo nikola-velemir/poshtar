@@ -2,6 +2,7 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.registrat
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
     void shouldFailCompilation_whenRequestIsOrphan() {
         Compilation compilation =
                 createCompiler()
-                        .withDefaultProcessor()
+                        .withProcessors(createProcessor())
                         .compile(completeSet);
 
         assertThat(compilation).failed();
@@ -34,7 +35,7 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
     void shouldPassCompilation_whenRequestNotOrphan() {
         Compilation compilation =
                 createCompiler()
-                        .withDefaultProcessor()
+                        .withProcessors(createProcessor())
                         .compile(matched);
 
         assertThat(compilation).succeeded();
@@ -46,7 +47,7 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
     void shouldPassCompilation_whenSuppressed() {
         Compilation compilation =
                 createCompiler()
-                        .withDefaultProcessor()
+                        .withProcessors(createProcessor())
                         .compile(suppressedRequest);
 
         assertThat(compilation).succeeded();
@@ -64,4 +65,9 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
             JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/MatchedHandler.java");
     private final JavaFileObject[] completeSet = {unhandledRequest, matchedHandler, matchedRequest};
     private final JavaFileObject[] matched = {matchedHandler, matchedRequest};
+
+    private PoshtarValidationProcessor createProcessor() {
+        var validator = new RuleValidatorProvider.Orphan();
+        return new PoshtarValidationProcessor(validator);
+    }
 }

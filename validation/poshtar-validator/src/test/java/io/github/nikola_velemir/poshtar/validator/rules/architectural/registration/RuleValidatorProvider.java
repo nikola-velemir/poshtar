@@ -9,7 +9,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.r
 
 import javax.annotation.processing.RoundEnvironment;
 
-public class RuleValidatorProvider {
+ class RuleValidatorProvider {
     public static class Ambiguity implements RuleValidator {
 
         @Override

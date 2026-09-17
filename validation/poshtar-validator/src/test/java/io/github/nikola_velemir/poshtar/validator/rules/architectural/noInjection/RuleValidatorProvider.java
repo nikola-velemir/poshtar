@@ -7,7 +7,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.n
 
 import javax.annotation.processing.RoundEnvironment;
 
-public class RuleValidatorProvider {
+ class RuleValidatorProvider {
     public static class Behaviour implements RuleValidator{
 
         @Override

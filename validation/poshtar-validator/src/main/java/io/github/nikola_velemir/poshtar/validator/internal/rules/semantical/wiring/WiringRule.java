@@ -50,7 +50,7 @@ import javax.lang.model.element.TypeElement;
  * @since 1.0.0
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-abstract class WiringRule implements Rule {
+public abstract class WiringRule implements Rule {
     /**
      * Annotation that will be checked for wiring violations.
      */

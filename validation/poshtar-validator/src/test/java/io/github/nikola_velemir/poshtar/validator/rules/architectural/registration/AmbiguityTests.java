@@ -2,6 +2,7 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.registrat
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
     void shouldFailCompilation_whenDuplicateHandlersExist() {
         Compilation compilation =
                 createCompiler()
-                        .withDefaultProcessor()
+                        .withProcessors(createProcessor())
                         .compile(ambiguousSet);
 
         assertThat(compilation).failed();
@@ -54,11 +55,14 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
     void shouldSucceed_whenSingleHandlerIsRegistered() {
         Compilation compilation =
                 createCompiler()
-                        .withDefaultProcessor()
+                        .withProcessors(createProcessor())
                         .compile(validSingleHandlerSet);
 
         assertThat(compilation).succeeded();
     }
-
+    private PoshtarValidationProcessor createProcessor() {
+        var validator = new RuleValidatorProvider.Ambiguity();
+        return new PoshtarValidationProcessor(validator);
+    }
 
 }

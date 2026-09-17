@@ -2,6 +2,7 @@ package io.github.nikola_velemir.poshtar.validator.rules.semantical.responsiblit
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,9 @@ public class SingleResponsibilityTests extends PoshtarProcessorTestBed {
     @Test
     @DisplayName("Compilation succeeds when exactly one interface is implemented")
     void shouldSucceed_whenExactlyOnInterfaceImplemented() {
-        Compilation compilation = createCompiler().withDefaultProcessor().compile(Single.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Single.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
@@ -23,7 +26,9 @@ public class SingleResponsibilityTests extends PoshtarProcessorTestBed {
     @Test
     @DisplayName("Compilation fails when all implemented")
     void shouldFail_whenAllImplemented() {
-        Compilation compilation = createCompiler().withDefaultProcessor().compile(All.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(All.set);
 
         assertThat(compilation).failed();
 
@@ -53,4 +58,8 @@ public class SingleResponsibilityTests extends PoshtarProcessorTestBed {
 
     }
 
+    private PoshtarValidationProcessor createProcessor() {
+        var validator = new RuleValidatorProvider.SingleResponsibility();
+        return new PoshtarValidationProcessor(validator);
+    }
 }
