@@ -29,7 +29,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarc
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.mock.hierarchy.HierarchySecondBehaviour;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.fail.FailTransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
-import io.github.nikola_velemir.poshtar.guice.adatper.module.PoshtarGuiceModule;
+import io.github.nikola_velemir.poshtar.guice.adapter.module.PoshtarGuiceModule;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.dead.DeadPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.global.GlobalTestPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderFirstPipeline;
@@ -37,7 +37,6 @@ import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.order.OrderS
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.specific.SpecificPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transactional.basic.success.TransactionalPipeline;
 import io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.validate.ValidationBehaviour;
-import jakarta.persistence.Basic;
 
 public class TestModule extends AbstractModule {
     @Override

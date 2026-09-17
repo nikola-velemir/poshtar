@@ -50,7 +50,7 @@ import java.util.Set;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  * @see io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead
  */

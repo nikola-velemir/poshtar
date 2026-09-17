@@ -23,7 +23,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.registry.scanner;
  * as its concrete implementation is package-private.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class RegistryScannerProvider {

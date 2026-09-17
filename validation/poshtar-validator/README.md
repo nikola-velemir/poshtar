@@ -42,7 +42,7 @@ The processor executes the following validation logic during compilation:
 
 Every class implementing the `Request<T>` interface must have exactly one associated class annotated with `@Handler` that implements `RequestHandler<R, T>`.
 
-Violation: Compilation error if a `Request` type lacks a matching `RequestHandler` implementation.
+Violation: Compilation error if a `Behaviour` type lacks a matching `RequestHandler` implementation.
 
 Override: Apply `@SuppressOrphan` to the Request type.
 
@@ -50,9 +50,9 @@ Override: Apply `@SuppressOrphan` to the Request type.
 
 **2. Handler Ambiguity**
 
-The library enforces a strict one-to-one mapping between a `Request` and its `RequestHandler`.
+The library enforces a strict one-to-one mapping between a `Behaviour` and its `RequestHandler`.
 
-Violation: Compilation error if multiple `RequestHandler` implementations are detected for the same `Request` type.
+Violation: Compilation error if multiple `RequestHandler` implementations are detected for the same `Behaviour` type.
 
 ---
 
@@ -102,8 +102,8 @@ Reasoning: Primitive types cannot carry structured result or error information a
 
 **8. Request Immutability and Finality**
 
-To prevent side effects during pipeline execution, every class implementing the `Request<T>` or `Notification` interface must be declared as `final` or `record`.
+To prevent side effects during pipeline execution, every class implementing the `Request<T>` or `Handler` interface must be declared as `final` or `record`.
 
-Violation: Compilation error if a `Request` or `Notification` class is not marked with the `final` modifier, or if it is not a `record`.
+Violation: Compilation error if a `Behaviour` or `Handler` class is not marked with the `final` modifier, or if it is not a `record`.
 
 Reasoning: Request object travels through multiple behaviors before reaching the handler. Restricting inheritance ensures that the request structure is immutable and its behavior is predictable across the entire pipeline, preventing the "Fragile Base Class" problem within messaging.

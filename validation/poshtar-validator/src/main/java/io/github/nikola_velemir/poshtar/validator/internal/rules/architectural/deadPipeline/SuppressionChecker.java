@@ -31,7 +31,7 @@ import javax.lang.model.element.ExecutableElement;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead
  * @since 1.0.0
  */

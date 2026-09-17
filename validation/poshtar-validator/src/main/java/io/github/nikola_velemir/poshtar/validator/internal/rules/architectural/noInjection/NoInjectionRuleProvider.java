@@ -19,15 +19,25 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.noInjection;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality.NotificationFinalityRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality.RequestFinalityRuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class NoInjectionRuleProvider implements RuleProvider {
-    public static List<Rule> provide(){
-        return List.of(
-                new BehaviourNoInjectionRule(),
-                new HandlerNoInjectionRule()
-        );
+    @Override
+    public RuleKind getKind() {
+        return RuleKind.ARCHITECTURAL;
+    }
+
+    public  List<Rule> provide(){
+        return Stream.of(
+                        new BehaviourNoInjectionRuleProvider().provide(),
+                        new HandlerNoInjectionRuleProvider().provide()
+                ).flatMap(List::stream)
+                .toList();
     }
 }

@@ -19,15 +19,26 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.behaviour.BehaviourWiringRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.handler.HandlerWiringRuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class WiringRuleProvider implements RuleProvider {
-    public static List<Rule> provide(){
-        return List.of(
-               new HandlerWiringRule(),
-                new BehaviourWiringRule()
-        );
+    @Override
+    public RuleKind getKind() {
+        return RuleKind.SEMANTICAL;
+    }
+
+    public List<Rule> provide() {
+        return Stream.of(
+                        new HandlerWiringRuleProvider().provide(),
+                        new BehaviourWiringRuleProvider().provide()
+                )
+                .flatMap(List::stream)
+                .toList();
     }
 }

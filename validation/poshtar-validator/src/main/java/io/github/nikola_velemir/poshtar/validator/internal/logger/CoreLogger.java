@@ -31,7 +31,7 @@ import javax.tools.Diagnostic;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 abstract class CoreLogger implements Logger {

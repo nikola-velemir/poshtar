@@ -21,7 +21,6 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
 import javax.annotation.processing.RoundEnvironment;
-import java.util.List;
 
 /**
  * Interface defines a validator of the architectural rules, specified by the library.
@@ -34,8 +33,4 @@ public interface RuleValidator {
      * @param ctx      Instance of context containing all.
      */
     void validateRules(RoundEnvironment roundEnv, ProcessorContext ctx);
-
-    static List<Rule> provideRules() {
-        return List.of();
-    }
 }

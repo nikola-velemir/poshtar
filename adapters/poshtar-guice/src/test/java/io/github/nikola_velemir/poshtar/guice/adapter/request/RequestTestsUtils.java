@@ -1,10 +1,12 @@
 package io.github.nikola_velemir.poshtar.guice.adapter.request;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.guice.adapter.TestModule;
-import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.*;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingFirstRequestHandler;
+import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining.ChainingSecondRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.DummyLoggingService;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection.InjectionRequestHandler;
 import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.mock.MockRequestHandler;
@@ -16,73 +18,102 @@ import io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Field;
-
+/**
+ * Shared test bootstrap helpers for the Poshtar request test suites.
+ * <p>
+ * MUST be public (and its methods public): it is used from {@code request.sender}
+ * and {@code request.mediator}, which are sibling sub-packages, not the same
+ * package as this class. Package-private access does not extend across
+ * sub-packages in Java, so the previous package-private version failed to
+ * compile from those callers.
+ * <p>
+ * Also intentionally NOT coupled to any specific {@code RequestTests} class.
+ * The previous version wrote directly to static fields on one hardcoded
+ * {@code RequestTests} (the {@code sender} one), which silently left any
+ * *other* test class's fields (e.g. {@code mediator.RequestTests}) null,
+ * causing NullPointerExceptions the moment those tests stubbed or verified
+ * a handler. {@link #createMocks()} and {@link #createSpies} now return
+ * plain holder objects; each calling test class copies what it needs into
+ * its own static fields.
+ */
 @OverruleNoInjection
-class RequestTestsUtils {
-    static void createSpies(Injector injector) {
-        // 1. Create all spies from the handler injector
-        RequestTests.nullRequestHandler = Mockito.spy(injector.getInstance(NullRequestHandler.class));
-        RequestTests.pingRequestHandler = Mockito.spy(injector.getInstance(PingRequestHandler.class));
-        RequestTests.injectionRequestHandler = Mockito.spy(injector.getInstance(InjectionRequestHandler.class));
-        RequestTests.transactionalRequestHandler = Mockito.spy(injector.getInstance(TransactionalRequestHandler.class));
-        RequestTests.updateTransactionalRequestHandler = Mockito.spy(injector.getInstance(UpdateTransactionalRequestHandler.class));
-        RequestTests.failForTransactionalRequestHandler = Mockito.spy(injector.getInstance(FailForTransactionalRequestHandler.class));
-        RequestTests.chainingFirstRequestHandler = Mockito.spy(injector.getInstance(ChainingFirstRequestHandler.class));
-        RequestTests.chainingSecondRequestHandler = Mockito.spy(injector.getInstance(ChainingSecondRequestHandler.class));
+public class RequestTestsUtils {
+
+    /** Plain Mockito mocks shared by a single test run. */
+    public static class Mocks {
+        public MockRequestHandler mockRequestHandler;
     }
 
-    static void createMocks() {
-        RequestTests.mockRequestHandler = Mockito.mock(MockRequestHandler.class);
+    /** Mockito spies wrapping real Guice-created handler instances. */
+    public static class Spies {
+        public DummyLoggingService dummyLoggingService;
+        public NullRequestHandler nullRequestHandler;
+        public PingRequestHandler pingRequestHandler;
+        public InjectionRequestHandler injectionRequestHandler;
+        public TransactionalRequestHandler transactionalRequestHandler;
+        public UpdateTransactionalRequestHandler updateTransactionalRequestHandler;
+        public FailForTransactionalRequestHandler failForTransactionalRequestHandler;
+        public ChainingFirstRequestHandler chainingFirstRequestHandler;
+        public ChainingSecondRequestHandler chainingSecondRequestHandler;
     }
 
-    static Injector buildTestInjector() {
-        var injector = Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
+    public static Mocks createMocks() {
+        Mocks mocks = new Mocks();
+        mocks.mockRequestHandler = Mockito.mock(MockRequestHandler.class);
+        return mocks;
+    }
+
+    /** Creates a spy of the real DummyLoggingService, resolved from a bare TestModule injector. */
+    public static DummyLoggingService createLoggingSpy() {
+        Injector bootstrapInjector = Guice.createInjector(new TestModule());
+        DummyLoggingService realLoggingService = bootstrapInjector.getInstance(DummyLoggingService.class);
+        return Mockito.spy(realLoggingService);
+    }
+
+    /** Bootstrap injector with only the logging spy bound, used to resolve real handler instances to wrap as spies. */
+    public static Injector buildHandlerInjector(DummyLoggingService dummyLoggingService) {
+        return Guice.createInjector(
+                Modules.override(new TestModule()).with(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(DummyLoggingService.class).toInstance(dummyLoggingService);
+                    }
+                })
+        );
+    }
+
+    public static Spies createSpies(Injector handlerInjector, DummyLoggingService dummyLoggingService) {
+        Spies spies = new Spies();
+        spies.dummyLoggingService = dummyLoggingService;
+        spies.nullRequestHandler = Mockito.spy(handlerInjector.getInstance(NullRequestHandler.class));
+        spies.pingRequestHandler = Mockito.spy(handlerInjector.getInstance(PingRequestHandler.class));
+        spies.injectionRequestHandler = Mockito.spy(handlerInjector.getInstance(InjectionRequestHandler.class));
+        spies.transactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(TransactionalRequestHandler.class));
+        spies.updateTransactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(UpdateTransactionalRequestHandler.class));
+        spies.failForTransactionalRequestHandler = Mockito.spy(handlerInjector.getInstance(FailForTransactionalRequestHandler.class));
+        spies.chainingFirstRequestHandler = Mockito.spy(handlerInjector.getInstance(ChainingFirstRequestHandler.class));
+        spies.chainingSecondRequestHandler = Mockito.spy(handlerInjector.getInstance(ChainingSecondRequestHandler.class));
+        return spies;
+    }
+
+    public static Injector buildTestInjector(Mocks mocks, Spies spies) {
+        return Guice.createInjector(Modules.override(new TestModule()).with(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(MockRequestHandler.class).toInstance(RequestTests.mockRequestHandler);
-                bind(DummyLoggingService.class).toInstance(RequestTests.dummyLoggingService);
-                bind(NullRequestHandler.class).toInstance(RequestTests.nullRequestHandler);
-                bind(PingRequestHandler.class).toInstance(RequestTests.pingRequestHandler);
+                bind(MockRequestHandler.class).toInstance(mocks.mockRequestHandler);
+                bind(DummyLoggingService.class).toInstance(spies.dummyLoggingService);
+                bind(NullRequestHandler.class).toInstance(spies.nullRequestHandler);
+                bind(PingRequestHandler.class).toInstance(spies.pingRequestHandler);
 
-                bind(InjectionRequestHandler.class).toInstance(RequestTests.injectionRequestHandler);
+                bind(InjectionRequestHandler.class).toInstance(spies.injectionRequestHandler);
 
-                bind(TransactionalRequestHandler.class).toInstance(RequestTests.transactionalRequestHandler);
-                bind(UpdateTransactionalRequestHandler.class).toInstance(RequestTests.updateTransactionalRequestHandler);
-                bind(FailForTransactionalRequestHandler.class).toInstance(RequestTests.failForTransactionalRequestHandler);
+                bind(TransactionalRequestHandler.class).toInstance(spies.transactionalRequestHandler);
+                bind(UpdateTransactionalRequestHandler.class).toInstance(spies.updateTransactionalRequestHandler);
+                bind(FailForTransactionalRequestHandler.class).toInstance(spies.failForTransactionalRequestHandler);
 
-                bind(ChainingFirstRequestHandler.class).toInstance(RequestTests.chainingFirstRequestHandler);
-                bind(ChainingSecondRequestHandler.class).toInstance(RequestTests.chainingSecondRequestHandler);
-
-
+                bind(ChainingFirstRequestHandler.class).toInstance(spies.chainingFirstRequestHandler);
+                bind(ChainingSecondRequestHandler.class).toInstance(spies.chainingSecondRequestHandler);
             }
-
         }));
-
-        return injector;
     }
-
-    private static void rewirePoshtarProvider(Injector injector, Object handlerSpy) {
-        try {
-            Provider<Poshtar> correctProvider = injector.getProvider(Poshtar.class);
-
-            // Walk past the Mockito-generated subclass to find the real class
-            // that declares the field.
-            var className = handlerSpy.getClass().getName();
-            Class<?> clazz = handlerSpy.getClass();
-            while (clazz != null && !clazz.equals(ChainingFirstRequestHandler.class)) {
-                clazz = clazz.getSuperclass();
-            }
-            if (clazz == null) {
-                throw new IllegalStateException(String.format("Could not locate %s in spy's class hierarchy", className));
-            }
-
-            Field providerField = clazz.getDeclaredField("poshtarProvider");
-            providerField.setAccessible(true);
-            providerField.set(handlerSpy, correctProvider);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to rewire poshtarProvider on ChainingFirstRequestHandler spy", e);
-        }
-    }
-
 }

@@ -34,7 +34,7 @@ import java.util.Map;
  * Class maps specific notification type to its designated handler class, including Spring proxies.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class SpringNotificationRegistry extends AbstractNotificationRegistry implements ApplicationListener<ContextRefreshedEvent> {

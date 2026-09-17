@@ -22,54 +22,95 @@ import io.github.nikola_velemir.poshtar.guice.adapter.notification.deps.transact
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 import org.mockito.Mockito;
 
+/**
+ * Shared test bootstrap helpers for the Poshtar notification test suites.
+ * <p>
+ * IMPORTANT: this class is intentionally NOT coupled to any specific
+ * {@code NotificationTests} class. Earlier versions wrote directly to
+ * static fields on one hardcoded {@code NotificationTests} class, which
+ * silently broke any *other* test class (e.g. one in a sibling package)
+ * that reused these helpers - their fields were never populated and Guice
+ * failed with "Binding to null instances is not allowed".
+ * <p>
+ * Instead, {@link #createMocks()} and {@link #createSpies(Injector)} return
+ * plain holder objects. Each calling test class is responsible for copying
+ * the fields it needs into its own static fields.
+ */
 @OverruleNoInjection
 public class NotificationTestsUtils {
-    static void createMocks() {
-        NotificationTests.mockService = Mockito.mock(MockService.class);
-        NotificationTests.mockServiceDeep = Mockito.mock(MockServiceDeep.class);
+
+    /** Plain Mockito mocks shared by a single test run. */
+    public static class Mocks {
+        public MockService mockService;
+        public MockServiceDeep mockServiceDeep;
     }
 
-    static void createSpies(Injector bootstrapInjector) {
-        NotificationTests.failedExecutionHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationHandler.class));
-        NotificationTests.failedExecutionFineHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationFineHandler.class));
-        NotificationTests.injectionFirstHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationFirstHandler.class));
-        NotificationTests.injectionSecondHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationSecondHandler.class));
-        NotificationTests.injectionThirdHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationThirdHandler.class));
-        NotificationTests.nullHandler = Mockito.spy(bootstrapInjector.getInstance(NullNotificationHandler.class));
-        NotificationTests.pingFirstHandler = Mockito.spy(bootstrapInjector.getInstance(PingFirstHandler.class));
-        NotificationTests.pingSecondHandler = Mockito.spy(bootstrapInjector.getInstance(PingSecondHandler.class));
-        NotificationTests.failTransactionalFirst = Mockito.spy(bootstrapInjector.getInstance(FailTransactionalNotificationFirstHandler.class));
-        NotificationTests.failTransactionalSecond = Mockito.spy(bootstrapInjector.getInstance(FailTransactionalNotificationSecondHandler.class));
-        NotificationTests.transactionalNotificationFirstHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationFirstHandler.class));
-        NotificationTests.transactionalNotificationSecondHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationSecondHandler.class));
-
-        NotificationTests.basicMockHandler = Mockito.spy(bootstrapInjector.getInstance(BasicMockNotificationHandler.class));
-        NotificationTests.hierarchyNotificationHandler = Mockito.spy(bootstrapInjector.getInstance(MockHierarchyNotificationHandler.class));
-
+    /** Mockito spies wrapping real Guice-created handler instances. */
+    public static class Spies {
+        public FailedExecutionNotificationHandler failedExecutionHandler;
+        public FailedExecutionNotificationFineHandler failedExecutionFineHandler;
+        public InjectionNotificationFirstHandler injectionFirstHandler;
+        public InjectionNotificationSecondHandler injectionSecondHandler;
+        public InjectionNotificationThirdHandler injectionThirdHandler;
+        public NullNotificationHandler nullHandler;
+        public PingFirstHandler pingFirstHandler;
+        public PingSecondHandler pingSecondHandler;
+        public FailTransactionalNotificationFirstHandler failTransactionalFirst;
+        public FailTransactionalNotificationSecondHandler failTransactionalSecond;
+        public TransactionalNotificationFirstHandler transactionalNotificationFirstHandler;
+        public TransactionalNotificationSecondHandler transactionalNotificationSecondHandler;
+        public BasicMockNotificationHandler basicMockHandler;
+        public MockHierarchyNotificationHandler hierarchyNotificationHandler;
     }
 
-    static Injector buildTestInjector() {
+    public static Mocks createMocks() {
+        Mocks mocks = new Mocks();
+        mocks.mockService = Mockito.mock(MockService.class);
+        mocks.mockServiceDeep = Mockito.mock(MockServiceDeep.class);
+        return mocks;
+    }
+
+    public static Spies createSpies(Injector bootstrapInjector) {
+        Spies spies = new Spies();
+        spies.failedExecutionHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationHandler.class));
+        spies.failedExecutionFineHandler = Mockito.spy(bootstrapInjector.getInstance(FailedExecutionNotificationFineHandler.class));
+        spies.injectionFirstHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationFirstHandler.class));
+        spies.injectionSecondHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationSecondHandler.class));
+        spies.injectionThirdHandler = Mockito.spy(bootstrapInjector.getInstance(InjectionNotificationThirdHandler.class));
+        spies.nullHandler = Mockito.spy(bootstrapInjector.getInstance(NullNotificationHandler.class));
+        spies.pingFirstHandler = Mockito.spy(bootstrapInjector.getInstance(PingFirstHandler.class));
+        spies.pingSecondHandler = Mockito.spy(bootstrapInjector.getInstance(PingSecondHandler.class));
+        spies.failTransactionalFirst = Mockito.spy(bootstrapInjector.getInstance(FailTransactionalNotificationFirstHandler.class));
+        spies.failTransactionalSecond = Mockito.spy(bootstrapInjector.getInstance(FailTransactionalNotificationSecondHandler.class));
+        spies.transactionalNotificationFirstHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationFirstHandler.class));
+        spies.transactionalNotificationSecondHandler = Mockito.spy(bootstrapInjector.getInstance(TransactionalNotificationSecondHandler.class));
+        spies.basicMockHandler = Mockito.spy(bootstrapInjector.getInstance(BasicMockNotificationHandler.class));
+        spies.hierarchyNotificationHandler = Mockito.spy(bootstrapInjector.getInstance(MockHierarchyNotificationHandler.class));
+        return spies;
+    }
+
+    public static Injector buildTestInjector(DummyIncrementService dummyIncrementService, Mocks mocks, Spies spies) {
         return Guice.createInjector(
                 Modules.override(new TestModule()).with(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(DummyIncrementService.class).toInstance(NotificationTests.dummyIncrementService);
-                        bind(FailedExecutionNotificationHandler.class).toInstance(NotificationTests.failedExecutionHandler);
-                        bind(FailedExecutionNotificationFineHandler.class).toInstance(NotificationTests.failedExecutionFineHandler);
-                        bind(InjectionNotificationFirstHandler.class).toInstance(NotificationTests.injectionFirstHandler);
-                        bind(InjectionNotificationSecondHandler.class).toInstance(NotificationTests.injectionSecondHandler);
-                        bind(InjectionNotificationThirdHandler.class).toInstance(NotificationTests.injectionThirdHandler);
-                        bind(NullNotificationHandler.class).toInstance(NotificationTests.nullHandler);
-                        bind(PingFirstHandler.class).toInstance(NotificationTests.pingFirstHandler);
-                        bind(PingSecondHandler.class).toInstance(NotificationTests.pingSecondHandler);
-                        bind(FailTransactionalNotificationSecondHandler.class).toInstance(NotificationTests.failTransactionalSecond);
-                        bind(FailTransactionalNotificationFirstHandler.class).toInstance(NotificationTests.failTransactionalFirst);
-                        bind(TransactionalNotificationSecondHandler.class).toInstance(NotificationTests.transactionalNotificationSecondHandler);
-                        bind(TransactionalNotificationFirstHandler.class).toInstance(NotificationTests.transactionalNotificationFirstHandler);
-                        bind(BasicMockNotificationHandler.class).toInstance(NotificationTests.basicMockHandler);
-                        bind(MockHierarchyNotificationHandler.class).toInstance(NotificationTests.hierarchyNotificationHandler);
-                        bind(MockServiceDeep.class).toInstance(NotificationTests.mockServiceDeep);
-                        bind(MockService.class).toInstance(NotificationTests.mockService);
+                        bind(DummyIncrementService.class).toInstance(dummyIncrementService);
+                        bind(FailedExecutionNotificationHandler.class).toInstance(spies.failedExecutionHandler);
+                        bind(FailedExecutionNotificationFineHandler.class).toInstance(spies.failedExecutionFineHandler);
+                        bind(InjectionNotificationFirstHandler.class).toInstance(spies.injectionFirstHandler);
+                        bind(InjectionNotificationSecondHandler.class).toInstance(spies.injectionSecondHandler);
+                        bind(InjectionNotificationThirdHandler.class).toInstance(spies.injectionThirdHandler);
+                        bind(NullNotificationHandler.class).toInstance(spies.nullHandler);
+                        bind(PingFirstHandler.class).toInstance(spies.pingFirstHandler);
+                        bind(PingSecondHandler.class).toInstance(spies.pingSecondHandler);
+                        bind(FailTransactionalNotificationSecondHandler.class).toInstance(spies.failTransactionalSecond);
+                        bind(FailTransactionalNotificationFirstHandler.class).toInstance(spies.failTransactionalFirst);
+                        bind(TransactionalNotificationSecondHandler.class).toInstance(spies.transactionalNotificationSecondHandler);
+                        bind(TransactionalNotificationFirstHandler.class).toInstance(spies.transactionalNotificationFirstHandler);
+                        bind(BasicMockNotificationHandler.class).toInstance(spies.basicMockHandler);
+                        bind(MockHierarchyNotificationHandler.class).toInstance(spies.hierarchyNotificationHandler);
+                        bind(MockServiceDeep.class).toInstance(mocks.mockServiceDeep);
+                        bind(MockService.class).toInstance(mocks.mockService);
                     }
                 })
         );

@@ -26,6 +26,8 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Template rule for no-injection logic.
@@ -35,7 +37,7 @@ import java.util.Set;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
  * @since 1.0.0
  */
@@ -50,7 +52,8 @@ abstract class NoInjectionRule implements Rule {
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        Set<String> forbidden = ctx.getAll();
+
+        Set<String> forbidden = provideForbiddenFQNS(ctx);
         if (forbidden.isEmpty()) return;
 
         for (Element root : roundEnv.getRootElements()) {
@@ -64,6 +67,8 @@ abstract class NoInjectionRule implements Rule {
             checkClassBody((TypeElement) root, forbidden, ctx);
         }
     }
+
+    protected abstract Set<String> provideForbiddenFQNS(ProcessorContext ctx);
 
     /**
      * Checks the body of a class in search for forbidden components that should not be injected or instantiated.
@@ -93,7 +98,8 @@ abstract class NoInjectionRule implements Rule {
         if (enclosed.getKind() == ElementKind.METHOD) {
             ExecutableElement method = (ExecutableElement) enclosed;
             for (VariableElement param : method.getParameters()) {
-                if (isForbiddenType(param.asType(), forbidden, ctx)) {
+                var isForbidden = isForbiddenType(param.asType(), forbidden, ctx);
+                if (isForbidden) {
                     logError(param, ctx);
                 }
             }
@@ -111,7 +117,8 @@ abstract class NoInjectionRule implements Rule {
         if (enclosed.getKind() == ElementKind.CONSTRUCTOR) {
             ExecutableElement constructor = (ExecutableElement) enclosed;
             for (VariableElement param : constructor.getParameters()) {
-                if (isForbiddenType(param.asType(), forbidden, ctx)) {
+                var isForbidden = isForbiddenType(param.asType(), forbidden, ctx);
+                if (isForbidden) {
                     logError(param, ctx);
                 }
             }
@@ -136,7 +143,8 @@ abstract class NoInjectionRule implements Rule {
     protected void validateFieldInjection(Set<String> forbidden, ProcessorContext ctx, Element enclosed) {
         if (enclosed.getKind() == ElementKind.FIELD) {
             VariableElement field = (VariableElement) enclosed;
-            if (isForbiddenType(field.asType(), forbidden, ctx)) {
+            var isForbidden = isForbiddenType(field.asType(), forbidden, ctx);
+            if (isForbidden) {
                 logError(field, ctx);
             }
         }

@@ -27,7 +27,7 @@ package io.github.nikola_velemir.poshtar.core.exceptions;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public class PoshtarException extends RuntimeException {

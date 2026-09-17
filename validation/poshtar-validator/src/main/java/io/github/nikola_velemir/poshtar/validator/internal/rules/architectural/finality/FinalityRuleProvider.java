@@ -19,12 +19,26 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.deadPipeline.DeadPipelineRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.noInjection.NoInjectionRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.registration.RegistrationRuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FinalityRuleProvider implements RuleProvider {
-    public static List<Rule> provide() {
-        return List.of(new NotificationFinalityRule(), new RequestFinalityRule());
+    @Override
+    public RuleKind getKind() {
+        return RuleKind.ARCHITECTURAL;
+    }
+
+    public  List<Rule> provide() {
+        return Stream.of(
+                        new NotificationFinalityRuleProvider().provide(),
+                        new RequestFinalityRuleProvider().provide()
+                ).flatMap(List::stream)
+                .toList();
     }
 }

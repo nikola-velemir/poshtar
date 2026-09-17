@@ -19,15 +19,22 @@
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.registration;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class RegistrationRuleProvider implements RuleProvider {
-    public static List<Rule> provide() {
-        return List.of(
-                new AmbiguityRule(),
-                new OrphanRequestRule()
-        );
+    @Override
+    public RuleKind getKind() {
+        return RuleKind.ARCHITECTURAL;
+    }
+
+    public  List<Rule> provide() {
+        return Stream.of(
+                new AmbiguityRuleProvider().provide(),
+                new OrphanRequestRuleProvider().provide()
+        ).flatMap(List::stream).toList();
     }
 }

@@ -18,6 +18,9 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Class acts as an injector to provide {@link RuleValidator} implementation, since implementation is package private.
  */
@@ -27,7 +30,7 @@ public class RuleValidatorProvider {
      *
      * @return Implementation of the {@link RuleValidator}, which will be used by the processor.
      */
-    public static RuleValidator provideValidator() {
-        return new RuleValidatorImpl();
+    public static RuleValidator provideValidator(Set<RuleKind> kinds) {
+        return new RuleValidatorImpl(kinds);
     }
 }

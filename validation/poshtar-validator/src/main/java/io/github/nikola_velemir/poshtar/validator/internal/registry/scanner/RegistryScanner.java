@@ -27,7 +27,7 @@ import javax.annotation.processing.RoundEnvironment;
  * to related components to later use the for validating.
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface RegistryScanner {

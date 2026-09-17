@@ -31,7 +31,7 @@ package io.github.nikola_velemir.poshtar.core.request;
  *
  * @param <TResponse> The type of the response expected after processing this request.
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @since 1.0.0
  */
 public interface Request<TResponse> {

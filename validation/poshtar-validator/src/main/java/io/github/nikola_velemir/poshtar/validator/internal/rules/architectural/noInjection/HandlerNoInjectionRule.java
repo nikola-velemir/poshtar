@@ -27,6 +27,8 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Rule that validates handler no-injection logic.
@@ -36,7 +38,7 @@ import java.util.Set;
  * </p>
  *
  * @author Nikola Velemir
- * @version ${project.version}
+ * @version ${revision}
  * @see io.github.nikola_velemir.poshtar.core.exceptions.AmbiguousHandlerException
  * @since 1.0.0
  */
@@ -71,6 +73,15 @@ class HandlerNoInjectionRule extends NoInjectionRule {
 
         return typeUtils.isAssignable(erasedType, erasedReq) ||
                 typeUtils.isAssignable(erasedType, erasedNotif);
+    }
+
+    @Override
+    protected Set<String> provideForbiddenFQNS(ProcessorContext ctx) {
+        Set<String> reqHandlers = ctx.getRequestHandlerFQNS();
+        Set<String> notifHandlers = ctx.getNotificationHandlerFQNS();
+
+        return Stream.concat(reqHandlers.stream(), notifHandlers.stream())
+                .collect(Collectors.toSet());
     }
 
     /**
