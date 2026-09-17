@@ -2,21 +2,24 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.finality;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class NotificationFinalityTests {
+public class NotificationFinalityTests extends PoshtarProcessorTestBed {
 
 
     @Test
     @DisplayName("Compilation fails when a notification is not final")
     void shouldFailCompilation_whenNotificationNotFinal() {
-        Compilation compilation = compile(NonFinal.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(NonFinal.set);
 
         assertThat(compilation).failed();
 
@@ -33,7 +36,10 @@ public class NotificationFinalityTests {
     @Test
     @DisplayName("Compilation fails when a notification is not record")
     void shouldFailCompilation_whenNotificationNotRecord() {
-        Compilation compilation = compile(NonRecord.set);
+
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(NonRecord.set);
 
         assertThat(compilation).failed();
 
@@ -49,7 +55,9 @@ public class NotificationFinalityTests {
     @Test
     @DisplayName("Compilation passes for final notification")
     void shouldPassCompilation_whenNotificationIsFinal() {
-        Compilation compilation = compile(Final.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Final.set);
 
         assertThat(compilation).succeeded();
     }
@@ -57,7 +65,10 @@ public class NotificationFinalityTests {
     @Test
     @DisplayName("Compilation passes for record notification")
     void shouldPassCompilation_whenNotificationIsRecord() {
-        Compilation compilation = compile(Record.set);
+
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Record.set);
 
         assertThat(compilation).succeeded();
     }
@@ -100,5 +111,9 @@ public class NotificationFinalityTests {
                 JavaFileObjects.forResource("test/fixtures/rules/architectural/finality/notification/NonRecordNotificationHandler.java");
         static final JavaFileObject[] set = {notification, handler};
 
+    }
+    private PoshtarValidationProcessor createProcessor(){
+        var validator = new RuleValidatorProvider.Notification();
+        return new PoshtarValidationProcessor(validator);
     }
 }

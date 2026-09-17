@@ -2,21 +2,26 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.finality;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.processing.AbstractProcessor;
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class RequestFinalityTests {
+public class RequestFinalityTests extends PoshtarProcessorTestBed {
 
 
     @Test
     @DisplayName("Compilation fails when a request is not final")
     void shouldFailCompilation_whenRequestNotFinal() {
-        Compilation compilation = compile(NonFinal.set);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(NonFinal.set);
 
         assertThat(compilation).failed();
 
@@ -33,7 +38,10 @@ public class RequestFinalityTests {
     @Test
     @DisplayName("Compilation fails when a request is not record")
     void shouldFailCompilation_whenRequestNotRecord() {
-        Compilation compilation = compile(NonRecord.set);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(NonRecord.set);
 
         assertThat(compilation).failed();
 
@@ -49,7 +57,10 @@ public class RequestFinalityTests {
     @Test
     @DisplayName("Compilation passes for final request")
     void shouldPassCompilation_whenRequestIsFinal() {
-        Compilation compilation = compile(Final.set);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        . compile(Final.set);
 
         assertThat(compilation).succeeded();
     }
@@ -57,7 +68,10 @@ public class RequestFinalityTests {
     @Test
     @DisplayName("Compilation passes for record request")
     void shouldPassCompilation_whenRequestIsRecord() {
-        Compilation compilation = compile(Record.set);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        . compile(Record.set);
 
         assertThat(compilation).succeeded();
     }
@@ -100,5 +114,9 @@ public class RequestFinalityTests {
                 JavaFileObjects.forResource("test/fixtures/rules/architectural/finality/request/NonRecordRequestHandler.java");
         static final JavaFileObject[] set = {request, handler};
 
+    }
+    private PoshtarValidationProcessor createProcessor(){
+        var validator = new RuleValidatorProvider.Request();
+        return new PoshtarValidationProcessor(validator);
     }
 }

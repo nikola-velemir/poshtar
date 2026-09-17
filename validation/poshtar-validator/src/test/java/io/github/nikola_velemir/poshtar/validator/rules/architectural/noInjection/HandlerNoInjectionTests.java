@@ -2,6 +2,8 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.noInjecti
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,9 +11,8 @@ import org.junit.jupiter.api.Test;
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class HandlerNoInjectionTests {
+public class HandlerNoInjectionTests extends PoshtarProcessorTestBed {
     private static class Notification {
         static final JavaFileObject notification =
                 JavaFileObjects.forResource("test/fixtures/rules/architectural/noInjection/handler/InjectedNotification.java");
@@ -25,6 +26,7 @@ public class HandlerNoInjectionTests {
         static final JavaFileObject[] validSet = {notification, handler, validConsumer};
         static final JavaFileObject[] failingSet = {notification, handler, failingConsumer};
     }
+
     private static class Request {
         static final JavaFileObject request =
                 JavaFileObjects.forResource("test/fixtures/rules/architectural/noInjection/handler/InjectedRequest.java");
@@ -38,10 +40,14 @@ public class HandlerNoInjectionTests {
         static final JavaFileObject[] validSet = {request, handler, validConsumer};
         static final JavaFileObject[] failingSet = {request, handler, failingConsumer};
     }
+
     @Test
     @DisplayName("Compilation fails when notification components injected but not overruled!")
     void shouldFailCompilation_whenNotificationComponentsNotOverruled() {
-        Compilation compilation = compile(Notification.failingSet);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Notification.failingSet);
 
         assertThat(compilation).failed();
 
@@ -49,17 +55,25 @@ public class HandlerNoInjectionTests {
                 .hadErrorContaining("PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. Use 'Poshtar.send(request)'")
                 .inFile(Notification.failingConsumer);
     }
+
     @Test
     @DisplayName("Compilation passes when notification components injected and overruled!")
     void shouldFailCompilation_whenNotificationComponentsOverruled() {
-        Compilation compilation = compile(Notification.validSet);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Notification.validSet);
 
         assertThat(compilation).succeeded();
     }
+
     @Test
     @DisplayName("Compilation fails when request components injected but not overruled!")
     void shouldFailCompilation_whenRequestComponentsNotOverruled() {
-        Compilation compilation = compile(Request.failingSet);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Request.failingSet);
 
         assertThat(compilation).failed();
 
@@ -67,11 +81,20 @@ public class HandlerNoInjectionTests {
                 .hadErrorContaining("PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. Use 'Poshtar.send(request)'")
                 .inFile(Request.failingConsumer);
     }
+
     @Test
     @DisplayName("Compilation passes when request components injected and overruled!")
     void shouldFailCompilation_whenRequestComponentsOverruled() {
-        Compilation compilation = compile(Request.validSet);
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Request.validSet);
 
         assertThat(compilation).succeeded();
+    }
+
+    private PoshtarValidationProcessor createProcessor() {
+        var validator = new RuleValidatorProvider.Handler();
+        return new PoshtarValidationProcessor(validator);
     }
 }

@@ -2,21 +2,24 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.registrat
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class OrphanRequestTests {
+public class OrphanRequestTests extends PoshtarProcessorTestBed {
 
 
     @Test
     @DisplayName("Compilation fails when a request has no registered handler")
     void shouldFailCompilation_whenRequestIsOrphan() {
-        Compilation compilation = compile(completeSet);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(completeSet);
 
         assertThat(compilation).failed();
 
@@ -29,7 +32,10 @@ public class OrphanRequestTests {
     @Test
     @DisplayName("Compilation succeeds with no orphan request")
     void shouldPassCompilation_whenRequestNotOrphan() {
-        Compilation compilation = compile(matched);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(matched);
 
         assertThat(compilation).succeeded();
 
@@ -38,7 +44,10 @@ public class OrphanRequestTests {
     @Test
     @DisplayName("Compilation succeeds with suppressed orphan")
     void shouldPassCompilation_whenSuppressed() {
-        Compilation compilation = compile(suppressedRequest);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(suppressedRequest);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadErrorCount(0);

@@ -23,6 +23,7 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class RegistrationRuleProvider implements RuleProvider {
     @Override
@@ -31,9 +32,9 @@ public class RegistrationRuleProvider implements RuleProvider {
     }
 
     public  List<Rule> provide() {
-        return List.of(
-                new AmbiguityRule(),
-                new OrphanRequestRule()
-        );
+        return Stream.of(
+                new AmbiguityRuleProvider().provide(),
+                new OrphanRequestRuleProvider().provide()
+        ).flatMap(List::stream).toList();
     }
 }

@@ -2,15 +2,15 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.noInjecti
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class BehaviourNoInjectionTests {
+public class BehaviourNoInjectionTests extends PoshtarProcessorTestBed {
     static final JavaFileObject request =
             JavaFileObjects.forResource("test/fixtures/rules/architectural/noInjection/behaviour/InjectedRequest.java");
     static final JavaFileObject behaviour =
@@ -28,7 +28,10 @@ public class BehaviourNoInjectionTests {
     @Test
     @DisplayName("Compilation fails when notification components injected but not overruled!")
     void shouldFailCompilation_whenNotificationComponentsNotOverruled() {
-        Compilation compilation = compile(failingSet);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(failingSet);
 
         assertThat(compilation).failed();
 
@@ -40,7 +43,10 @@ public class BehaviourNoInjectionTests {
     @Test
     @DisplayName("Compilation passes when notification components injected and overruled!")
     void shouldFailCompilation_whenNotificationComponentsOverruled() {
-        Compilation compilation = compile(validSet);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(validSet);
 
         assertThat(compilation).succeeded();
     }

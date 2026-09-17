@@ -21,8 +21,11 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality.NotificationFinalityRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality.RequestFinalityRuleProvider;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class NoInjectionRuleProvider implements RuleProvider {
     @Override
@@ -31,9 +34,10 @@ public class NoInjectionRuleProvider implements RuleProvider {
     }
 
     public  List<Rule> provide(){
-        return List.of(
-                new BehaviourNoInjectionRule(),
-                new HandlerNoInjectionRule()
-        );
+        return Stream.of(
+                        new BehaviourNoInjectionRuleProvider().provide(),
+                        new HandlerNoInjectionRuleProvider().provide()
+                ).flatMap(List::stream)
+                .toList();
     }
 }

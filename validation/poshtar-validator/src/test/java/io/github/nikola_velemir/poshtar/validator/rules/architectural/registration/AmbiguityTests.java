@@ -2,15 +2,15 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.registrat
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class AmbiguityTests {
+public class AmbiguityTests extends PoshtarProcessorTestBed {
 
     private final JavaFileObject request =
             JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/AmbiguousRequest.java");
@@ -26,7 +26,10 @@ public class AmbiguityTests {
     @Test
     @DisplayName("Compilation fails when a request has multiple handlers registered")
     void shouldFailCompilation_whenDuplicateHandlersExist() {
-        Compilation compilation = compile(ambiguousSet);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(ambiguousSet);
 
         assertThat(compilation).failed();
 
@@ -49,7 +52,10 @@ public class AmbiguityTests {
     @Test
     @DisplayName("Compilation succeeds when exactly one handler is registered")
     void shouldSucceed_whenSingleHandlerIsRegistered() {
-        Compilation compilation = compile(validSingleHandlerSet);
+        Compilation compilation =
+                createCompiler()
+                        .withDefaultProcessor()
+                        .compile(validSingleHandlerSet);
 
         assertThat(compilation).succeeded();
     }

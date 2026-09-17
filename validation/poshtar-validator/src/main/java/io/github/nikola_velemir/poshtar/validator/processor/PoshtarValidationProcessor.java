@@ -63,6 +63,14 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 public class PoshtarValidationProcessor extends AbstractProcessor {
+    public PoshtarValidationProcessor() {
+    }
+
+    public PoshtarValidationProcessor(RuleValidator validator) {
+
+        this.validator = validator;
+    }
+
     /**
      * The set of annotations this processor is interested in monitoring.
      */
@@ -126,7 +134,8 @@ public class PoshtarValidationProcessor extends AbstractProcessor {
 
         String ruleOptionName = ProcessorConstants.OPTIONS.get(ProcessorConstants.OptionKey.RULES);
         enabledRuleKinds = OptionsResolver.resolveEnabledRuleKinds(ruleOptionName, processingEnv);
-        validator = RuleValidatorProvider.provideValidator(enabledRuleKinds);
+        if (validator == null)
+            validator = RuleValidatorProvider.provideValidator(enabledRuleKinds);
         ProcessingEnvironment unwrapped = IdeUnwrapper.unwrap(ProcessingEnvironment.class, processingEnv);
         this.trees = Trees.instance(unwrapped);
     }

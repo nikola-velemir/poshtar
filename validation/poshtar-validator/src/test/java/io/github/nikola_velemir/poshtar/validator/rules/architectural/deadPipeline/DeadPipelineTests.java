@@ -2,15 +2,16 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.deadPipel
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
+import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static io.github.nikola_velemir.poshtar.validator.rules.TestUtils.compile;
 
-public class DeadPipelineTests {
+public class DeadPipelineTests extends PoshtarProcessorTestBed {
 
     private static class Dead {
         static final JavaFileObject request =
@@ -82,7 +83,10 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation warns when pipeline dead")
     void shouldWarn_whenPipelineDead() {
-        Compilation compilation = compile(Dead.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(
+                       createProcessor()
+                ).compile(Dead.set);
 
         assertThat(compilation).succeeded();
 
@@ -95,7 +99,10 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation does not warn when pipeline alive")
     void shouldNotWarn_whenPipelineAlive() {
-        Compilation compilation = compile(Alive.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Alive.set);
+
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
@@ -104,7 +111,9 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation does not warn when behaviours throw")
     void shouldNotWarn_whenBehavioursThrow() {
-        Compilation compilation = compile(Throwing.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Throwing.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
@@ -113,7 +122,9 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation warns when behaviours shadows")
     void shouldWarn_whenShadows() {
-        Compilation compilation = compile(Shadow.Dead.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Shadow.Dead.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation)
@@ -124,7 +135,9 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation does not warn when behaviours shadows")
     void shouldNotWarn_whenShadows() {
-        Compilation compilation = compile(Shadow.Alive.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Shadow.Alive.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
@@ -132,9 +145,15 @@ public class DeadPipelineTests {
     @Test
     @DisplayName("Compilation does not warn when suppressed")
     void shouldNotWarn_whenSuppressed() {
-        Compilation compilation = compile(Suppressed.set);
+        Compilation compilation = createCompiler()
+                .withProcessors(createProcessor())
+                .compile(Suppressed.set);
 
         assertThat(compilation).succeeded();
         assertThat(compilation).hadWarningCount(0);
+    }
+    private PoshtarValidationProcessor createProcessor(){
+        var ruleProvider = new RuleValidator();
+        return new PoshtarValidationProcessor(ruleProvider);
     }
 }
