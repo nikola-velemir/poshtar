@@ -103,16 +103,31 @@ public class PoshtarFactory {
     public Poshtar poshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry, @Named(TaskExecutors.IO) ExecutorService executorService) {
         return new MicronautPoshtar(requestRegistry, notificationRegistry, executorService);
     }
+    /**
+     * Creates a default exector that poshtar will consume for async dispatch
+     * @param ioExecutor IO Executor (default)
+     * @return designated executor
+     */
     @Singleton
     @Named("poshtar")
     ExecutorService poshtarExecutorService(@Named(TaskExecutors.IO) ExecutorService ioExecutor) {
         return ioExecutor;
     }
+    /**
+     * Creates a dedicated {@link Sender} Bean
+     * @param poshtar
+     * @return
+     */
     @Singleton
     public Sender sender(Poshtar poshtar) {
         return poshtar;
     }
 
+    /**
+     * Creates a dedicated {@link Publisher} Bean
+     * @param poshtar
+     * @return
+     */
     @Singleton
     public Publisher publisher(Poshtar poshtar) {
         return poshtar;
