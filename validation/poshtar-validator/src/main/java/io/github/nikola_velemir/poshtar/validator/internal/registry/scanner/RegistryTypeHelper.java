@@ -18,6 +18,7 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.registry.scanner;
 
+import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.validator.internal.registry.exception.ResolutionException;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
@@ -44,7 +45,9 @@ import java.util.List;
  */
 class RegistryTypeHelper {
     private static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
+    private static final String NOTIFICATION_HANDLER_INTERFACE_NAME = NotificationHandler.class.getName();
     public static final String RESOLUTION_ERROR_MESSAGE = "PoshtaR: Cannot resolve request type for handle %s. Ensure the Request class is imported and compiles.";
+    public static final String NOTIFICATION_RESOLUTION_ERROR_MESSAGE = "PoshtaR: Cannot resolve notification type for handle %s. Ensure the Notification class is imported and compiles.";
     /**
      * Finds a specific annotation on an element and returns its mirror.
      *
@@ -96,6 +99,51 @@ class RegistryTypeHelper {
                         throw new ResolutionException(errorMessage);
                     }
                     return typeUtils.erasure(requestType).toString();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Inspects a handler class to determine the Fully Qualified Name of the notification it handles.
+     *
+     * <p><b>Type Safety:</b></p>
+     * <p>
+     * If the notification type is unresolved (e.g., the Notification class is missing or has syntax errors),
+     * a {@link ResolutionException} is thrown to prevent the processor from registering
+     * "broken" handlers.
+     * </p>
+     *
+     * @param handler The class element suspected of being a NotificationHandler.
+     * @param ctx     The current processor context for type and element utilities.
+     * @return The FQN of the Notification type as a String, or {@code null} if the interface is not found
+     *         or the handler does not implement it.
+     * @throws ResolutionException if the Notification type is in an error state (TypeKind.ERROR).
+     */
+    public static String extractNotificationType(TypeElement handler, ProcessorContext ctx) throws ResolutionException {
+        var typeUtils = ctx.env.getTypeUtils();
+        var elementUtils = ctx.env.getElementUtils();
+
+        TypeElement notificationHandlerInterface = elementUtils.getTypeElement(NOTIFICATION_HANDLER_INTERFACE_NAME);
+        if (notificationHandlerInterface == null) return null;
+
+        TypeMirror erasedNotificationHandler = typeUtils.erasure(notificationHandlerInterface.asType());
+
+        for (TypeMirror iface : handler.getInterfaces()) {
+            if (typeUtils.isAssignable(typeUtils.erasure(iface), erasedNotificationHandler)) {
+                if (iface instanceof DeclaredType declared) {
+                    List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
+                    if (typeArgs.isEmpty()) continue;
+
+                    TypeMirror notificationType = typeArgs.get(0);
+
+                    if (notificationType.getKind() == TypeKind.ERROR) {
+                        Name handlerName = handler.getSimpleName();
+                        String errorMessage = String.format(NOTIFICATION_RESOLUTION_ERROR_MESSAGE, handlerName);
+                        throw new ResolutionException(errorMessage);
+                    }
+                    return typeUtils.erasure(notificationType).toString();
                 }
             }
         }

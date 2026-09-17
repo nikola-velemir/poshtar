@@ -8,11 +8,27 @@ import io.micronaut.inject.BeanDefinition;
 
 import java.util.Collection;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
-public class MicronautNotificationRegistry extends AbstractNotificationRegistry {
+/**
+ * Micronaut-specific implementation of {@link AbstractNotificationRegistry}.
+ * <p>
+ * Scans the Micronaut {@link BeanContext} for all registered
+ * {@link NotificationHandler} bean definitions,
+ * extracts the target {@link Notification} generic type parameter, and
+ * registers each handler in the registry.
+ * </p>
+ */
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public final class MicronautNotificationRegistry extends AbstractNotificationRegistry {
+    /**
+     * Constructs the notification registry and eagerly discovers and registers all
+     * {@link NotificationHandler} beans present in the Micronaut context.
+     *
+     * @param context the Micronaut {@link BeanContext} used for handler discovery
+     *                and lookup
+     */
     public MicronautNotificationRegistry(BeanContext context) {
-        Collection<BeanDefinition<NotificationHandler>> definitions =
-                context.getBeanDefinitions(NotificationHandler.class);
+        Collection<BeanDefinition<NotificationHandler>> definitions = context
+                .getBeanDefinitions(NotificationHandler.class);
 
         for (BeanDefinition<NotificationHandler> definition : definitions) {
             Class<?> notificationType = definition.getTypeArguments(NotificationHandler.class)

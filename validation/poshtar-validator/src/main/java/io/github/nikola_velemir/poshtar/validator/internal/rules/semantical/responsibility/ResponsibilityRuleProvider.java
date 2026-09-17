@@ -32,7 +32,7 @@ public class ResponsibilityRuleProvider implements RuleProvider {
 
     public List<Rule> provide(){
         return List.of(
-                new SingleResponsibilityHandlerRule()
+                new SingleResponsibilityRule()
         );
     }
 }

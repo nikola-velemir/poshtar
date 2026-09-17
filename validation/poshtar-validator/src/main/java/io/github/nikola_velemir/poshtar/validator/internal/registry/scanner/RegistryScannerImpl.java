@@ -94,6 +94,7 @@ class RegistryScannerImpl implements RegistryScanner {
                 ))
                 .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
     }
+
     private void scanForNotifications(RoundEnvironment roundEnv, ProcessorContext ctx) {
         TypeElement requestInterface = ctx.getElements()
                 .getTypeElement(NOTIFICATION_INTERFACE_NAME);
@@ -144,7 +145,14 @@ class RegistryScannerImpl implements RegistryScanner {
         String requestType = RegistryTypeHelper.extractRequestType(h, ctx);
         if (requestType != null) {
             var mirror = RegistryTypeHelper.getAnnotationMirror(h, HANDLER_ANNOTATION_NAME);
-            ctx.registerHandler(h.getQualifiedName().toString(), requestType, h, mirror);
+            ctx.registerRequestHandler(h.getQualifiedName().toString(), requestType, h, mirror);
+            return;
+        }
+
+        String notificationType = RegistryTypeHelper.extractNotificationType(h, ctx);
+        if (notificationType != null) {
+            var mirror = RegistryTypeHelper.getAnnotationMirror(h, HANDLER_ANNOTATION_NAME);
+            ctx.registerNotificationHandler(h.getQualifiedName().toString(), notificationType, h, mirror);
         }
     }
 

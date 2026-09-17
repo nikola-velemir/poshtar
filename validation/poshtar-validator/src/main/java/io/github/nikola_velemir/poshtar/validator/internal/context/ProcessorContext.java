@@ -19,7 +19,8 @@
 package io.github.nikola_velemir.poshtar.validator.internal.context;
 
 import com.sun.source.util.Trees;
-import io.github.nikola_velemir.poshtar.validator.internal.registry.RegistryEntry;
+import io.github.nikola_velemir.poshtar.validator.internal.registry.NotificationRegistryEntry;
+import io.github.nikola_velemir.poshtar.validator.internal.registry.RequestRegistryEntry;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -46,9 +47,14 @@ import java.util.stream.Collectors;
 public class ProcessorContext {
     public final ProcessingEnvironment env;
     public final Trees trees;
-    private final Map<String, RegistryEntry> handlerRegistry = new LinkedHashMap<>();
+
+
+    private final Map<String, List<NotificationRegistryEntry>> notificationHandlerRegistry = new LinkedHashMap<>();
+
+    private final Map<String, RequestRegistryEntry> requestHandlerRegistry = new LinkedHashMap<>();
     private final Set<String> knownRequests = new HashSet<>();
     private final Set<String> knownNotifications = new HashSet<>();
+
     /**
      * Constructs a context with an explicit Trees instance.
      *
@@ -78,21 +84,27 @@ public class ProcessorContext {
     public void registerRequest(String requestFqn) {
         knownRequests.add(requestFqn);
     }
+
     /**
      * Registers a notification type found in the source code.
      *
      * @param notificationFqn The fully qualified name of the notification class.
      */
-    public void registerNotification(String notificationFqn){
+    public void registerNotification(String notificationFqn) {
         knownNotifications.add(notificationFqn);
     }
+
     /**
      * Returns an unmodifiable view of the handler registry.
      *
      * @return A map of handler names to their respective registry entries.
      */
-    public Map<String, RegistryEntry> getHandlerRegistry() {
-        return Collections.unmodifiableMap(handlerRegistry);
+    public Map<String, RequestRegistryEntry> getRequestHandlerRegistry() {
+        return Collections.unmodifiableMap(requestHandlerRegistry);
+    }
+
+    public Map<String, List<NotificationRegistryEntry>> getNotificationHandlerRegistry() {
+        return Collections.unmodifiableMap(notificationHandlerRegistry);
     }
 
     /**
@@ -121,9 +133,16 @@ public class ProcessorContext {
      * @param handlerElement The compile-time element representing the handler class.
      * @param mirror         The annotation mirror for the @Handler annotation.
      */
-    public void registerHandler(String handlerFqn, String requestFqn,
-                                Element handlerElement, AnnotationMirror mirror) {
-        handlerRegistry.put(handlerFqn, new RegistryEntry(requestFqn, handlerFqn, handlerElement, mirror));
+    public void registerRequestHandler(String handlerFqn, String requestFqn,
+                                       Element handlerElement, AnnotationMirror mirror) {
+        requestHandlerRegistry.put(handlerFqn, new RequestRegistryEntry(requestFqn, handlerFqn, handlerElement, mirror));
+    }
+
+    public void registerNotificationHandler(String handlerFqn, String notification,
+                                            Element handlerElement, AnnotationMirror mirror) {
+        notificationHandlerRegistry
+                .computeIfAbsent(notification, k -> new ArrayList<>())
+                .add(new NotificationRegistryEntry(notification, handlerFqn, handlerElement, mirror));
     }
 
     /**
@@ -134,7 +153,7 @@ public class ProcessorContext {
      * @param mirror           The annotation mirror for the @Behaviour annotation.
      */
     public void registerBehaviour(String behaviourFqn, Element behaviourElement, AnnotationMirror mirror) {
-        handlerRegistry.put(behaviourFqn, new RegistryEntry("BEHAVIOUR", behaviourFqn, behaviourElement, mirror));
+        requestHandlerRegistry.put(behaviourFqn, new RequestRegistryEntry("BEHAVIOUR", behaviourFqn, behaviourElement, mirror));
 
     }
 
@@ -144,9 +163,9 @@ public class ProcessorContext {
      * @return A set of request class names that have at least one handler.
      */
     public Set<String> getHandledRequestTypes() {
-        return handlerRegistry.values().stream()
+        return requestHandlerRegistry.values().stream()
                 .filter(e -> !e.isBehaviour())
-                .map(RegistryEntry::requestFQN)
+                .map(RequestRegistryEntry::requestFQN)
                 .collect(Collectors.toSet());
     }
 
@@ -156,9 +175,9 @@ public class ProcessorContext {
      * @return A set of behavior class names.
      */
     public Set<String> getKnownBehaviours() {
-        return handlerRegistry.values().stream()
-                .filter(RegistryEntry::isBehaviour)
-                .map(RegistryEntry::handlerFQN)
+        return requestHandlerRegistry.values().stream()
+                .filter(RequestRegistryEntry::isBehaviour)
+                .map(RequestRegistryEntry::handlerFQN)
                 .collect(Collectors.toSet());
     }
 
@@ -167,9 +186,25 @@ public class ProcessorContext {
      *
      * @return A set containing all registered handler and behavior class names.
      */
-    public Set<String> getAll() {
-        return handlerRegistry.values().stream()
-                .map(RegistryEntry::handlerFQN)
+    public Set<String> getRequestHandlerFQNS() {
+        return requestHandlerRegistry.values().stream()
+                .filter(s -> !s.isBehaviour())
+
+                .map(RequestRegistryEntry::handlerFQN)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getBehaviourFQNS() {
+        return requestHandlerRegistry.values().stream()
+                .filter(RequestRegistryEntry::isBehaviour)
+                .map(RequestRegistryEntry::handlerFQN)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getNotificationHandlerFQNS() {
+        return notificationHandlerRegistry.values().stream()
+                .flatMap(List::stream)
+                .map(NotificationRegistryEntry::handlerFQN)
                 .collect(Collectors.toSet());
     }
 
@@ -181,6 +216,7 @@ public class ProcessorContext {
     public Set<String> getKnownRequests() {
         return Collections.unmodifiableSet(knownRequests);
     }
+
     /**
      * Provides a set of found notification FQNs to the client class.
      *

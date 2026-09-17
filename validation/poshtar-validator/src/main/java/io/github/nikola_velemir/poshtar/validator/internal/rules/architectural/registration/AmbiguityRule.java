@@ -20,7 +20,7 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.
 
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.registry.RegistryEntry;
+import io.github.nikola_velemir.poshtar.validator.internal.registry.RequestRegistryEntry;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 
@@ -55,9 +55,9 @@ class AmbiguityRule implements Rule {
      */
     @Override
     public void validate(RoundEnvironment roundEnv, ProcessorContext ctx) {
-        Map<String, RegistryEntry> seenRequests = new HashMap<>();
+        Map<String, RequestRegistryEntry> seenRequests = new HashMap<>();
 
-        for (var entry : ctx.getHandlerRegistry().values()) {
+        for (var entry : ctx.getRequestHandlerRegistry().values()) {
             String requestFqn = entry.requestFQN();
             if ("BEHAVIOUR".equals(requestFqn)) continue;
 
@@ -82,7 +82,7 @@ class AmbiguityRule implements Rule {
      * @param conflict The new handler entry causing the ambiguity.
      */
     private static void logError(ProcessorContext ctx, String requestFqn,
-                                 RegistryEntry existing, RegistryEntry conflict) {
+                                 RequestRegistryEntry existing, RequestRegistryEntry conflict) {
         String msgOnConflict = String.format(
                 ALREADY_HANDLED_MESSAGE,
                 requestFqn, existing.handlerFQN());

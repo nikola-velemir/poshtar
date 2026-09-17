@@ -6,7 +6,6 @@ import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.micronaut.scheduling.TaskExecutors;
 import jakarta.inject.Named;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
-public class MicronautPoshtar extends PoshtarBase {
+public final class MicronautPoshtar extends PoshtarBase {
     private final ExecutorService executorService;
 
     /**

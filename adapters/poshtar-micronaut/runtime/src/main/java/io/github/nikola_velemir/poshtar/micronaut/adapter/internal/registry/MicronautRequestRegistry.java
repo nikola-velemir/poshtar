@@ -11,7 +11,17 @@ import io.micronaut.inject.BeanDefinition;
 import java.util.Collection;
 import java.util.List;
 
-public class MicronautRequestRegistry extends AbstractRequestRegistry {
+/**
+ * Micronaut-specific implementation of {@link AbstractRequestRegistry}.
+ * <p>
+ * Handles the auto-discovery of {@link RequestHandler} beans and configured
+ * {@link PipelineBehaviour}s
+ * within the Micronaut {@link BeanContext}, dynamically mapping handlers and
+ * matching behaviors based on
+ * generic {@link Request} types.
+ * </p>
+ */
+public final class MicronautRequestRegistry extends AbstractRequestRegistry {
     private final BeanContext context;
 
     /**
@@ -26,6 +36,13 @@ public class MicronautRequestRegistry extends AbstractRequestRegistry {
         init(pipelineConfiguration);
     }
 
+    /**
+     * Initializes the registry by resolving behaviors and registering matching
+     * request handlers.
+     *
+     * @param pipelineConfiguration the pipeline configuration defining configured
+     *                              behaviors
+     */
     @SuppressWarnings("unchecked")
     private void init(PipelineConfiguration pipelineConfiguration) {
         List<PipelineBehaviour<?, ?>> orderedBehaviours = (List<PipelineBehaviour<?, ?>>) provideBehaviours(
