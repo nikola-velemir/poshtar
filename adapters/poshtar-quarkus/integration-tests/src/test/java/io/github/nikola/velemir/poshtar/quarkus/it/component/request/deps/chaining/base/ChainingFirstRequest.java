@@ -18,8 +18,8 @@
 
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chaining.base;
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public final class ChainingFirstRequest implements Request<ChainedResponse> {
+public final class ChainingFirstRequest implements Query<ChainedResponse> {
 
 }

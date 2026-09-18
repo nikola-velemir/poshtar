@@ -18,9 +18,9 @@
 
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chaining.base;
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public final class ChainingSecondRequest implements Request<String> {
+public final class ChainingSecondRequest implements Query<String> {
     public final int id;
 
     public ChainingSecondRequest(int id) {

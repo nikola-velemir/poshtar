@@ -34,6 +34,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
@@ -126,6 +127,9 @@ class QuarkusPoshtarProcessor {
                 DotName.createSimple(PIPELINE_CONFIGURATION_CLASS_NAME)
         );
     }
-
+    @BuildStep
+    IndexDependencyBuildItem indexCore() {
+        return new IndexDependencyBuildItem("io.github.nikola-velemir", "poshtar-core");
+    }
 
 }
