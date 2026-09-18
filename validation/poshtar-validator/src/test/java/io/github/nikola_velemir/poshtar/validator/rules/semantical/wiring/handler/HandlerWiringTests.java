@@ -37,8 +37,64 @@ public class HandlerWiringTests extends PoshtarProcessorTestBed {
         assertThat(compilation).hadWarningCount(0);
     }
     @Test
-    @DisplayName("Compilation fails for wiring handler with behaviour")
-    void shouldFail_whenWiringHandlerWithBehaviour() {
+    @DisplayName("Compilation fails for wiring void command handler with behaviour")
+    void shouldFail_whenWiringVoidCommandHandlerWithBehaviour() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Fail.VoidCommandHandler.Behaviour.set);
+
+        assertThat(compilation)
+                .failed();
+
+        assertThat(compilation)
+                .hadErrorCount(1);
+
+        assertThat(compilation)
+                .hadErrorContaining("[PoshtaR] Class annotated with @Handler must implement RequestHandler or NotificationHandler.")
+                .inFile(Fail.VoidCommandHandler.Behaviour.handler);
+    }
+    @Test
+    @DisplayName("Compilation fails for wiring command handler with behaviour")
+    void shouldFail_whenWiringCommandHandlerWithBehaviour() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Fail.CommandHandler.Behaviour.set);
+
+        assertThat(compilation)
+                .failed();
+
+        assertThat(compilation)
+                .hadErrorCount(1);
+
+        assertThat(compilation)
+                .hadErrorContaining("[PoshtaR] Class annotated with @Handler must implement RequestHandler or NotificationHandler.")
+                .inFile(Fail.CommandHandler.Behaviour.handler);
+    }
+
+    @Test
+    @DisplayName("Compilation fails for wiring query handler with behaviour")
+    void shouldFail_whenWiringQueryHandlerWithBehaviour() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Fail.QueryHandler.Behaviour.set);
+
+        assertThat(compilation)
+                .failed();
+
+        assertThat(compilation)
+                .hadErrorCount(1);
+
+        assertThat(compilation)
+                .hadErrorContaining("[PoshtaR] Class annotated with @Handler must implement RequestHandler or NotificationHandler.")
+                .inFile(Fail.QueryHandler.Behaviour.handler);
+    }
+
+    @Test
+    @DisplayName("Compilation fails for wiring request handler with behaviour")
+    void shouldFail_whenWiringRequestHandlerWithBehaviour() {
         Compilation compilation =
                 createCompiler()
                         .withProcessors(createProcessor())
@@ -78,10 +134,40 @@ public class HandlerWiringTests extends PoshtarProcessorTestBed {
         static class RequestHandler {
             static class Behaviour {
                 static final JavaFileObject request =
-                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/requestHandler/withBehaviour/FailWithBehaviourRequest.java");
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/request/FailWithBehaviourRequest.java");
                 static final JavaFileObject handler =
-                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/requestHandler/withBehaviour/FailWithBehaviourHandler.java");
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/request/FailWithBehaviourHandler.java");
                 static final JavaFileObject[] set = {request, handler};
+            }
+        }
+
+        static class QueryHandler {
+            static class Behaviour {
+                static final JavaFileObject query =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/query/FailWithBehaviourQuery.java");
+                static final JavaFileObject handler =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/query/FailWithBehaviourHandler.java");
+                static final JavaFileObject[] set = {query, handler};
+            }
+        }
+
+        static class CommandHandler {
+            static class Behaviour {
+                static final JavaFileObject command =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/command/FailWithBehaviourCommand.java");
+                static final JavaFileObject handler =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/command/FailWithBehaviourHandler.java");
+                static final JavaFileObject[] set = {command, handler};
+            }
+        }
+
+        static class VoidCommandHandler {
+            static class Behaviour {
+                static final JavaFileObject command =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/voidCommand/FailWithBehaviourVoidCommand.java");
+                static final JavaFileObject handler =
+                        JavaFileObjects.forResource("test/fixtures/rules/semantical/wiring/handler/fail/voidCommand/FailWithBehaviourVoidHandler.java");
+                static final JavaFileObject[] set = {command, handler};
             }
         }
     }

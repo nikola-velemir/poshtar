@@ -13,6 +13,21 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class OrphanRequestTests extends PoshtarProcessorTestBed {
 
+    @Test
+    @DisplayName("Compilation fails when a query has no registered handler")
+    void shouldFailCompilation_whenQueryIsOrphan() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Query.Fail.set);
+
+        assertThat(compilation).failed();
+
+        assertThat(compilation)
+                .hadErrorContaining("[PoshtaR] PoshtaR VIOLATION: No handler registered for request 'test.fixtures.rules.architectural.registration.orphan.query.fail.UnhandledQuery'")
+                .inFile(Query.Fail.unhandledQuery)
+                .onLineContaining("public record UnhandledQuery");
+    }
 
     @Test
     @DisplayName("Compilation fails when a request has no registered handler")
@@ -20,14 +35,28 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
         Compilation compilation =
                 createCompiler()
                         .withProcessors(createProcessor())
-                        .compile(completeSet);
+                        .compile(Request.Fail.set);
 
         assertThat(compilation).failed();
 
         assertThat(compilation)
                 .hadErrorContaining("[PoshtaR] PoshtaR VIOLATION: No handler registered for request 'fixtures.rules.architectural.registration.orphan.UnhandledRequest'")
-                .inFile(unhandledRequest)
+                .inFile(Request.Fail.unhandledRequest)
                 .onLineContaining("public record UnhandledRequest");
+    }
+
+    @Test
+    @DisplayName("Compilation succeeds with no orphan queires")
+    void shouldPassCompilation_whenQueryotOrphan() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Query.Success.Matched.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .hadWarningCount(0);
+
     }
 
     @Test
@@ -36,35 +65,113 @@ public class OrphanRequestTests extends PoshtarProcessorTestBed {
         Compilation compilation =
                 createCompiler()
                         .withProcessors(createProcessor())
-                        .compile(matched);
+                        .compile(Request.Success.Matched.set);
 
         assertThat(compilation).succeeded();
 
-    }
+        assertThat(compilation)
+                .hadWarningCount(0);
 
+    }
     @Test
-    @DisplayName("Compilation succeeds with suppressed orphan")
-    void shouldPassCompilation_whenSuppressed() {
+    @DisplayName("Compilation succeeds with suppressed orphan query")
+    void shouldPassCompilation_whenQuerySuppressed() {
         Compilation compilation =
                 createCompiler()
                         .withProcessors(createProcessor())
-                        .compile(suppressedRequest);
+                        .compile(Query.Success.Suppressed.set);
 
         assertThat(compilation).succeeded();
-        assertThat(compilation).hadErrorCount(0);
+        assertThat(compilation).hadWarningCount(0);
+    }
+    @Test
+    @DisplayName("Compilation succeeds with suppressed orphan request")
+    void shouldPassCompilation_whenRequestSuppressed() {
+        Compilation compilation =
+                createCompiler()
+                        .withProcessors(createProcessor())
+                        .compile(Request.Success.Suppressed.set);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningCount(0);
     }
 
-    private final JavaFileObject unhandledRequest =
-            JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/UnhandledRequest.java");
-    private final JavaFileObject suppressedRequest =
-            JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/SuppressedOrphanRequest.java");
+    private static class Query {
+        static class Fail {
+            static final JavaFileObject unhandledQuery =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/fail/UnhandledQuery.java");
 
-    private final JavaFileObject matchedRequest =
-            JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/MatchedRequest.java");
-    private final JavaFileObject matchedHandler =
-            JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/MatchedHandler.java");
-    private final JavaFileObject[] completeSet = {unhandledRequest, matchedHandler, matchedRequest};
-    private final JavaFileObject[] matched = {matchedHandler, matchedRequest};
+            static final JavaFileObject matchedQuery =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/success/MatchedQuery.java");
+            static final JavaFileObject matchedHandler =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/success/MatchedQueryHandler.java");
+            static final JavaFileObject[] set = {unhandledQuery, matchedHandler, matchedQuery};
+
+        }
+
+        static class Success {
+            static class Matched {
+
+                static final JavaFileObject query =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/success/MatchedQuery.java");
+                static final JavaFileObject handler =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/success/MatchedQueryHandler.java");
+                static final JavaFileObject[] set = {handler, query};
+
+            }
+
+            static class Suppressed {
+                static final JavaFileObject query =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/query/success/SuppressedOrphanQuery.java");
+
+                static final JavaFileObject matchedRequest =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedRequest.java");
+                static final JavaFileObject matchedHandler =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedHandler.java");
+                static final JavaFileObject[] set = {query, matchedHandler, matchedRequest};
+
+            }
+        }
+    }
+
+    private static class Request {
+        static class Fail {
+
+            static final JavaFileObject unhandledRequest =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/fail/UnhandledRequest.java");
+
+            static final JavaFileObject matchedRequest =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedRequest.java");
+            static final JavaFileObject matchedHandler =
+                    JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedHandler.java");
+            static final JavaFileObject[] set = {unhandledRequest, matchedHandler, matchedRequest};
+        }
+
+        static class Success {
+            static class Matched {
+
+                static final JavaFileObject request =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedRequest.java");
+                static final JavaFileObject handler =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedHandler.java");
+                static final JavaFileObject[] set = {handler, request};
+
+            }
+
+            static class Suppressed {
+                static final JavaFileObject request =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/SuppressedOrphanRequest.java");
+
+                static final JavaFileObject matchedRequest =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedRequest.java");
+                static final JavaFileObject matchedHandler =
+                        JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/orphan/request/success/MatchedHandler.java");
+                static final JavaFileObject[] set = {request, matchedHandler, matchedRequest};
+
+            }
+        }
+    }
+
 
     private PoshtarValidationProcessor createProcessor() {
         var validator = new RuleValidatorProvider.Orphan();
