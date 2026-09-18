@@ -55,14 +55,16 @@ abstract class NoInjectionRule implements Rule {
 
         Set<String> forbidden = provideForbiddenFQNS(ctx);
         if (forbidden.isEmpty()) return;
-
+        System.out.println(forbidden);
         for (Element root : roundEnv.getRootElements()) {
             if (root.getKind() != ElementKind.CLASS) continue;
             TypeElement clazz = (TypeElement) root;
 
             if (clazz.getQualifiedName().contentEquals(MEDIATOR_FQN)) continue;
-
-            if (InjectionBypassChecker.isBypassed(clazz, ctx)) continue;
+            System.out.println(clazz.getSimpleName());
+            var isBypassed = InjectionBypassChecker.isBypassed(clazz, ctx);
+            System.out.println(isBypassed);
+            if (isBypassed) continue;
 
             checkClassBody((TypeElement) root, forbidden, ctx);
         }
