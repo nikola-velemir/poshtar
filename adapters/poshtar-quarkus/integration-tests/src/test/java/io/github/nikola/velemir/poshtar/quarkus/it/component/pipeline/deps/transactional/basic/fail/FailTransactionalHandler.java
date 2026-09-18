@@ -21,10 +21,11 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.tran
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class FailTransactionalHandler implements RequestHandler<FailTransactionalRequest, Unit> {
+public class FailTransactionalHandler implements VoidCommandHandler<FailTransactionalRequest> {
     @Override
     public Unit handle(FailTransactionalRequest request) {
         return null;
