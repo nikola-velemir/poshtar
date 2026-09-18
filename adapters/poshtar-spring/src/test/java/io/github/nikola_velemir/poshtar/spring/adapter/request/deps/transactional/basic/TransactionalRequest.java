@@ -19,7 +19,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactional.basic;
 
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public record TransactionalRequest(String payload) implements Request<String> {
+public record TransactionalRequest(String payload) implements Query<String> {
 }
