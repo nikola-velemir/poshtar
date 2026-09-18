@@ -21,11 +21,12 @@ package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastruct
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
 public class SingleResponsibilityHandler
-        implements RequestHandler<SingleResponsibilityFirstRequest, Unit>
+        implements VoidCommandHandler<SingleResponsibilityFirstRequest>
 //        , NotificationHandler<SingleResponsibilityNotification>
 {
 

@@ -1,10 +1,11 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.mock;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class MockRequestHandler implements RequestHandler<MockRequest, MockResponse> {
+public class MockRequestHandler implements CommandHandler<MockRequest, MockResponse> {
     @Override
     public MockResponse handle(MockRequest mockRequest) {
         var payload = mockRequest.payload();
