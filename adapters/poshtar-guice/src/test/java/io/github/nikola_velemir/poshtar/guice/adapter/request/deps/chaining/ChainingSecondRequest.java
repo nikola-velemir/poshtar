@@ -1,8 +1,8 @@
 package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining;
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Command;
 
-public final class ChainingSecondRequest implements Request<String> {
+public final class ChainingSecondRequest implements Command<String> {
     public final int id;
 
     public ChainingSecondRequest(int id) {

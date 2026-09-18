@@ -21,6 +21,7 @@ package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactiona
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
@@ -29,8 +30,9 @@ import io.github.nikola_velemir.poshtar.core.types.Unit;
 import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
 
 @Handler
-public class UpdateTransactionalRequestHandler implements RequestHandler<UpdateTransactionalRequest, Unit> {
+public class UpdateTransactionalRequestHandler implements VoidCommandHandler<UpdateTransactionalRequest> {
     private final Provider<EntityManager> emProvider;
+
     @Inject
     public UpdateTransactionalRequestHandler(Provider<EntityManager> emProvider) {
         this.emProvider = emProvider;
