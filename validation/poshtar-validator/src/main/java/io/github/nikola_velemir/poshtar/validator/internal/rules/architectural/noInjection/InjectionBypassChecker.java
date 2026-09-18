@@ -30,7 +30,10 @@ class InjectionBypassChecker {
     private static final String BYPASS_ANNOTATION_FQN = OverruleNoInjection.class.getName();
 
     public static boolean isBypassed(TypeElement clazz, ProcessorContext ctx) {
-
+        var hasAnnotation = hasAnnotation(clazz, ctx);
+        var isInTestPackage = isInTestPackage(clazz, ctx);
+        System.out.println("Is annot: " +hasAnnotation);
+        System.out.println("Is in test: "+isInTestPackage);
         return hasAnnotation(clazz, ctx) && isInTestPackage(clazz, ctx);
     }
 
@@ -55,8 +58,10 @@ class InjectionBypassChecker {
                             clazz.getSimpleName() + ".java");
 
             String uri = resource.toUri().toString();
+            System.out.println(uri);
             return uri.contains("/test/");
         } catch (IOException | IllegalArgumentException ignored) {
+            System.out.println(ignored);
         }
         return false;
     }

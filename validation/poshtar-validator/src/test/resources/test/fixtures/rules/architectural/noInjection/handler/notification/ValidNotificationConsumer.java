@@ -1,4 +1,4 @@
-package test.fixtures.rules.architectural.noInjection.handler;
+package test.fixtures.rules.architectural.noInjection.handler.notification;
 
 import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
 

@@ -1,4 +1,4 @@
-package fixtures.rules.architectural.noInjection.handler;
+package fixtures.rules.architectural.noInjection.handler.request;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
