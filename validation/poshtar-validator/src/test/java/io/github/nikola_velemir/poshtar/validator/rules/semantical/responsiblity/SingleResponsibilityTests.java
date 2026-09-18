@@ -28,7 +28,7 @@ public class SingleResponsibilityTests extends PoshtarProcessorTestBed {
     void shouldFail_whenAllImplemented() {
         Compilation compilation = createCompiler()
                 .withProcessors(createProcessor())
-                .compile(All.set);
+                .compile(All.Basic.set);
 
         assertThat(compilation).failed();
 
@@ -37,11 +37,17 @@ public class SingleResponsibilityTests extends PoshtarProcessorTestBed {
 
 
     private static class All {
-        static final JavaFileObject request = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAllRequest.java");
-        static final JavaFileObject godClass = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAll.java");
+        static class Basic {
+            static final JavaFileObject request = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAllRequest.java");
+            static final JavaFileObject godClass = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAll.java");
 
-        static final JavaFileObject notification = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAllNotification.java");
-        static final JavaFileObject[] set = {request, godClass, notification};
+            static final JavaFileObject notification = JavaFileObjects.forResource("test/fixtures/rules/semantical/responsiblity/all/WhenAllNotification.java");
+            static final JavaFileObject[] set = {request, godClass, notification};
+
+        }
+        static class AllRequests{
+
+        }
 
     }
 

@@ -102,8 +102,8 @@ Reasoning: Primitive types cannot carry structured result or error information a
 
 **8. Request Immutability and Finality**
 
-To prevent side effects during pipeline execution, every class implementing the `Request<T>` or `Handler` interface must be declared as `final` or `record`.
+To prevent side effects during pipeline execution, every class implementing the `Request<T>` or `Notification` interface must be declared as `final` or `record`.
 
-Violation: Compilation error if a `Behaviour` or `Handler` class is not marked with the `final` modifier, or if it is not a `record`.
+Violation: Compilation error if a `Request` or `Notification` class is not marked with the `final` modifier, or if it is not a `record`.
 
 Reasoning: Request object travels through multiple behaviors before reaching the handler. Restricting inheritance ensures that the request structure is immutable and its behavior is predictable across the entire pipeline, preventing the "Fragile Base Class" problem within messaging.

@@ -1,4 +1,4 @@
-package test.fixtures.rules.semantical.wiring.valid;
+package test.fixtures.rules.semantical.wiring.behaviour.valid;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
@@ -6,9 +6,9 @@ import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Behaviour
-public class ValidBehaviour implements PipelineBehaviour<ValidRequest, Unit> {
+public class ValidCommandBehaviour implements PipelineBehaviour<ValidCommand, Unit> {
     @Override
-    public Unit handle(ValidRequest validRequest, RequestDelegate<ValidRequest, Unit> requestDelegate) {
+    public Unit handle(ValidCommand request, RequestDelegate<ValidCommand, Unit> next) {
         return null;
     }
 }

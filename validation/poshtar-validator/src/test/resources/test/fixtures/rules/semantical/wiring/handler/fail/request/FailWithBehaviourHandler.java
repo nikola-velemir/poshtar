@@ -1,4 +1,4 @@
-package test.fixtures.rules.semantical.wiring.handler.fail.requestHandler.withBehaviour;
+package test.fixtures.rules.semantical.wiring.handler.fail.request;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
