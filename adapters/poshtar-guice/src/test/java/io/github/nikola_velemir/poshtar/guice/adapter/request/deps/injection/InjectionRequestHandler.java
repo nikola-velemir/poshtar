@@ -18,13 +18,14 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection;
 
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import jakarta.inject.Inject;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 
 @Handler
-public class InjectionRequestHandler implements RequestHandler<InjectionRequest, InjectionResponse> {
+public class InjectionRequestHandler implements QueryHandler<InjectionRequest, InjectionResponse> {
     private final DummyLoggingService loggingService;
 
     @Inject

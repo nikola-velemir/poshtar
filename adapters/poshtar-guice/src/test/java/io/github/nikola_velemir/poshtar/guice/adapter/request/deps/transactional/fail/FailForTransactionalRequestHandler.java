@@ -21,6 +21,7 @@ package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactiona
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import jakarta.persistence.EntityManager;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
@@ -29,7 +30,7 @@ import io.github.nikola_velemir.poshtar.guice.adapter.model.TestEntity;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class FailForTransactionalRequestHandler implements RequestHandler<FailForTransactionalRequest, String> {
+public class FailForTransactionalRequestHandler implements CommandHandler<FailForTransactionalRequest, String> {
     private final Provider<EntityManager> entityManagerProvider;
     @Inject
     public FailForTransactionalRequestHandler(Provider<EntityManager> provider) {

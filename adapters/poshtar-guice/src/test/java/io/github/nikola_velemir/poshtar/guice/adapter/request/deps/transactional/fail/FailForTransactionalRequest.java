@@ -18,7 +18,7 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.transactional.fail;
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Command;
 
-public record FailForTransactionalRequest(String payload) implements Request<String> {
+public record FailForTransactionalRequest(String payload) implements Command<String> {
 }

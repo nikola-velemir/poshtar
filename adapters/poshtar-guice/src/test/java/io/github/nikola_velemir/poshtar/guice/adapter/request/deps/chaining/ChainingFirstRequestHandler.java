@@ -2,12 +2,13 @@ package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.chaining;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
 @Handler
-public class ChainingFirstRequestHandler implements RequestHandler<ChainingFirstRequest, ChainedResponse> {
+public class ChainingFirstRequestHandler implements QueryHandler<ChainingFirstRequest, ChainedResponse> {
     private final Provider<Poshtar> poshtarProvider;
 
     @Inject
