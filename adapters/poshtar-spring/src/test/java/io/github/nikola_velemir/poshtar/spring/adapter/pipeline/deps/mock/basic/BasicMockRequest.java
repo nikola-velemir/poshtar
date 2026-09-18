@@ -1,6 +1,6 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.mock.basic;
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public record BasicMockRequest() implements Request<String> {
+public record BasicMockRequest() implements Query<String> {
 }
