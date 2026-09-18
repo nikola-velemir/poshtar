@@ -20,11 +20,13 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.glob
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.VoidCommand;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class GlobalPipelineTestRequestHandler implements RequestHandler<GlobalPipelineTestRequest, Unit> {
+public class GlobalPipelineTestRequestHandler implements VoidCommandHandler<GlobalPipelineTestRequest> {
     @Override
     public Unit handle(GlobalPipelineTestRequest request) {
         return Unit.Value;
