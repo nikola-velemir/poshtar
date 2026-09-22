@@ -43,6 +43,8 @@ public class BehaviourAnnotationMapper implements TypedAnnotationMapper<Behaviou
      */
     @Override
     public List<AnnotationValue<?>> map(AnnotationValue<Behaviour> annotation, VisitorContext visitorContext) {
+        System.out.println("It fucking ran didnt it?");
+
         return Collections.singletonList(AnnotationValue.builder(Singleton.class).build());
     }
 }
