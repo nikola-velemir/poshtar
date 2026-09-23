@@ -1,8 +1,9 @@
-package io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.registry;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.discovery.NotificationType;
 import io.micronaut.context.BeanContext;
 import io.micronaut.inject.BeanDefinition;
 
@@ -31,11 +32,9 @@ public final class MicronautNotificationRegistry extends AbstractNotificationReg
                 .getBeanDefinitions(NotificationHandler.class);
 
         for (BeanDefinition<NotificationHandler> definition : definitions) {
-            Class<?> notificationType = definition.getTypeArguments(NotificationHandler.class)
-                    .get(0)
-                    .getType();
+            Class<?> notificationType = definition.classValue(NotificationType.class).orElse(null);
 
-            if (Notification.class.isAssignableFrom(notificationType)) {
+            if (notificationType != null && Notification.class.isAssignableFrom(notificationType)) {
                 @SuppressWarnings("unchecked")
 
                 Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;

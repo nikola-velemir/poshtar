@@ -22,7 +22,7 @@ import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationExc
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.MicronautPoshtar;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.mediator.MicronautPoshtar;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncFirstHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncSecondHandler;

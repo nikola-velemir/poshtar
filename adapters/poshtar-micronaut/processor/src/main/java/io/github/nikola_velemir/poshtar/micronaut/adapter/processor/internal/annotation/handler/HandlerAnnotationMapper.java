@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.micronaut.processor.internal.request;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.processor.internal.annotation.handler;
 
 import com.google.auto.service.AutoService;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;

@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.micronaut.processor.internal.request;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.processor.internal.annotation.behaviour;
 
 import com.google.auto.service.AutoService;
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
@@ -43,6 +43,8 @@ public class BehaviourAnnotationMapper implements TypedAnnotationMapper<Behaviou
      */
     @Override
     public List<AnnotationValue<?>> map(AnnotationValue<Behaviour> annotation, VisitorContext visitorContext) {
+        System.out.println("It fucking ran didnt it?");
+
         return Collections.singletonList(AnnotationValue.builder(Singleton.class).build());
     }
 }

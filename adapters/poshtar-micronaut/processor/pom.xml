@@ -4,18 +4,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.nikola-velemir</groupId>
   <artifactId>poshtar-micronaut-processor</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <packaging>jar</packaging>
   <name>Poshtar Micronaut - Processor</name>
 
   <parent>
     <groupId>io.github.nikola-velemir</groupId>
     <artifactId>poshtar-micronaut</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
   </parent>
 
   <properties>
-    <revision>1.1.0</revision>
+    <revision>1.1.1</revision>
     <changelist>-SNAPSHOT</changelist>
     <jdk.version>17</jdk.version>
     <release.version>17</release.version>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>io.github.nikola-velemir</groupId>
       <artifactId>poshtar-micronaut-runtime</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -44,8 +44,8 @@
     <dependency>
       <groupId>io.github.nikola-velemir</groupId>
       <artifactId>poshtar-core</artifactId>
-      <version>1.1.0</version>
-      <!--      <version>1.1.0</version>-->
+      <version>1.1.1</version>
+      <!--      <version>1.1.1</version>-->
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -66,5 +66,22 @@
     </dependency>
 
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.auto.service</groupId>
+              <artifactId>auto-service</artifactId>
+              <version>1.1.1</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

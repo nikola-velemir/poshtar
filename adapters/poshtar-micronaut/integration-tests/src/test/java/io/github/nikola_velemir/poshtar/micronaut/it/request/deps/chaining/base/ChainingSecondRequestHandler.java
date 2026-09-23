@@ -1,12 +1,14 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.base;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.Command;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Handler
-public class ChainingSecondRequestHandler implements RequestHandler<ChainingSecondRequest, String> {
+public class ChainingSecondRequestHandler implements CommandHandler<ChainingSecondRequest, String> {
     @Override
     public String handle(ChainingSecondRequest chainingSecondRequest) {
         assertEquals(1, chainingSecondRequest.id);

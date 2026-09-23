@@ -23,7 +23,7 @@ import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.mediator.Sender;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.MicronautPoshtar;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.mediator.MicronautPoshtar;
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.base.*;
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.mock.MockChainedFirstRequest;
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.mock.MockChainedFirstRequestHandler;
