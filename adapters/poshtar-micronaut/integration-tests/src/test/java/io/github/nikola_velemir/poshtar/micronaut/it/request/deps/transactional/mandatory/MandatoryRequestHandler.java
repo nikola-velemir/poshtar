@@ -19,12 +19,13 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.mandatory;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.micronaut.transaction.TransactionDefinition;
 import io.micronaut.transaction.annotation.Transactional;
 
 @Handler
-public class MandatoryRequestHandler implements RequestHandler<MandatoryRequest,String> {
+public class MandatoryRequestHandler implements QueryHandler<MandatoryRequest, String> {
     @Override
     @Transactional(propagation = TransactionDefinition.Propagation.MANDATORY)
     public String handle(MandatoryRequest mandatoryRequest) {

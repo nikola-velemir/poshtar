@@ -18,8 +18,9 @@
 
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.infrastructure.singleResponsibility;
 
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.request.deps.injection.InjectionRequest;
 
-public interface HandlerMaskingInterface extends RequestHandler<InjectionRequest, String> {
+public interface HandlerMaskingInterface extends QueryHandler<InjectionRequest, String> {
 }
