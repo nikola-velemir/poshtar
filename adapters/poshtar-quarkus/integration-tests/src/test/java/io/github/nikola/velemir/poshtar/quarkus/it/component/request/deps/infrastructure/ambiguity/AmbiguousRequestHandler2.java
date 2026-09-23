@@ -19,12 +19,13 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.infrastructure.ambiguity;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 
 @Handler
-public class AmbiguousRequestHandler2 implements RequestHandler<AmbiguousRequest, Unit> {
+public class AmbiguousRequestHandler2 implements CommandHandler<AmbiguousRequest, Unit> {
 //    @Autowired
 //    private final TransactionalPipeline rq;
 //

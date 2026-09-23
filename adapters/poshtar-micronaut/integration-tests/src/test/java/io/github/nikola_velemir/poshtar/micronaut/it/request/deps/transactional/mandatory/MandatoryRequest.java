@@ -19,7 +19,8 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.transactional.mandatory;
 
 
+import io.github.nikola_velemir.poshtar.core.request.Query;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 
-public record MandatoryRequest(String payload) implements Request<String> {
+public record MandatoryRequest(String payload) implements Query<String> {
 }

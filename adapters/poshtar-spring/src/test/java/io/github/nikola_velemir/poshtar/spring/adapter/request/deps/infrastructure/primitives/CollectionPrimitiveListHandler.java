@@ -21,12 +21,13 @@ package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastruct
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 import java.util.List;
 
 @Handler
-public class CollectionPrimitiveListHandler implements RequestHandler<CollectionPrimitiveListRequest, List<CollectionPrimitiveListResponse>> {
+public class CollectionPrimitiveListHandler implements QueryHandler<CollectionPrimitiveListRequest, List<CollectionPrimitiveListResponse>> {
     @Override
     public List<CollectionPrimitiveListResponse> handle(CollectionPrimitiveListRequest request) {
         return List.of();

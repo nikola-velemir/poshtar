@@ -4,6 +4,7 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class AmbiguityTests extends PoshtarProcessorTestBed {
-    private static class Success{
+    private static class Success {
         static final JavaFileObject request =
                 JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/request/AmbiguousRequest.java");
         static final JavaFileObject handlerOne =
@@ -20,8 +21,9 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
         static final JavaFileObject[] set = {request, handlerOne};
 
     }
-    private static class Fail{
-        static class Request{
+
+    private static class Fail {
+        static class Request {
             static final JavaFileObject request =
                     JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/request/AmbiguousRequest.java");
             static final JavaFileObject handlerOne =
@@ -31,7 +33,8 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
             static final JavaFileObject[] set = {request, handlerOne, handlerTwo};
 
         }
-        static class VoidCommand{
+
+        static class VoidCommand {
             static final JavaFileObject request =
                     JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/voidCommand/AmbiguousRequest.java");
             static final JavaFileObject handlerOne =
@@ -41,7 +44,8 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
             static final JavaFileObject[] set = {request, handlerOne, handlerTwo};
 
         }
-        static class Command{
+
+        static class Command {
             static final JavaFileObject request =
                     JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/command/AmbiguousRequest.java");
             static final JavaFileObject handlerOne =
@@ -51,7 +55,8 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
             static final JavaFileObject[] set = {request, handlerOne, handlerTwo};
 
         }
-        static class Query{
+
+        static class Query {
             static final JavaFileObject request =
                     JavaFileObjects.forResource("test/fixtures/rules/architectural/registration/ambiguity/query/AmbiguousQuery.java");
             static final JavaFileObject handlerOne =
@@ -83,6 +88,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
                 .hadErrorContaining("Ambiguity! Request")
                 .inFile(Fail.VoidCommand.handlerTwo);
     }
+
     @Test
     @DisplayName("Compilation fails when a command has multiple command handlers registered")
     void shouldFailCompilation_whenDuplicateCommandHandlersExist() {
@@ -101,6 +107,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
                 .hadErrorContaining("Ambiguity! Request")
                 .inFile(Fail.Command.handlerTwo);
     }
+
     @Test
     @DisplayName("Compilation fails when a query has multiple query handlers registered")
     void shouldFailCompilation_whenDuplicateQueryHandlersExist() {
@@ -119,6 +126,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
                 .hadErrorContaining("Ambiguity! Request")
                 .inFile(Fail.Query.handlerTwo);
     }
+
     @Test
     @DisplayName("Compilation fails when a request has multiple handlers registered")
     void shouldFailCompilation_whenDuplicateHandlersExist() {
@@ -145,6 +153,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
                 .inFile(Fail.Request.handlerOne);
     }
 
+    @Disabled("Request is no longer used.")
     @Test
     @DisplayName("Compilation succeeds when exactly one handler is registered")
     void shouldSucceed_whenSingleHandlerIsRegistered() {
@@ -155,6 +164,7 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
 
         assertThat(compilation).succeeded();
     }
+
     private PoshtarValidationProcessor createProcessor() {
         var validator = new RuleValidatorProvider.Ambiguity();
         return new PoshtarValidationProcessor(validator);

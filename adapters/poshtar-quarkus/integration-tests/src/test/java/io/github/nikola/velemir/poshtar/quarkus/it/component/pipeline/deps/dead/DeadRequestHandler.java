@@ -21,10 +21,11 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.dead
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class DeadRequestHandler implements RequestHandler<DeadRequest, Unit> {
+public class DeadRequestHandler implements VoidCommandHandler<DeadRequest> {
     @Override
     public Unit handle(DeadRequest request) {
         return Unit.Value;

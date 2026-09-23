@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.transactional.mandatory.success;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,7 +29,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class SucceedForMandatoryRequestHandler implements RequestHandler<SucceedForMandatoryRequest, Unit> {
+public class SucceedForMandatoryRequestHandler implements CommandHandler<SucceedForMandatoryRequest, Unit> {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Unit handle(SucceedForMandatoryRequest request) {

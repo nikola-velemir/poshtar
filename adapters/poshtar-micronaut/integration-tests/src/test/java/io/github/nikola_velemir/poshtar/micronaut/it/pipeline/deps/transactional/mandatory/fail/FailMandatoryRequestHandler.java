@@ -21,10 +21,11 @@ package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.transactiona
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class FailMandatoryRequestHandler implements RequestHandler<FailMandatoryRequest, Unit> {
+public class FailMandatoryRequestHandler implements VoidCommandHandler<FailMandatoryRequest> {
     @Override
     public Unit handle(FailMandatoryRequest request) {
         request.payload += 1;

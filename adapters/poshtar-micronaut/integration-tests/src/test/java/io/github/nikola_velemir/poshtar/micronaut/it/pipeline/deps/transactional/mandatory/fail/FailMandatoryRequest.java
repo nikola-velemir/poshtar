@@ -20,8 +20,9 @@ package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.transactiona
 
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.VoidCommand;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
-public final class FailMandatoryRequest implements Request<Unit> {
+public final class FailMandatoryRequest implements VoidCommand {
     public int payload = 0;
 }
