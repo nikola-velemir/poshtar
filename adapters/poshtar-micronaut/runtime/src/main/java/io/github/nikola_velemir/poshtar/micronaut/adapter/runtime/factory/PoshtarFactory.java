@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.nikola_velemir.poshtar.micronaut.adapter.factory;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.factory;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
 import io.github.nikola_velemir.poshtar.core.mediator.Sender;
@@ -24,9 +24,9 @@ import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHa
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.MicronautPoshtar;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry.MicronautNotificationRegistry;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry.MicronautRequestRegistry;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.mediator.MicronautPoshtar;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.registry.MicronautNotificationRegistry;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.registry.MicronautRequestRegistry;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
@@ -34,7 +34,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
