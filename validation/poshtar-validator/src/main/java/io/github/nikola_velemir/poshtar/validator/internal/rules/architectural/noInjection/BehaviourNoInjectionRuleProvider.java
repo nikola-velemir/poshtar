@@ -6,6 +6,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Exposes behaviour no injection rule
+ */
 public class BehaviourNoInjectionRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

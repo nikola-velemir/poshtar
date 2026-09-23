@@ -77,6 +77,17 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <!-- Disables strict doclint checking -->
+                    <doclint>none</doclint>
+                    <!-- Set Java version matching your compiler settings -->
+                    <release>17</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
@@ -109,14 +120,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <argLine>
-                        --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
-                        --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+                    <argLine> --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>

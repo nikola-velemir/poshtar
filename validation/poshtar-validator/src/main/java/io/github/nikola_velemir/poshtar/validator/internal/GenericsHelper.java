@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Used to check the class, interface and type hierarchies to ensure backward compatibility.
+ */
 public class GenericsHelper {
 
     /**
@@ -16,9 +19,9 @@ public class GenericsHelper {
      * doesn't implement Request directly — it's one or more hops up.
      */
     public static boolean implementsHierarchically(TypeMirror type,
-                                             TypeMirror erasedTarget,
-                                             Types typeUtils,
-                                             Set<String> visited) {
+                                                   TypeMirror erasedTarget,
+                                                   Types typeUtils,
+                                                   Set<String> visited) {
         TypeMirror erasedType = typeUtils.erasure(type);
 
         if (typeUtils.isSameType(erasedType, erasedTarget)) {

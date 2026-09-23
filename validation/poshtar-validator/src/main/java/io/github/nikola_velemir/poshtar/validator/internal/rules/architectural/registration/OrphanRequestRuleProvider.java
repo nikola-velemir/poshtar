@@ -6,6 +6,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Exposes oprhan request rule
+ */
 public class OrphanRequestRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

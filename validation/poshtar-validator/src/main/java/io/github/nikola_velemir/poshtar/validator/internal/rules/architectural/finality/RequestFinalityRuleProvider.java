@@ -6,6 +6,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Exposes request finality rule
+ */
 public class RequestFinalityRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {
