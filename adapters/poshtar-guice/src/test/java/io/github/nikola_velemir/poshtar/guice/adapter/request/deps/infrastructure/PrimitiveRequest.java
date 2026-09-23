@@ -18,9 +18,10 @@
 
 package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.infrastructure;
 
+import io.github.nikola_velemir.poshtar.core.request.Query;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.validator.api.annotations.request.SuppressOrphan;
 
 @SuppressOrphan
-public final class PrimitiveRequest implements Request<String> {
+public final class PrimitiveRequest implements Query<String> {
 }

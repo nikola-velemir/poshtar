@@ -21,6 +21,7 @@ package io.github.nikola_velemir.poshtar.guice.adapter.pipeline.deps.transaction
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import jakarta.persistence.EntityManager;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
@@ -29,7 +30,7 @@ import io.github.nikola_velemir.poshtar.core.types.Unit;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, Unit> {
+public class TransactionalRequestHandler implements CommandHandler<TransactionalRequest, Unit> {
     private final Provider<EntityManager> entityManagerProvider;
     @Inject
     public TransactionalRequestHandler(Provider<EntityManager> provider) {
