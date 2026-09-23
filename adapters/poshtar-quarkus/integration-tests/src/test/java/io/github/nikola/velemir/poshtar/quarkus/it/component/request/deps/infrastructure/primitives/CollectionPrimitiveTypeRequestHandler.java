@@ -21,13 +21,14 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.infra
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 import java.util.List;
 import java.util.Map;
 
 @Handler
-public class CollectionPrimitiveTypeRequestHandler implements RequestHandler<CollectionPrimitiveTypeRequest, List<Map<Integer,String>>> {
+public class CollectionPrimitiveTypeRequestHandler implements QueryHandler<CollectionPrimitiveTypeRequest, List<Map<Integer,String>>> {
     @Override
     public List<Map<Integer, String>> handle(CollectionPrimitiveTypeRequest request) {
         return null;

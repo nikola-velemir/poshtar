@@ -20,11 +20,12 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.injec
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import jakarta.inject.Inject;
 
 @Handler
-public class InjectionRequestHandler implements RequestHandler<InjectionRequest, String> {
+public class InjectionRequestHandler implements QueryHandler<InjectionRequest, String> {
 
     private final DummyLoggingService loggingService;
 
