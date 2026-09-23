@@ -20,10 +20,11 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.ping;
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class PingRequestHandler implements RequestHandler<PingRequest,String> {
+public class PingRequestHandler implements QueryHandler<PingRequest, String> {
     @Override
     public String handle(PingRequest request) {
         return "Pong: " + request.message();

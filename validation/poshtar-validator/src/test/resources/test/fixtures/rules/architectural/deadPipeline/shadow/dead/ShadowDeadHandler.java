@@ -1,11 +1,12 @@
 package test.fixtures.rules.architectural.deadPipeline.shadow.dead;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class ShadowDeadHandler implements RequestHandler<ShadowDeadRequest, Unit> {
+public class ShadowDeadHandler implements CommandHandler<ShadowDeadRequest, Unit> {
     @Override
     public Unit handle(ShadowDeadRequest request) {
         return Unit.Value;

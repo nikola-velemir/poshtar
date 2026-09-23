@@ -23,6 +23,7 @@ import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.validator.internal.GenericsHelper;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
 import io.github.nikola_velemir.poshtar.validator.internal.registry.exception.ResolutionException;
@@ -33,6 +34,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import java.util.HashSet;
 
 /**
  * Implementation of {@link RegistryScanner} that performs classpath
@@ -82,15 +84,14 @@ class RegistryScannerImpl implements RegistryScanner {
                 .getTypeElement(REQUEST_INTERFACE_NAME);
         if (requestInterface == null) return;
 
-        TypeMirror erasedRequest = ctx.env.getTypeUtils()
+        var typeUtils = ctx.env.getTypeUtils();
+        TypeMirror erasedRequest = typeUtils
                 .erasure(requestInterface.asType());
 
         roundEnv.getRootElements().stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS || e.getKind() == ElementKind.RECORD)
                 .map(e -> (TypeElement) e)
-                .filter(e -> ctx.env.getTypeUtils().isAssignable(
-                        ctx.env.getTypeUtils().erasure(e.asType()),
-                        erasedRequest
+                .filter(e -> GenericsHelper.implementsHierarchically(e.asType(), erasedRequest, typeUtils, new HashSet<>()
                 ))
                 .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
     }
@@ -100,16 +101,23 @@ class RegistryScannerImpl implements RegistryScanner {
                 .getTypeElement(NOTIFICATION_INTERFACE_NAME);
         if (requestInterface == null) return;
 
-        TypeMirror erasedNotification = ctx.env.getTypeUtils()
+        var typeUtils = ctx.env.getTypeUtils();
+        TypeMirror erasedNotification = typeUtils
                 .erasure(requestInterface.asType());
 
         roundEnv.getRootElements().stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS || e.getKind() == ElementKind.RECORD)
                 .map(e -> (TypeElement) e)
-                .filter(e -> ctx.env.getTypeUtils().isAssignable(
-                        ctx.env.getTypeUtils().erasure(e.asType()),
-                        erasedNotification
-                ))
+                .filter(e ->
+                        GenericsHelper
+                                .implementsHierarchically(
+                                        e.asType(),
+                                        erasedNotification,
+                                        typeUtils,
+                                        new HashSet<>()
+                                )
+                )
+
                 .forEach(e -> ctx.registerNotification(e.getQualifiedName().toString()));
     }
 

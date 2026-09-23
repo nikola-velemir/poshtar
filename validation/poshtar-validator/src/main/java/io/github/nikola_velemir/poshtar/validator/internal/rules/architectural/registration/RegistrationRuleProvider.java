@@ -25,6 +25,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Exposes registration rules
+ */
 public class RegistrationRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

@@ -19,9 +19,9 @@
 package io.github.nikola_velemir.poshtar.guice.adapter.request.deps.injection;
 
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public final class InjectionRequest implements Request<InjectionResponse> {
+public final class InjectionRequest implements Query<InjectionResponse> {
     public String payload;
 
     public InjectionRequest(String _payload) {

@@ -19,8 +19,9 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.basic.fail;
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.VoidCommand;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 
-public record FailTransactionalRequest(String payload) implements Request<Unit> {
+public record FailTransactionalRequest(String payload) implements VoidCommand {
 }

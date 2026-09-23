@@ -2,12 +2,13 @@ package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.mock
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
 @Handler
-public class MockChainedFirstRequestHandler implements RequestHandler<MockChainedFirstRequest, MockChainedResponse> {
+public class MockChainedFirstRequestHandler implements QueryHandler<MockChainedFirstRequest, MockChainedResponse> {
 
     @Inject
     private final Provider<Poshtar> poshtarProvider;

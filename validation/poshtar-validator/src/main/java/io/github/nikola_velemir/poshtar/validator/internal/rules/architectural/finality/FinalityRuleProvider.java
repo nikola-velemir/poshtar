@@ -28,6 +28,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.r
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Exposes finality rules
+ */
 public class FinalityRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

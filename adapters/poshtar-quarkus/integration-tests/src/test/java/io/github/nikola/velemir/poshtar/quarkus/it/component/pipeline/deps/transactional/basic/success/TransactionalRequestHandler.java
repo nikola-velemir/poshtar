@@ -19,6 +19,7 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.transactional.basic.success;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 import io.quarkus.narayana.jta.QuarkusTransaction;
@@ -28,7 +29,7 @@ import jakarta.transaction.Transactional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, Unit> {
+public class TransactionalRequestHandler implements CommandHandler<TransactionalRequest, Unit> {
     @Override
     @Transactional
     public Unit handle(TransactionalRequest request) {

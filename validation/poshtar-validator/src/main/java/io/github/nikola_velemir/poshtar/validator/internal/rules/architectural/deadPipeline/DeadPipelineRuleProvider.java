@@ -24,6 +24,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Exposes dead pipeline rule
+ */
 public class DeadPipelineRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

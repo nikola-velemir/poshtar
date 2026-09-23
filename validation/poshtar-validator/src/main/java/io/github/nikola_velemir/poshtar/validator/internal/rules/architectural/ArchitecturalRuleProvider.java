@@ -11,6 +11,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.r
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Exposes architectural rules
+ */
 public class ArchitecturalRuleProvider implements RuleProvider {
     public  List<Rule> provide() {
         return Stream.of(

@@ -19,11 +19,12 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transactional.mandatory;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import jakarta.transaction.Transactional;
 
 @Handler
-public class MandatoryRequestHandler implements RequestHandler<MandatoryRequest,String> {
+public class MandatoryRequestHandler implements QueryHandler<MandatoryRequest,String> {
     @Override
     @Transactional(Transactional.TxType.MANDATORY)
     public String handle(MandatoryRequest mandatoryRequest) {

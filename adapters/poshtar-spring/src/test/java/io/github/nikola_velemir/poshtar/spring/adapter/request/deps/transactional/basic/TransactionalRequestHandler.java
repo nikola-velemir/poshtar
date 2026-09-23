@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.transactional.basic;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -26,7 +27,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, String> {
+public class TransactionalRequestHandler implements QueryHandler<TransactionalRequest, String> {
 
     public TransactionalRequestHandler() {
     }

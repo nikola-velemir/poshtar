@@ -20,11 +20,12 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.chain
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import jakarta.inject.Inject;
 
 @Handler
-public class MockChainedFirstRequestHandler implements RequestHandler<MockChainedFirstRequest, MockChainedResponse> {
+public class MockChainedFirstRequestHandler implements CommandHandler<MockChainedFirstRequest, MockChainedResponse> {
     @Inject
     Poshtar poshtar;
 

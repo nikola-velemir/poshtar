@@ -6,6 +6,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Exposes ambiguity rule
+ */
 public class AmbiguityRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

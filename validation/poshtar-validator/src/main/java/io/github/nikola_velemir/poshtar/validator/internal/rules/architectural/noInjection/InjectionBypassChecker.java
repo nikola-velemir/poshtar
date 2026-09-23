@@ -30,7 +30,6 @@ class InjectionBypassChecker {
     private static final String BYPASS_ANNOTATION_FQN = OverruleNoInjection.class.getName();
 
     public static boolean isBypassed(TypeElement clazz, ProcessorContext ctx) {
-
         return hasAnnotation(clazz, ctx) && isInTestPackage(clazz, ctx);
     }
 

@@ -1,8 +1,9 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.chaining.base;
 
+import io.github.nikola_velemir.poshtar.core.request.Command;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 
-public final class ChainingSecondRequest implements Request<String> {
+public final class ChainingSecondRequest implements Command<String> {
     public final int id;
 
     public ChainingSecondRequest(int id) {

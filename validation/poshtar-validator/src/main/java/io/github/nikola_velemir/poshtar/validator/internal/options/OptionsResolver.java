@@ -9,6 +9,9 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * Resolves options, regarding which category of rules should be employed when validated the source code.
+ */
 public class OptionsResolver {
     public static Set<RuleKind> resolveEnabledRuleKinds(String optionName,ProcessingEnvironment env) {
         String opt = env.getOptions().get(optionName);

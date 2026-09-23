@@ -19,7 +19,7 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.injection;
 
 
-import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.Query;
 
-public record InjectionRequest(String payload) implements Request<String> {
+public record InjectionRequest(String payload) implements Query<String> {
 }

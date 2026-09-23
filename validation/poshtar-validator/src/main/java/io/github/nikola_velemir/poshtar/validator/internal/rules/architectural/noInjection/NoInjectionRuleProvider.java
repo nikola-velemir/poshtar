@@ -27,6 +27,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.f
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Exposes no injection rules
+ */
 public class NoInjectionRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {
