@@ -20,11 +20,12 @@ package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.infrastructur
 
 
 
+import io.github.nikola_velemir.poshtar.core.request.Query;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 
 import java.util.List;
 import java.util.Map;
 
-public final class CollectionPrimitiveTypeRequest implements Request<List<Map<Integer, String>>> {
+public final class CollectionPrimitiveTypeRequest implements Query<List<Map<Integer, String>>> {
 
 }

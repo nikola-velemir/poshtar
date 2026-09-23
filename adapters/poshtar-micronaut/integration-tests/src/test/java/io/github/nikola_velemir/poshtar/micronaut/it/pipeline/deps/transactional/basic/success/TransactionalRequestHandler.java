@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.micronaut.it.pipeline.deps.transactional.basic.success;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 import io.micronaut.transaction.TransactionDefinition;
@@ -27,7 +28,7 @@ import io.micronaut.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Handler
-public class TransactionalRequestHandler implements RequestHandler<TransactionalRequest, Unit> {
+public class TransactionalRequestHandler implements CommandHandler<TransactionalRequest, Unit> {
     @Override
     @Transactional(propagation = TransactionDefinition.Propagation.MANDATORY)
 //    @Transactional(propagation = TransactionDefinition.Propagation.MANDATORY)
