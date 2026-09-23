@@ -19,12 +19,13 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.infrastructure.ambiguity;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 
 @Handler
-public class AmbiguousRequestHandler2 implements RequestHandler<AmbiguousRequest, Unit> {
+public class AmbiguousRequestHandler2 implements QueryHandler<AmbiguousRequest, Unit> {
 //    @Autowired
 //    private final TransactionalPipeline rq;
 //
