@@ -1,10 +1,11 @@
-package io.github.nikola_velemir.poshtar.micronaut.adapter.internal.registry;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.registry;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.discovery.RequestType;
 import io.micronaut.context.BeanContext;
 import io.micronaut.inject.BeanDefinition;
 
@@ -65,31 +66,32 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
     }
 
     private static Class<?> resolveRequestType(BeanDefinition<RequestHandler> definition) {
-        List<io.micronaut.core.type.Argument<?>> typeArguments = definition.getTypeArguments(RequestHandler.class);
-
-        // 1. Standard Micronaut resolution (works perfectly for real beans)
-        if (typeArguments != null && !typeArguments.isEmpty()) {
-            return typeArguments.get(0).getType();
-        }
-
-        Class<?> beanType = definition.getBeanType();
-        while (beanType != null && beanType != Object.class) {
-            for (java.lang.reflect.Type genericInterface : beanType.getGenericInterfaces()) {
-                if (genericInterface instanceof java.lang.reflect.ParameterizedType) {
-                    java.lang.reflect.ParameterizedType paramType = (java.lang.reflect.ParameterizedType) genericInterface;
-                    if (RequestHandler.class.equals(paramType.getRawType())) {
-                        return (Class<?>) paramType.getActualTypeArguments()[0];
-                    }
-                }
-            }
-            beanType = beanType.getSuperclass();
-        }
-        return null;
+        return definition.classValue(RequestType.class).orElse(null);
+//        List<io.micronaut.core.type.Argument<?>> typeArguments = definition.getTypeArguments(RequestHandler.class);
+//
+//        // 1. Standard Micronaut resolution (works perfectly for real beans)
+//        if (typeArguments != null && !typeArguments.isEmpty()) {
+//            return typeArguments.get(0).getType();
+//        }
+//
+//        Class<?> beanType = definition.getBeanType();
+//        while (beanType != null && beanType != Object.class) {
+//            for (java.lang.reflect.Type genericInterface : beanType.getGenericInterfaces()) {
+//                if (genericInterface instanceof java.lang.reflect.ParameterizedType) {
+//                    java.lang.reflect.ParameterizedType paramType = (java.lang.reflect.ParameterizedType) genericInterface;
+//                    if (RequestHandler.class.equals(paramType.getRawType())) {
+//                        return (Class<?>) paramType.getActualTypeArguments()[0];
+//                    }
+//                }
+//            }
+//            beanType = beanType.getSuperclass();
+//        }
+//        return null;
     }
 
     @SuppressWarnings("unchecked")
     private void registerAsCasted(RequestHandler<?, ?> handler, Class<?> requestType,
-            List<PipelineBehaviour<?, ?>> filteredBehaviours) {
+                                  List<PipelineBehaviour<?, ?>> filteredBehaviours) {
         Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
         RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
 
@@ -109,9 +111,7 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
     protected boolean supportsRequest(PipelineBehaviour<?, ?> behaviour, Class<?> requestType) {
         BeanDefinition<? extends PipelineBehaviour> definition = context.getBeanDefinition(behaviour.getClass());
 
-        Class<?> genericRequestType = definition.getTypeArguments(PipelineBehaviour.class)
-                .get(0)
-                .getType();
+        Class<?> genericRequestType = definition.classValue(RequestType.class).orElse(null);
 
         return genericRequestType != null && genericRequestType.isAssignableFrom(requestType);
     }

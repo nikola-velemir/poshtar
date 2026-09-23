@@ -22,7 +22,7 @@ import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationExc
 import io.github.nikola_velemir.poshtar.core.mediator.Publisher;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
-import io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator.MicronautPoshtar;
+import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.mediator.MicronautPoshtar;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncFirstHandler;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncNotification;
 import io.github.nikola_velemir.poshtar.micronaut.it.notification.deps.async.FailForAsyncSecondHandler;
@@ -49,10 +49,8 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.transaction.exceptions.IllegalTransactionStateException;
-import io.micronaut.transaction.exceptions.NoTransactionException;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

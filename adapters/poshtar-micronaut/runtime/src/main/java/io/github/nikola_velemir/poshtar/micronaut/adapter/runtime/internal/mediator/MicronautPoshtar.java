@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.micronaut.adapter.internal.mediator;
+package io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.mediator;
 
 import io.github.nikola_velemir.poshtar.core.exceptions.AggregateNotificationException;
 import io.github.nikola_velemir.poshtar.core.mediator.PoshtarBase;
