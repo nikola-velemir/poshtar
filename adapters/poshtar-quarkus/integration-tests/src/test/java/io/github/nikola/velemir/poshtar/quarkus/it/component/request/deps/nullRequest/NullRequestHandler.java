@@ -20,10 +20,11 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.nullR
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import io.github.nikola_velemir.poshtar.core.request.handler.VoidCommandHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class NullRequestHandler implements RequestHandler<NullRequest, Unit> {
+public class NullRequestHandler implements VoidCommandHandler<NullRequest> {
     @Override
     public Unit handle(NullRequest nullRequest) {
         return null;

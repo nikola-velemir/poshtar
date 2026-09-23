@@ -1,10 +1,11 @@
 package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mock;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class MockChainedSecondRequestHandler implements RequestHandler<MockChainedSecondRequest, String> {
+public class MockChainedSecondRequestHandler implements QueryHandler<MockChainedSecondRequest, String> {
     @Override
     public String handle(MockChainedSecondRequest mockChainedSecondRequest) {
         return "Hello";

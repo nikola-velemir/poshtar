@@ -20,11 +20,12 @@ package io.github.nikola.velemir.poshtar.quarkus.it.component.pipeline.deps.spec
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class NotSpecificRequestHandler implements RequestHandler<NotSpecificRequest, Unit> {
+public class NotSpecificRequestHandler implements CommandHandler<NotSpecificRequest, Unit> {
     @Override
     public Unit handle(NotSpecificRequest request) {
         return Unit.Value;

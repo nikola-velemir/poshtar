@@ -20,12 +20,13 @@ package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.infrastructur
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
 public class SingleResponsibilityHandler
-        implements RequestHandler<SingleResponsibilityFirstRequest, Unit>
+        implements CommandHandler<SingleResponsibilityFirstRequest, Unit>
 //        , NotificationHandler<SingleResponsibilityNotification>
 {
 

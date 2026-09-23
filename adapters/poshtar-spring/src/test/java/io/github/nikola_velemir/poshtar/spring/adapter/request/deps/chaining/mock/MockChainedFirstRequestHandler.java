@@ -2,11 +2,12 @@ package io.github.nikola_velemir.poshtar.spring.adapter.request.deps.chaining.mo
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Handler
-public class MockChainedFirstRequestHandler implements RequestHandler<MockChainedFirstRequest, MockChainedResponse> {
+public class MockChainedFirstRequestHandler implements QueryHandler<MockChainedFirstRequest, MockChainedResponse> {
 
     @Autowired
     private final Poshtar poshtar;

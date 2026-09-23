@@ -19,7 +19,8 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.transactional.basic;
 
 
+import io.github.nikola_velemir.poshtar.core.request.Command;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 
-public record TransactionalRequest(String payload) implements Request<String> {
+public record TransactionalRequest(String payload) implements Command<String> {
 }

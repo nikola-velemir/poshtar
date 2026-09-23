@@ -18,8 +18,9 @@
 
 package io.github.nikola_velemir.poshtar.micronaut.it.request.deps.infrastructure.singleResponsibility;
 
+import io.github.nikola_velemir.poshtar.core.request.Command;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
-public record SingleResponsibilityFirstRequest() implements Request<Unit> {
+public record SingleResponsibilityFirstRequest() implements Command<Unit> {
 }

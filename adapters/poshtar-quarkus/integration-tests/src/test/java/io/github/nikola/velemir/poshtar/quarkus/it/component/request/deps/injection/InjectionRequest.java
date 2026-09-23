@@ -19,7 +19,8 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.injection;
 
 
+import io.github.nikola_velemir.poshtar.core.request.Query;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 
-public record InjectionRequest(String payload) implements Request<String> {
+public record InjectionRequest(String payload) implements Query<String> {
 }
