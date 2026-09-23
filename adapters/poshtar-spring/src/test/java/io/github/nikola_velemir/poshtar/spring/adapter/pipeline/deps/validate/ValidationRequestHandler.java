@@ -20,10 +20,11 @@ package io.github.nikola_velemir.poshtar.spring.adapter.pipeline.deps.validate;
 
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class ValidationRequestHandler implements RequestHandler<ValidationRequest, Integer> {
+public class ValidationRequestHandler implements QueryHandler<ValidationRequest, Integer> {
 
     @Override
     public Integer handle(ValidationRequest request) {
