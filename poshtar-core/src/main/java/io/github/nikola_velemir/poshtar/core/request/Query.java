@@ -1,5 +1,5 @@
 package io.github.nikola_velemir.poshtar.core.request;
 
-public interface Query<TResponse> extends Request<TResponse>{
+public non-sealed interface Query<TResponse> extends Request<TResponse>{
 }
 

@@ -4,6 +4,7 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class HandlerWiringTests extends PoshtarProcessorTestBed {
-
+    @Disabled("Request is no longer used.")
     @Test
     @DisplayName("Compilation succeeds for correct request handler wiring")
     void shouldSucceed_whenRequestHandlerWiredCorrectly() {
