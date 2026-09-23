@@ -19,10 +19,11 @@
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.mock;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.request.handler.QueryHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 
 @Handler
-public class MockRequestHandler implements RequestHandler<MockRequest, MockResponse> {
+public class MockRequestHandler implements QueryHandler<MockRequest, MockResponse> {
     @Override
     public MockResponse handle(MockRequest mockRequest) {
         var payload = mockRequest.payload();

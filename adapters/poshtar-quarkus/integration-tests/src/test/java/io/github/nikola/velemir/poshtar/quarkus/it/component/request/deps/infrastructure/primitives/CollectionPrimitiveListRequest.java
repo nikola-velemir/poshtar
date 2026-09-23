@@ -18,7 +18,8 @@
 
 package io.github.nikola.velemir.poshtar.quarkus.it.component.request.deps.infrastructure.primitives;
 
+import io.github.nikola_velemir.poshtar.core.request.Query;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import java.util.List;
 
-public record CollectionPrimitiveListRequest() implements Request<List<CollectionPrimitiveListResponse>>{}
+public record CollectionPrimitiveListRequest() implements Query<List<CollectionPrimitiveListResponse>> {}
