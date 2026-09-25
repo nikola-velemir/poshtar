@@ -91,7 +91,11 @@ class RegistryScannerImpl implements RegistryScanner {
         roundEnv.getRootElements().stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS || e.getKind() == ElementKind.RECORD)
                 .map(e -> (TypeElement) e)
-                .filter(e -> GenericsHelper.implementsHierarchically(e.asType(), erasedRequest, typeUtils, new HashSet<>()
+                .filter(e -> GenericsHelper.implementsHierarchically(
+                        e.asType(),
+                        erasedRequest,
+                        typeUtils
+                        //, new HashSet<>()
                 ))
                 .forEach(e -> ctx.registerRequest(e.getQualifiedName().toString()));
     }
@@ -113,8 +117,8 @@ class RegistryScannerImpl implements RegistryScanner {
                                 .implementsHierarchically(
                                         e.asType(),
                                         erasedNotification,
-                                        typeUtils,
-                                        new HashSet<>()
+                                        typeUtils
+                                        //,new HashSet<>()
                                 )
                 )
 
