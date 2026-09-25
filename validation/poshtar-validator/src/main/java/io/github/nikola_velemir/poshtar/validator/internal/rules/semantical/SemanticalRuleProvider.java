@@ -10,6 +10,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiri
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Provides all semantical rules
+ */
 public class SemanticalRuleProvider implements RuleProvider {
     public  List<Rule> provide() {
         return Stream.of(

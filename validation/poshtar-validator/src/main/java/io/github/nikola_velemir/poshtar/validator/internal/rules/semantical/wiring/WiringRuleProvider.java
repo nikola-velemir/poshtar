@@ -27,6 +27,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiri
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Exposes a list of wiring rules
+ */
 public class WiringRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

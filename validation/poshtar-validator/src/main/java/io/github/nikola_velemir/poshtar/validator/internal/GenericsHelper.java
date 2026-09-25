@@ -15,8 +15,14 @@ public class GenericsHelper {
     /**
      * Walks the full supertype hierarchy (superclasses and interfaces,
      * recursively) of {@code type} looking for {@code erasedTarget}.
-     * Needed because e.g. a class implementing Command<T> or VoidCommand
+     * Needed because e.g. a class implementing Command or VoidCommand
      * doesn't implement Request directly — it's one or more hops up.
+     * 
+     * @param type Designated type.
+     * @param erasedTarget Type lost thru erasure.
+     * @param typeUtils Type utils of the processor context.
+     * @param visited Visited classes
+     * @return True or false whether the designated type implements the target.
      */
     public static boolean implementsHierarchically(TypeMirror type,
                                                    TypeMirror erasedTarget,

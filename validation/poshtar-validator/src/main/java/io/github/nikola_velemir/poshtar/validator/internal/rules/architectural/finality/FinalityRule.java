@@ -29,11 +29,19 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
+/**
+ * Base for all finality rules.
+ */
 public abstract class FinalityRule implements Rule {
 
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
 
+    /**
+     * Provides violation message.
+     * @param requestFqn FQN of a request class.
+     * @return Violoation message text.
+     */
     protected abstract String getViolationMessage(String requestFqn);
     protected abstract Set<String> getFQNs(ProcessorContext ctx);
     /**

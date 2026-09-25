@@ -24,6 +24,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Provides all return type rules
+ */
 public class ReturnTypesRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {
