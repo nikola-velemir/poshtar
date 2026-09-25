@@ -18,15 +18,16 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.registration;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.processing.RoundEnvironment;
+
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
 import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
 import io.github.nikola_velemir.poshtar.validator.internal.registry.RequestRegistryEntry;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
-
-import javax.annotation.processing.RoundEnvironment;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Architectural rule that enforces a strict one-to-one mapping between a Request and its Handler.
@@ -43,8 +44,9 @@ import java.util.Map;
  */
 class AmbiguityRule implements Rule {
 
-    public static final String ALREADY_HANDLED_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'";
-    public static final String AMBIGUITY_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'";
+    private static final String ALREADY_HANDLED_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is already handled by '%s'";
+    
+    private static final String AMBIGUITY_MESSAGE = "PoshtaR: Ambiguity! Request '%s' is also handled by '%s'";
     private static final Logger logger = LoggerProvider.provideErrorLogger();
 
     /**

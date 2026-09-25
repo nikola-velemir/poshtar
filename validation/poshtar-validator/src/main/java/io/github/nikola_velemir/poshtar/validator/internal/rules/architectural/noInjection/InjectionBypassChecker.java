@@ -18,17 +18,32 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.noInjection;
 
-import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import java.io.IOException;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.IOException;
 
+import io.github.nikola_velemir.poshtar.validator.api.annotations.injection.OverruleNoInjection;
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+
+/**
+ * Class checks whether the class that directly injects, creates or provides the Poshtar components 
+ * is annotated with {@link OverruleNoInjection} and is contained in the test package of the project.
+ * InjectionBypassChecker
+ */
 class InjectionBypassChecker {
+    /**
+     * FQN Of the bypass annotation.
+     */
     private static final String BYPASS_ANNOTATION_FQN = OverruleNoInjection.class.getName();
 
+    /**
+     * Tells if the class does bypass the injection.
+     * @param clazz Class element.
+     * @param ctx Processor context for the round.
+     * @return True if class is allowed to bypass the injection rule.
+     */
     public static boolean isBypassed(TypeElement clazz, ProcessorContext ctx) {
         return hasAnnotation(clazz, ctx) && isInTestPackage(clazz, ctx);
     }

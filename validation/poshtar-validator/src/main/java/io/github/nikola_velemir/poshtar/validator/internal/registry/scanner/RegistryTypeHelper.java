@@ -44,9 +44,21 @@ import java.util.List;
  * @since 1.0.0
  */
 class RegistryTypeHelper {
+        /**
+     * FQN of the request handler interface.
+     */
     private static final String REQUEST_HANDLER_INTERFACE_NAME = RequestHandler.class.getName();
+    /**
+     * FQN of the notification handler interface.
+     */
     private static final String NOTIFICATION_HANDLER_INTERFACE_NAME = NotificationHandler.class.getName();
+    /**
+     * Request resolution error message.
+     */
     public static final String RESOLUTION_ERROR_MESSAGE = "PoshtaR: Cannot resolve request type for handle %s. Ensure the Request class is imported and compiles.";
+    /**
+     * Notification resolution error message.
+     */
     public static final String NOTIFICATION_RESOLUTION_ERROR_MESSAGE = "PoshtaR: Cannot resolve notification type for handle %s. Ensure the Notification class is imported and compiles.";
     /**
      * Finds a specific annotation on an element and returns its mirror.

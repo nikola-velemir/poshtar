@@ -18,15 +18,17 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.deadPipeline;
 
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.util.TreePath;
-import com.sun.source.util.Trees;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import java.util.HashSet;
-import java.util.Set;
+
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.util.TreePath;
+import com.sun.source.util.Trees;
+
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 
 /**
  * Internal utility responsible for resolving method calls to their underlying source elements.
@@ -46,6 +48,11 @@ class CalleeResolver {
     private final ProcessorContext ctx;
     private final ExecutableElement rootMethod;
 
+    /**
+     * Creates callee resolver from the current context and the method element.
+     * @param ctx Processor context of the round.
+     * @param method Method element.
+     */
     public CalleeResolver(ProcessorContext ctx, ExecutableElement method) {
         this.ctx = ctx;
         rootMethod = method;

@@ -18,14 +18,14 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.handler;
 
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.WiringRule;
-
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 /**
  * Template rule for validating wiring logic.
  * <p>
@@ -51,6 +51,9 @@ class HandlerWiringRule extends WiringRule {
     private TypeMirror requestHandlerInterfaceErasure;
     private TypeMirror notificationHandlerInterfaceErasure;
 
+    /**
+     * Default constructor, providing the extact annotation class literal.
+     */
     public HandlerWiringRule() {
         super(Handler.class);
     }

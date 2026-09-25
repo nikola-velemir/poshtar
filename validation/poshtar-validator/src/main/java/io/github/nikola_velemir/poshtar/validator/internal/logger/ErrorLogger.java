@@ -27,6 +27,9 @@ import javax.tools.Diagnostic;
  */
 class ErrorLogger extends CoreLogger {
 
+    /**
+     * Default constructor for the Error logger.
+     */
     public ErrorLogger() {
     }
 

@@ -27,6 +27,9 @@ import javax.tools.Diagnostic;
  */
 class WarningLogger extends CoreLogger {
 
+    /**
+     * Default constructor for a warning logger.
+     */
     public WarningLogger() {
     }
     /**

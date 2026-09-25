@@ -22,6 +22,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorCont
 
 import java.util.Set;
 
+/**
+ * Notification finality rule, prevents mutability and inheritance between notification classes.
+ */
 class NotificationFinalityRule extends FinalityRule {
     @Override
     protected String getViolationMessage(String fqn) {
