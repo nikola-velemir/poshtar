@@ -13,7 +13,6 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class HandlerWiringTests extends PoshtarProcessorTestBed {
-    @Disabled("Request is no longer used.")
     @Test
     @DisplayName("Compilation succeeds for correct request handler wiring")
     void shouldSucceed_whenRequestHandlerWiredCorrectly() {

@@ -28,6 +28,7 @@ public class RuleValidatorProvider {
     /**
      * Provides the implementation of {@link RuleValidator}, as the concrete implementation is package-private.
      *
+     * @param kinds Kinds of rules, either semantical or architectural, provided thru xml options.
      * @return Implementation of the {@link RuleValidator}, which will be used by the processor.
      */
     public static RuleValidator provideValidator(Set<RuleKind> kinds) {

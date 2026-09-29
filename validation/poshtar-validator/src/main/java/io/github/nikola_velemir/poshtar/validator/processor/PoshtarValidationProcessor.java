@@ -63,9 +63,16 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 public class PoshtarValidationProcessor extends AbstractProcessor {
+    /**
+     * Default contructor that javac initializes.
+     */
     public PoshtarValidationProcessor() {
     }
 
+    /**
+     * Mock contructor for unit testing the rules.
+     * @param validator Designated validator, containing ruleset for validation.
+     */
     public PoshtarValidationProcessor(RuleValidator validator) {
 
         this.validator = validator;

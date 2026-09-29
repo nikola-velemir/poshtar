@@ -45,7 +45,13 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class ProcessorContext {
+    /**
+     * Processing environment of the build.
+     */
     public final ProcessingEnvironment env;
+    /**
+     * Trees compiler api for element access.
+     */
     public final Trees trees;
 
 
@@ -103,6 +109,10 @@ public class ProcessorContext {
         return Collections.unmodifiableMap(requestHandlerRegistry);
     }
 
+    /**
+     * Returns the contents of notification registy.
+     * @return A map of handler sets to their respective notifications in registry.
+     */
     public Map<String, List<NotificationRegistryEntry>> getNotificationHandlerRegistry() {
         return Collections.unmodifiableMap(notificationHandlerRegistry);
     }
@@ -138,6 +148,13 @@ public class ProcessorContext {
         requestHandlerRegistry.put(handlerFqn, new RequestRegistryEntry(requestFqn, handlerFqn, handlerElement, mirror));
     }
 
+    /**
+     * Registers a notification handler to processor context.
+     * @param handlerFqn FQN of a handler
+     * @param notification Notification FQN
+     * @param handlerElement Element of code for a handler.
+     * @param mirror Annotation mirror.
+     */
     public void registerNotificationHandler(String handlerFqn, String notification,
                                             Element handlerElement, AnnotationMirror mirror) {
         notificationHandlerRegistry
@@ -193,7 +210,10 @@ public class ProcessorContext {
                 .map(RequestRegistryEntry::handlerFQN)
                 .collect(Collectors.toSet());
     }
-
+    /**
+     * Returns a set of behaviour FQNs, extracted from the processor context.
+     * @return String set of pipeline behaviour FQNs.
+     */
     public Set<String> getBehaviourFQNS() {
         return requestHandlerRegistry.values().stream()
                 .filter(RequestRegistryEntry::isBehaviour)
@@ -201,6 +221,10 @@ public class ProcessorContext {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns a set of notification handlers FQNs, extracted from the processor context.
+     * @return String set of notificaiton handler FQNs.
+     */
     public Set<String> getNotificationHandlerFQNS() {
         return notificationHandlerRegistry.values().stream()
                 .flatMap(List::stream)

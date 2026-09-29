@@ -18,16 +18,19 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.noInjection;
 
+import java.util.Set;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
+
 import io.github.nikola_velemir.poshtar.core.mediator.Poshtar;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
-
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Template rule for no-injection logic.
@@ -67,6 +70,11 @@ abstract class NoInjectionRule implements Rule {
         }
     }
 
+    /**
+     * Provies the set of forbiddent FQNs, classes that must not be injected.
+     * @param ctx Current processor context.
+     * @return Set of FQNs of forbiddent classes.
+     */
     protected abstract Set<String> provideForbiddenFQNS(ProcessorContext ctx);
 
     /**

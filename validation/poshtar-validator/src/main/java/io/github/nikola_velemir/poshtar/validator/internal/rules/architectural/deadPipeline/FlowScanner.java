@@ -18,25 +18,25 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.deadPipeline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.ThrowTree;
 import com.sun.source.util.TreeScanner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A specialized AST visitor, identifies pipeline exit points and delegation patterns.
  * <p>
  * This scanner traverses the method body to find occurrences of the {@code RequestDelegate}
- * (the "next" link). It categorizes findings into three categories:
+ * (the "next" link). It categorizes findings into three categories: 
+ * </p>
  * <ol>
  *     <li><b>Direct Calls:</b> Explicit invocations of {@code delegate.handle()}.</li>
  *     <li><b>Throws:</b> Exception handling that intentionally halts the pipeline.</li>
  *     <li><b>Forwarded Calls:</b> Passing the delegate as an argument to another method.</li>
  * </ol>
- * </p>
  * @author Nikola Velemir
  * @version ${revision}
  * @since 1.0.0
@@ -48,6 +48,10 @@ class FlowScanner extends TreeScanner<Void, Void> {
     private boolean throwFound = false;
     private final List<ForwardedCall> forwardedCalls = new ArrayList<>();
 
+    /**
+     * Creates a flow scanner with provided reqeust delegate name.
+     * @param delegateName String name of the request delegate.
+     */
     public FlowScanner(String delegateName) {
         this.delegateName = delegateName;
     }

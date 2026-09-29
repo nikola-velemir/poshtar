@@ -18,30 +18,32 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.deadPipeline;
 
-import com.sun.source.tree.*;
-import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
-import io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import java.util.Set;
+
+import com.sun.source.tree.MethodTree;
+
+import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
+import io.github.nikola_velemir.poshtar.validator.api.annotations.pipeline.SuppressDead;
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 
 /**
  * Validation rule that ensures pipeline continuity by detecting "Dead Pipelines."
  * <p>
- * In a Chain of Responsibility pattern, a {@code Behaviour} must either:
+ * In a Chain of Responsibility pattern, a {@code Behaviour} must either:</p>
  * <ol>
  *     <li>Forward the request to the next component using {@code next.handle(request)}.</li>
  *     <li>Terminate the flow intentionally by throwing a {@link RuntimeException}.</li>
  * </ol>
- * </p>
+ * 
  * <p>
  * If a behavior finishes execution without doing either, the request is effectively
  * dropped, leading to silent failures at runtime. This rule uses the Abstract Syntax

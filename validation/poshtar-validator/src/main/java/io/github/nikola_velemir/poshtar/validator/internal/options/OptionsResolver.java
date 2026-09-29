@@ -13,6 +13,12 @@ import java.util.Set;
  * Resolves options, regarding which category of rules should be employed when validated the source code.
  */
 public class OptionsResolver {
+    /**
+     * Resolves the enabled rule kinds, set thru xml config.
+     * @param optionName Name of the option in xml config.
+     * @param env Build environment
+     * @return Set of all enabled rule kinds.
+     */
     public static Set<RuleKind> resolveEnabledRuleKinds(String optionName,ProcessingEnvironment env) {
         String opt = env.getOptions().get(optionName);
 

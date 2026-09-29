@@ -24,6 +24,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
 
+/**
+ * Provides all responsibility rules
+ */
 public class ResponsibilityRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

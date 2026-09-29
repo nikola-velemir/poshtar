@@ -18,18 +18,24 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.behaviour;
 
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+
 import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.wiring.WiringRule;
-
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-
+/**
+ * Behaviour wiring rule, validates that {@link Behaviour} annotation matches 
+ * the required contract for the component to implement ({@link PipelineBehaviour})
+ */
 class BehaviourWiringRule extends WiringRule {
 
     private TypeMirror behaviourErasure;
 
+    /**
+     * Default constructor for the behaviour wiring rule. Takes the Behaviour annotation class as param.
+     */
     public BehaviourWiringRule() {
         super(Behaviour.class);
     }

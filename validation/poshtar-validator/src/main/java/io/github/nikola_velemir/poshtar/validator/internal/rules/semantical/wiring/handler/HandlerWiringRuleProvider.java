@@ -5,7 +5,9 @@ import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
 
 import java.util.List;
-
+/**
+ * Provides the handler wiring rules
+ */
 public class HandlerWiringRuleProvider implements RuleProvider {
     @Override
     public RuleKind getKind() {

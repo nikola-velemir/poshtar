@@ -38,6 +38,10 @@ import java.util.stream.Stream;
 class RuleValidatorImpl implements RuleValidator {
     private final List<Rule> rules;
 
+    /**
+     * Constructor receives rule kinds, that are later filtered out of all the provided rules.
+     * @param kinds Rule kinds extracted from the config.
+     */
     RuleValidatorImpl(Set<RuleKind> kinds) {
         this.rules = provideRules(kinds);
     }

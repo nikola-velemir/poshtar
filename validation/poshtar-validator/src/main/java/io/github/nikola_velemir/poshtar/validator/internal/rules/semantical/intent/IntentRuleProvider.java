@@ -1,0 +1,28 @@
+package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent;
+
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.hierarchy.RequestHandlerHierarchyRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.implementation.RequestHandlerImplementationRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.request.RequestIntentRuleProvider;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+public class IntentRuleProvider implements RuleProvider {
+    @Override
+    public RuleKind getKind() {
+        return null;
+    }
+
+    @Override
+    public List<Rule> provide() {
+        return Stream.of(
+                new RequestHandlerHierarchyRuleProvider().provide(),
+                        new RequestHandlerImplementationRuleProvider().provide(),
+                        new RequestIntentRuleProvider().provide()
+                ).flatMap(List::stream)
+                .toList();
+    }
+}

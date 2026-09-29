@@ -35,8 +35,7 @@ import io.github.nikola_velemir.poshtar.core.request.Request;
  * @version ${revision}
  * @since 1.0.0
  */
-public sealed interface RequestHandler<TRequest extends Request<TResponse>, TResponse>
-permits QueryHandler, CommandHandler, VoidCommandHandler
+public interface RequestHandler<TRequest extends Request<TResponse>, TResponse>
 {
     /**
      * Handles the given request and produces a response.
