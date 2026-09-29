@@ -26,6 +26,7 @@ import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationR
 import io.github.nikola_velemir.poshtar.core.pipeline.configuration.PipelineConfiguration;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
 import io.quarkus.arc.DefaultBean;
+import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
@@ -44,6 +45,7 @@ public class QuarkusPoshtarProducer {
     @Produces
     @DefaultBean
     @ApplicationScoped
+    @Nonnull
     public PipelineConfiguration pipelineConfiguration() {
         return new PipelineConfiguration();
     }
@@ -58,8 +60,12 @@ public class QuarkusPoshtarProducer {
     @Produces
     @DefaultBean
     @ApplicationScoped
-    public Poshtar poshtar(RequestRegistry requestRegistry,
-                           NotificationRegistry notificationRegistry) {
+    @Nonnull
+    public Poshtar poshtar(
+            @Nonnull
+            RequestRegistry requestRegistry,
+            @Nonnull
+            NotificationRegistry notificationRegistry) {
         return new QuarkusPoshtarImpl(requestRegistry, notificationRegistry);
     }
 }

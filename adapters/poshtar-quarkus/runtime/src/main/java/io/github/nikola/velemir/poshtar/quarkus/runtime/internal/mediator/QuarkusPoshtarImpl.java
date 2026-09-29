@@ -69,8 +69,8 @@ public final class QuarkusPoshtarImpl extends PoshtarBase {
      */
     @Override
     protected <TNotification extends Notification> void dispatch(
-            TNotification notification,
-            List<NotificationHandler> handlers) {
+            @Nonnull TNotification notification,
+            @Nonnull List<NotificationHandler> handlers) {
 
         List<Throwable> errors = Collections.synchronizedList(new ArrayList<>());
 

@@ -23,6 +23,8 @@ import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.exception.Suppo
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestRegistry;
+import io.smallrye.common.constraint.NotNull;
+import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -47,9 +49,13 @@ public class QuarkusRequestRegistry extends AbstractRequestRegistry {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void registerFromClass(
+            @Nonnull
             Class<?> handlerClass,
+            @Nonnull
             Class<?> requestClass,
+            @Nonnull
             List<PipelineBehaviour<?, ?>> filteredBehaviours,
+            @NotNull
             BeanManager bm) {
 
         Bean<?> bean = bm.resolve(bm.getBeans(handlerClass));

@@ -21,6 +21,7 @@ package io.github.nikola.velemir.poshtar.quarkus.runtime.internal.registry;
 import io.github.nikola.velemir.poshtar.quarkus.runtime.internal.exception.BeanNotFoundException;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotificationRegistry;
+import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -48,7 +49,13 @@ public class QuarkusNotificationRegistry extends AbstractNotificationRegistry {
      * @throws BeanNotFoundException if the target handler class cannot be located as a registered CDI bean
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void registerFromClass(Class<?> handlerClass, Class<?> notifClass, BeanManager bm) {
+    public void registerFromClass(
+            @Nonnull
+            Class<?> handlerClass,
+            @Nonnull
+            Class<?> notifClass,
+            @Nonnull
+            BeanManager bm) {
         Bean<?> bean = bm.getBeans(handlerClass).stream().findFirst()
                 .orElseThrow(() -> new BeanNotFoundException(handlerClass));
         NotificationHandler handler = (NotificationHandler) bm.getReference(
