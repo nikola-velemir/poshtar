@@ -1,4 +1,4 @@
-package test.fixtures.rules.semantical.intent.handler.success.command;
+package test.fixtures.rules.semantical.intent.handler.implementation.success.command;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.CommandHandler;

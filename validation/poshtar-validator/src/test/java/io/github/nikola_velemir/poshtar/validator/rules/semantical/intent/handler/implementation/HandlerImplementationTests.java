@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.validator.rules.semantical.intent.handler;
+package io.github.nikola_velemir.poshtar.validator.rules.semantical.intent.handler.implementation;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
@@ -15,7 +15,7 @@ import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
-public class HandlerIntentTests extends PoshtarProcessorTestBed {
+public class HandlerImplementationTests extends PoshtarProcessorTestBed {
     private static final String WARNING_MESSAGE = String.format("Using %s is discouraged, to better declare semantical intent use either %s, %s or %s",
             RequestHandler.class.getName(), QueryHandler.class.getName(), CommandHandler.class.getName(), VoidCommandHandler.class.getName());
 
@@ -64,32 +64,32 @@ public class HandlerIntentTests extends PoshtarProcessorTestBed {
     }
 
     private PoshtarValidationProcessor createProcessor() {
-        var validator = new RuleValidatorProvider.HandlerIntent();
+        var validator = new RuleValidatorProvider.Implementation();
         return new PoshtarValidationProcessor(validator);
     }
 
     private static class Success {
         static class Command {
             static final JavaFileObject request =
-                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/success/command/SucceedsCommand.java");
+                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/success/command/SucceedsCommand.java");
             static final JavaFileObject handler =
-                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/success/command/SucceedsCommandHandler.java");
+                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/success/command/SucceedsCommandHandler.java");
             static final JavaFileObject[] set = {request, handler};
         }
         static class Query {
             static final JavaFileObject request =
-                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/success/query/SucceedsQuery.java");
+                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/success/query/SucceedsQuery.java");
             static final JavaFileObject handler =
-                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/success/query/SucceedsQueryHandler.java");
+                    JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/success/query/SucceedsQueryHandler.java");
             static final JavaFileObject[] set = {request, handler};
         }
     }
 
     private static class Fail {
         static final JavaFileObject request =
-                JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/fail/FlagsRequest.java");
+                JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/fail/FlagsRequest.java");
         static final JavaFileObject handler =
-                JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/fail/FlagsHandler.java");
+                JavaFileObjects.forResource("test/fixtures/rules/semantical/intent/handler/implementation/fail/FlagsHandler.java");
         static final JavaFileObject[] set = {request, handler};
 
     }

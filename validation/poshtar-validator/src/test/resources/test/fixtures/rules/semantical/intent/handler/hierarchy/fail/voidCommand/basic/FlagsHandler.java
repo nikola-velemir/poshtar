@@ -1,13 +1,14 @@
-package test.fixtures.rules.semantical.intent.handler;
+package test.fixtures.rules.semantical.intent.handler.hierarchy.fail.voidCommand;
 
 import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
 import io.github.nikola_velemir.poshtar.core.types.Unit;
 
 @Handler
-public class FlagsHandler implements RequestHandler<FlagsRequest, Unit> {
+public class FlagsHandler implements RequestHandler<FlagsVoidCommand, Unit> {
+
     @Override
-    public Unit handle(FlagsRequest flagsRequest) {
+    public Unit handle(FlagsVoidCommand flagsVoidCommand) {
         return null;
     }
 }

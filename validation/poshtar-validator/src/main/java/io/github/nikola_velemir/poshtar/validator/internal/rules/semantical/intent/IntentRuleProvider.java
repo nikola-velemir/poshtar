@@ -3,7 +3,8 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.int
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.RequestHandlerIntentRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.hierarchy.RequestHandlerHierarchyRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.implementation.RequestHandlerImplementationRuleProvider;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.request.RequestIntentRuleProvider;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class IntentRuleProvider implements RuleProvider {
     @Override
     public List<Rule> provide() {
         return Stream.of(
-                        new RequestHandlerIntentRuleProvider().provide(),
+                new RequestHandlerHierarchyRuleProvider().provide(),
+                        new RequestHandlerImplementationRuleProvider().provide(),
                         new RequestIntentRuleProvider().provide()
                 ).flatMap(List::stream)
                 .toList();

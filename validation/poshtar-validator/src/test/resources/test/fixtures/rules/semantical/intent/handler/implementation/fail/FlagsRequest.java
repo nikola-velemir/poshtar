@@ -1,4 +1,4 @@
-package test.fixtures.rules.semantical.intent.handler;
+package test.fixtures.rules.semantical.intent.handler.implementation.fail;
 
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
