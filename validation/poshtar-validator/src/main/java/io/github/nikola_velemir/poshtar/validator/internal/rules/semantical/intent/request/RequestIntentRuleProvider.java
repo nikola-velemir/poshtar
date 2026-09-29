@@ -1,4 +1,4 @@
-package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent;
+package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.request;
 
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
@@ -14,6 +14,6 @@ public class RequestIntentRuleProvider implements RuleProvider {
 
     @Override
     public List<Rule> provide() {
-        return List.of();
+        return List.of(new RequestIntentRule());
     }
 }

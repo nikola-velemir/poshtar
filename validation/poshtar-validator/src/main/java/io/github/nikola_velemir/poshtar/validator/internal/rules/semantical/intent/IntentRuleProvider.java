@@ -3,6 +3,8 @@ package io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.int
 import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleKind;
 import io.github.nikola_velemir.poshtar.validator.internal.rules.RuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.handler.RequestHandlerIntentRuleProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.semantical.intent.request.RequestIntentRuleProvider;
 
 import java.util.List;
 import java.util.stream.Stream;

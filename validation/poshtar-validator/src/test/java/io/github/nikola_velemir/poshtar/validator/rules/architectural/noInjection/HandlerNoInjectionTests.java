@@ -2,6 +2,10 @@ package io.github.nikola_velemir.poshtar.validator.rules.architectural.noInjecti
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import io.github.nikola_velemir.poshtar.core.request.Command;
+import io.github.nikola_velemir.poshtar.core.request.Query;
+import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.core.request.VoidCommand;
 import io.github.nikola_velemir.poshtar.validator.processor.PoshtarValidationProcessor;
 import io.github.nikola_velemir.poshtar.validator.rules.PoshtarProcessorTestBed;
 import org.junit.jupiter.api.Disabled;
@@ -183,7 +187,6 @@ public class HandlerNoInjectionTests extends PoshtarProcessorTestBed {
 
         assertThat(compilation).succeeded();
     }
-    @Disabled("Request is no longer used.")
     @Test
     @DisplayName("Compilation fails when request components injected but not overruled!")
     void shouldFailCompilation_whenRequestComponentsNotOverruled() {
@@ -198,8 +201,7 @@ public class HandlerNoInjectionTests extends PoshtarProcessorTestBed {
                 .hadErrorContaining("PoshtaR VIOLATION: Handlers cannot be injected, set thru methods or constructor, or manually managed. Use 'Poshtar.send(request)'")
                 .inFile(Request.failingConsumer);
     }
-    @Disabled("Request is no longer used.")
-    @Test
+   @Test
     @DisplayName("Compilation passes when request components injected and overruled!")
     void shouldFailCompilation_whenRequestComponentsOverruled() {
         Compilation compilation =
