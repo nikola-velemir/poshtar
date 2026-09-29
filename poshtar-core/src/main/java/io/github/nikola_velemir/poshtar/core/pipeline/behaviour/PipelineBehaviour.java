@@ -20,6 +20,7 @@ package io.github.nikola_velemir.poshtar.core.pipeline.behaviour;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import jakarta.annotation.Nonnull;
 
 /**
  * Defines a cross-cutting concern that can be executed before or after a request is handled.
@@ -52,5 +53,6 @@ public interface PipelineBehaviour<TRequest extends Request<TResponse>, TRespons
      * @param next    Next node in pipeline execution.
      * @return The result of the request processing.
      */
-    TResponse handle(TRequest request, RequestDelegate<TRequest, TResponse> next);
+    @Nonnull
+    TResponse handle(@Nonnull TRequest request, @Nonnull RequestDelegate<TRequest, TResponse> next);
 }

@@ -24,6 +24,7 @@ import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +67,10 @@ public abstract class PoshtarBase implements Poshtar {
      * @return Object of {@param <TRes>}, once the request has been handled.
      * @throws IllegalArgumentException if passed request is null.
      */
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    public <TReq extends Request<TRes>, TRes> TRes send(TReq request) {
+    public <TReq extends Request<TRes>, TRes> TRes send(@Nonnull TReq request) {
 
         if (request == null)
             throw new IllegalArgumentException("Request cannot be null");
@@ -77,6 +79,7 @@ public abstract class PoshtarBase implements Poshtar {
 
     }
 
+    @Nonnull
     protected NotificationRegistry getNotificationRegistry() {
         return this.notificationRegistry;
     }
@@ -90,7 +93,7 @@ public abstract class PoshtarBase implements Poshtar {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <TNotification extends Notification> void publish(TNotification notification) {
+    public <TNotification extends Notification> void publish(@Nonnull TNotification notification) {
         if (notification == null)
             throw new IllegalArgumentException("Request cannot be null");
         var handlers = notificationRegistry.resolve((Class<TNotification>) notification.getClass());
@@ -100,9 +103,12 @@ public abstract class PoshtarBase implements Poshtar {
 
     }
 
-
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {
+    protected <TNotification extends Notification> void dispatch(
+            @Nonnull
+            TNotification notification,
+            @Nonnull
+            List<NotificationHandler> handlers) {
         List<Throwable> collectedErrors = new ArrayList<>();
 
         for (var handler : handlers) {

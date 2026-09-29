@@ -19,6 +19,8 @@
 package io.github.nikola_velemir.poshtar.core.request;
 
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Defines a chain of responsibility, through which request will be passed during handling.
  * <p>
@@ -46,5 +48,6 @@ public interface RequestInvocationChain<TRequest extends Request<TResponse>, TRe
      * @param request Request to be processed.
      * @return Response object, which represents the result of request processing.
      */
+    @Nonnull
     TResponse execute(TRequest request);
 }

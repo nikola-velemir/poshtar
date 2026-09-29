@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.core.pipeline.configuration;
 
 import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviour;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +64,8 @@ public class PipelineConfiguration {
      * @return This configurer instance for method chaining.
      * @throws IllegalArgumentException if the provided class is null.
      */
-    public <T extends PipelineBehaviour<?, ?>> PipelineConfiguration add(Class<T> behaviourClass) {
+    @Nonnull
+    public <T extends PipelineBehaviour<?, ?>> PipelineConfiguration add(@Nonnull Class<T> behaviourClass) {
         if (behaviourClass == null) {
             throw new IllegalArgumentException("Behaviour class cannot be null");
         }
@@ -76,6 +78,7 @@ public class PipelineConfiguration {
      *
      * @return A list of classes representing the configured pipeline.
      */
+    @Nonnull
     public List<Class<? extends PipelineBehaviour<?, ?>>> getBehaviourClasses() {
         return Collections.unmodifiableList(behaviourClasses);
     }

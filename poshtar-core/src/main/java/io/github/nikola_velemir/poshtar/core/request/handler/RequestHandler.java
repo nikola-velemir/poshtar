@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.core.request.handler;
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import jakarta.annotation.Nonnull;
 
 /**
  * Defines a component responsible for processing a specific type of {@link Request}.
@@ -43,5 +44,6 @@ public interface RequestHandler<TRequest extends Request<TResponse>, TResponse>
      * @param request The request object containing the input data.
      * @return The result of the request processing.
      */
+    @Nonnull
     TResponse handle(TRequest request);
 }

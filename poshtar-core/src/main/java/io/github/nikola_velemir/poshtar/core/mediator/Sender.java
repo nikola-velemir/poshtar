@@ -1,6 +1,7 @@
 package io.github.nikola_velemir.poshtar.core.mediator;
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import jakarta.annotation.Nonnull;
 
 public interface Sender {
     /**
@@ -12,6 +13,9 @@ public interface Sender {
      * @return The response produced by the handler and its associated pipeline.
      * @throws RuntimeException if no handler is registered for the given request type.
      */
-    <TRequest extends Request<TResponse>, TResponse> TResponse send(TRequest request);
+    @Nonnull
+    <TRequest extends Request<TResponse>, TResponse> TResponse send(
+            @Nonnull
+            TRequest request);
 
 }

@@ -25,6 +25,7 @@ import io.github.nikola_velemir.poshtar.core.pipeline.factory.PipelineFactory;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.RequestInvocationChain;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import jakarta.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public abstract class AbstractRequestRegistry implements RequestRegistry {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(Class<TRequest> requestType) {
+    public @Nonnull <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(@Nonnull Class<TRequest> requestType) {
         RequestInvocationChain<TRequest, TResponse> requestChain = (RequestInvocationChain<TRequest, TResponse>) handlerMappings.get(requestType);
         if (requestChain == null)
             throw new HandlerNotFoundException(requestType);
@@ -74,7 +75,7 @@ public abstract class AbstractRequestRegistry implements RequestRegistry {
      * @throws AmbiguousHandlerException if handler is already registered to the request type.
      */
     @Override
-    public <TRequest extends Request<TResponse>, TResponse> void register(Class<TRequest> requestType, RequestHandler<TRequest, TResponse> handler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
+    public <TRequest extends Request<TResponse>, TResponse> void register(@Nonnull Class<TRequest> requestType, @Nonnull RequestHandler<TRequest, TResponse> handler, @Nonnull List<PipelineBehaviour<?, ?>> rawBehaviours) {
         var builtPipeline = PipelineFactory.create(handler, rawBehaviours);
         var putResult =
                 handlerMappings.putIfAbsent(requestType, builtPipeline);
@@ -90,6 +91,7 @@ public abstract class AbstractRequestRegistry implements RequestRegistry {
      * @param requestType   Class literal of the request.
      * @return List of behaviors that support the request type.
      */
+    @Nonnull
     protected List<PipelineBehaviour<?, ?>> filterBehaviours(
             List<PipelineBehaviour<?, ?>> allBehaviours, Class<?> requestType) {
 

@@ -1,6 +1,7 @@
 package io.github.nikola_velemir.poshtar.core.mediator;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
+import jakarta.annotation.Nonnull;
 
 public interface Publisher {
     /**
@@ -13,5 +14,5 @@ public interface Publisher {
      * @param <TNotification> The type of notification being published.
      * @param notification    The notification object to be broadcasted.
      */
-    <TNotification extends Notification> void publish(TNotification notification);
+    <TNotification extends Notification> void publish(@Nonnull TNotification notification);
 }

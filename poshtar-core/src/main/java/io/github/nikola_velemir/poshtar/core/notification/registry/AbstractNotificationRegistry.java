@@ -20,6 +20,7 @@ package io.github.nikola_velemir.poshtar.core.notification.registry;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public abstract class AbstractNotificationRegistry implements NotificationRegist
      * @param <TNotification>   Type of notification.
      */
     @Override
-    public <TNotification extends Notification> void register(Class<TNotification> notificationClass, NotificationHandler<TNotification> handler) {
+    public <TNotification extends Notification> void register(@Nonnull Class<TNotification> notificationClass, NotificationHandler<TNotification> handler) {
         handlerMappings.computeIfAbsent(notificationClass, k -> new ArrayList<>())
                 .add(handler);
     }
@@ -62,7 +63,7 @@ public abstract class AbstractNotificationRegistry implements NotificationRegist
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public <TNotification extends Notification> List<NotificationHandler> resolve(Class<TNotification> type) {
+    public @Nonnull <TNotification extends Notification> List<NotificationHandler> resolve(@Nonnull Class<TNotification> type) {
         return (List) handlerMappings.getOrDefault(type, List.of());
     }
 }

@@ -23,6 +23,7 @@ import io.github.nikola_velemir.poshtar.core.pipeline.delegate.RequestDelegate;
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.RequestInvocationChain;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -53,7 +54,12 @@ public class PipelineFactory {
      * @return A function representing the complete execution head of the pipeline.
      */
     @SuppressWarnings("unchecked")
-    public static <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> create(RequestHandler<?, ?> rawHandler, List<PipelineBehaviour<?, ?>> rawBehaviours) {
+    @Nonnull
+    public static
+    <TRequest extends Request<TResponse>, TResponse>
+    RequestInvocationChain<TRequest, TResponse>
+    create(@Nonnull RequestHandler<?, ?> rawHandler,
+           @Nonnull List<PipelineBehaviour<?, ?>> rawBehaviours) {
         RequestHandler<TRequest, TResponse> handler =
                 (RequestHandler<TRequest, TResponse>) rawHandler;
 
@@ -79,7 +85,8 @@ public class PipelineFactory {
      * @param behaviour   The behavior to be applied at this step.
      * @return A new {@link RequestDelegate} that executes the behavior.
      */
-    private static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> createNextNode(RequestDelegate<TRequest, TResponse> nextNode, PipelineBehaviour<TRequest, TResponse> behaviour) {
+    @Nonnull
+    private static <TRequest extends Request<TResponse>, TResponse> RequestDelegate<TRequest, TResponse> createNextNode(@Nonnull RequestDelegate<TRequest, TResponse> nextNode, @Nonnull PipelineBehaviour<TRequest, TResponse> behaviour) {
         return (request) -> behaviour.handle(request, nextNode);
     }
 }

@@ -22,6 +22,7 @@ import io.github.nikola_velemir.poshtar.core.pipeline.behaviour.PipelineBehaviou
 import io.github.nikola_velemir.poshtar.core.request.Request;
 import io.github.nikola_velemir.poshtar.core.request.RequestInvocationChain;
 import io.github.nikola_velemir.poshtar.core.request.handler.RequestHandler;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -55,7 +56,8 @@ public interface RequestRegistry {
      * @return A {@link RequestInvocationChain} that supports the request type, containing wrapping behaviors and the final handler.
      * @throws RuntimeException if no handler is registered to the given request type.
      */
-    <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(Class<TRequest> requestType);
+    @Nonnull
+    <TRequest extends Request<TResponse>, TResponse> RequestInvocationChain<TRequest, TResponse> resolve(@Nonnull Class<TRequest> requestType);
 
     /**
      * Registers a request type by binding to a handler and a set of pipeline behaviors.
@@ -67,8 +69,11 @@ public interface RequestRegistry {
      * @param <TResponse>   The type of the response.
      */
     <TRequest extends Request<TResponse>, TResponse> void register(
+            @Nonnull
             Class<TRequest> requestType,
+            @Nonnull
             RequestHandler<TRequest, TResponse> rawHandler,
+            @Nonnull
             List<PipelineBehaviour<?, ?>> rawBehaviours);
 
 }

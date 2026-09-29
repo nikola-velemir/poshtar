@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.core.pipeline.delegate;
 
 import io.github.nikola_velemir.poshtar.core.request.Request;
+import jakarta.annotation.Nonnull;
 
 /**
  * Represents a delegate that handles a request within the execution pipeline.
@@ -41,5 +42,6 @@ public interface RequestDelegate<TRequest extends Request<TResponse>, TResponse>
      * @param request The request object to be processed.
      * @return The response produced by the subsequent steps in the pipeline.
      */
+    @Nonnull
     TResponse handle(TRequest request);
 }

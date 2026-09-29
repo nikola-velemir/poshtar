@@ -20,6 +20,7 @@ package io.github.nikola_velemir.poshtar.core.notification.registry;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -44,13 +45,14 @@ import java.util.List;
  */
 public interface NotificationRegistry {
     /**
-     *  Registers a handler to the specific notification type.
+     * Registers a handler to the specific notification type.
      *
      * @param notificationClass Class literal of the notification to register.
      * @param handler           Handler that will handler a notification.
      * @param <TNotification>   The type of the notification.
      */
-    <TNotification extends Notification> void register(Class<TNotification> notificationClass, NotificationHandler<TNotification> handler);
+    <TNotification extends Notification>
+    void register(@Nonnull Class<TNotification> notificationClass, NotificationHandler<TNotification> handler);
 
     /**
      * Resolves the list of handlers for a specific notification.
@@ -60,5 +62,7 @@ public interface NotificationRegistry {
      * @return A list of {@link NotificationHandler} that supports the notification type.
      */
     @SuppressWarnings("rawtypes")
-    <TNotification extends Notification> List<NotificationHandler> resolve(Class<TNotification> type);
+    @Nonnull
+    <TNotification extends Notification>
+    List<NotificationHandler> resolve(@Nonnull Class<TNotification> type);
 }

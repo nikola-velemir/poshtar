@@ -19,6 +19,7 @@
 package io.github.nikola_velemir.poshtar.core.notification.handler;
 
 import io.github.nikola_velemir.poshtar.core.notification.Notification;
+import jakarta.annotation.Nonnull;
 
 /**
  * Defines a component responsible for processing a specific type of {@link NotificationHandler}.
@@ -40,6 +41,6 @@ public interface NotificationHandler<TNotification extends Notification> {
      *
      * @param notification The notification object containing the input data.
      */
-    void handle(TNotification notification);
+    void handle(@Nonnull TNotification notification);
 
 }
