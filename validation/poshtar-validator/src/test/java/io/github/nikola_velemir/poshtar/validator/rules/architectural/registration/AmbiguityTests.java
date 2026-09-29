@@ -153,7 +153,6 @@ public class AmbiguityTests extends PoshtarProcessorTestBed {
                 .inFile(Fail.Request.handlerOne);
     }
 
-    @Disabled("Request is no longer used.")
     @Test
     @DisplayName("Compilation succeeds when exactly one handler is registered")
     void shouldSucceed_whenSingleHandlerIsRegistered() {

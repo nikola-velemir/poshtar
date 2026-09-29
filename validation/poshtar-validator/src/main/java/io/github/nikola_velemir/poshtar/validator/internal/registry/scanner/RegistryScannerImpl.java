@@ -19,35 +19,33 @@
 package io.github.nikola_velemir.poshtar.validator.internal.registry.scanner;
 
 
-import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
-import io.github.nikola_velemir.poshtar.core.annotations.Handler;
-import io.github.nikola_velemir.poshtar.core.notification.Notification;
-import io.github.nikola_velemir.poshtar.core.request.Request;
-import io.github.nikola_velemir.poshtar.validator.internal.GenericsHelper;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.registry.exception.ResolutionException;
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.HashSet;
+
+import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
+import io.github.nikola_velemir.poshtar.core.annotations.Handler;
+import io.github.nikola_velemir.poshtar.core.notification.Notification;
+import io.github.nikola_velemir.poshtar.core.request.Request;
+import io.github.nikola_velemir.poshtar.validator.internal.GenericsHelper;
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.registry.exception.ResolutionException;
 
 /**
  * Implementation of {@link RegistryScanner} that performs classpath
  * discovery during an annotation processing round.
  * <p>
  * This scanner identifies three primary categories of components:
+ * </p>
  * <ul>
  *     <li><b>Handlers:</b> Classes annotated with {@code @Handler} that process specific requests.</li>
  *     <li><b>Behaviors:</b> Classes annotated with {@code @Behaviour} that act as pipeline middleware.</li>
  *     <li><b>Requests:</b> Any class or record implementing the {@code Request} interface.</li>
  * </ul>
- * </p>
- * <p>
  *
  * @author Nikola Velemir
  * @version ${revision}

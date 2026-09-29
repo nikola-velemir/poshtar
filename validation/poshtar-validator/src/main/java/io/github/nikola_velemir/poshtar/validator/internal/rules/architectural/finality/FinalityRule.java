@@ -18,16 +18,17 @@
 
 package io.github.nikola_velemir.poshtar.validator.internal.rules.architectural.finality;
 
-import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
-import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
-import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
+import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import java.util.Set;
+
+import io.github.nikola_velemir.poshtar.validator.internal.context.ProcessorContext;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.Logger;
+import io.github.nikola_velemir.poshtar.validator.internal.logger.LoggerProvider;
+import io.github.nikola_velemir.poshtar.validator.internal.rules.Rule;
 
 /**
  * Base for all finality rules.
@@ -43,6 +44,11 @@ public abstract class FinalityRule implements Rule {
      * @return Violoation message text.
      */
     protected abstract String getViolationMessage(String requestFqn);
+    /**
+     * Provides the FQNs required for finality validation.
+     * @param ctx Processor context of the round.
+     * @return String set of the required FQNs.
+     */
     protected abstract Set<String> getFQNs(ProcessorContext ctx);
     /**
      * Validates the finality of request classes. Logs the error if finality is violated.

@@ -34,5 +34,5 @@ package io.github.nikola_velemir.poshtar.core.request;
  * @version ${revision}
  * @since 1.0.0
  */
-public sealed interface Request<TResponse> permits Query, Command, VoidCommand {
+public interface Request<TResponse> {
 }
