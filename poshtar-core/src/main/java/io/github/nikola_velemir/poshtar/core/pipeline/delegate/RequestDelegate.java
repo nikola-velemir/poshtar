@@ -43,5 +43,5 @@ public interface RequestDelegate<TRequest extends Request<TResponse>, TResponse>
      * @return The response produced by the subsequent steps in the pipeline.
      */
     @Nonnull
-    TResponse handle(TRequest request);
+    TResponse handle(@Nonnull TRequest request);
 }
