@@ -31,6 +31,7 @@ import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.scheduling.TaskExecutors;
+import jakarta.annotation.Nonnull;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
@@ -56,6 +57,7 @@ public class PoshtarFactory {
      * @return an empty pipeline configuration.
      */
     @Singleton
+    @Nonnull
     @Requires(missingBeans = PipelineConfiguration.class)
     public PipelineConfiguration defaultPipelineConfiguration() {
         return new PipelineConfiguration();
@@ -72,7 +74,12 @@ public class PoshtarFactory {
      * @return the constructed request registry.
      */
     @Singleton
-    public RequestRegistry requestRegistry(BeanContext context, PipelineConfiguration pipelineConfiguration) {
+    @Nonnull
+    public RequestRegistry requestRegistry(
+            @Nonnull
+            BeanContext context,
+            @Nonnull
+            PipelineConfiguration pipelineConfiguration) {
         return new MicronautRequestRegistry(context, pipelineConfiguration);
     }
 
@@ -84,7 +91,9 @@ public class PoshtarFactory {
      * @return the constructed notification registry.
      */
     @Singleton
-    public NotificationRegistry notificationRegistry(BeanContext context) {
+    public NotificationRegistry notificationRegistry(
+            @Nonnull
+            BeanContext context) {
         return new MicronautNotificationRegistry(context);
     }
 
@@ -99,7 +108,13 @@ public class PoshtarFactory {
      * @return the constructed Poshtar facade.
      */
     @Singleton
-    public Poshtar poshtar(RequestRegistry requestRegistry, NotificationRegistry notificationRegistry, @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public Poshtar poshtar(
+            @Nonnull
+            RequestRegistry requestRegistry,
+            @Nonnull
+            NotificationRegistry notificationRegistry,
+            @Nonnull
+            @Named(TaskExecutors.IO) ExecutorService executorService) {
         return new MicronautPoshtar(requestRegistry, notificationRegistry, executorService);
     }
     /**

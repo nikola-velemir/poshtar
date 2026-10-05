@@ -45,5 +45,5 @@ public interface RequestHandler<TRequest extends Request<TResponse>, TResponse>
      * @return The result of the request processing.
      */
     @Nonnull
-    TResponse handle(TRequest request);
+    TResponse handle(@Nonnull TRequest request);
 }

@@ -8,6 +8,8 @@ import io.github.nikola_velemir.poshtar.core.request.registry.AbstractRequestReg
 import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.discovery.RequestType;
 import io.micronaut.context.BeanContext;
 import io.micronaut.inject.BeanDefinition;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +34,11 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
      *                              discovery.
      * @param pipelineConfiguration Provided order of behavior execution.
      */
-    public MicronautRequestRegistry(BeanContext context, PipelineConfiguration pipelineConfiguration) {
+    public MicronautRequestRegistry(
+            @Nonnull
+            BeanContext context,
+            @Nonnull
+            PipelineConfiguration pipelineConfiguration) {
         this.context = context;
         init(pipelineConfiguration);
     }
@@ -45,7 +51,10 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
      *                              behaviors
      */
     @SuppressWarnings("unchecked")
-    private void init(PipelineConfiguration pipelineConfiguration) {
+    private void init(
+            @Nonnull
+            PipelineConfiguration pipelineConfiguration) {
+
         List<PipelineBehaviour<?, ?>> orderedBehaviours = (List<PipelineBehaviour<?, ?>>) provideBehaviours(
                 pipelineConfiguration);
 
@@ -65,7 +74,8 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
         }
     }
 
-    private static Class<?> resolveRequestType(BeanDefinition<RequestHandler> definition) {
+    @Nullable
+    private static Class<?> resolveRequestType(@Nonnull BeanDefinition<RequestHandler> definition) {
         return definition.classValue(RequestType.class).orElse(null);
 //        List<io.micronaut.core.type.Argument<?>> typeArguments = definition.getTypeArguments(RequestHandler.class);
 //
@@ -90,15 +100,19 @@ public final class MicronautRequestRegistry extends AbstractRequestRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private void registerAsCasted(RequestHandler<?, ?> handler, Class<?> requestType,
-                                  List<PipelineBehaviour<?, ?>> filteredBehaviours) {
+    private void registerAsCasted(
+            @Nonnull
+            RequestHandler<?, ?> handler, Class<?> requestType,
+            @Nonnull
+            List<PipelineBehaviour<?, ?>> filteredBehaviours) {
         Class<Request<Object>> castedRequest = (Class<Request<Object>>) requestType;
         RequestHandler<Request<Object>, Object> castedHandler = (RequestHandler<Request<Object>, Object>) handler;
 
         register(castedRequest, castedHandler, filteredBehaviours);
     }
 
-    private List<? extends PipelineBehaviour<?, ?>> provideBehaviours(PipelineConfiguration pipelineConfiguration) {
+    @Nonnull
+    private List<? extends PipelineBehaviour<?, ?>> provideBehaviours(@Nonnull PipelineConfiguration pipelineConfiguration) {
         return pipelineConfiguration
                 .getBehaviourClasses()
                 .stream()

@@ -6,6 +6,7 @@ import io.github.nikola_velemir.poshtar.core.notification.Notification;
 import io.github.nikola_velemir.poshtar.core.notification.handler.NotificationHandler;
 import io.github.nikola_velemir.poshtar.core.notification.registry.NotificationRegistry;
 import io.github.nikola_velemir.poshtar.core.request.registry.RequestRegistry;
+import jakarta.annotation.Nonnull;
 import jakarta.inject.Named;
 
 import java.util.ArrayList;
@@ -25,17 +26,22 @@ public final class MicronautPoshtar extends PoshtarBase {
      * @param executorService      Micronaut-managed executor used to dispatch notification handlers concurrently.
      */
     public MicronautPoshtar(
+            @Nonnull
             RequestRegistry requestRegistry,
+            @Nonnull
             NotificationRegistry notificationRegistry,
+            @Nonnull
             @Named("poshtar") ExecutorService executorService
     ) {
         super(requestRegistry, notificationRegistry);
         this.executorService = executorService;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
-    protected <TNotification extends Notification> void dispatch(TNotification notification, List<NotificationHandler> handlers) {
+    protected <TNotification extends Notification> void dispatch(
+            @Nonnull TNotification notification,
+            @Nonnull List<NotificationHandler> handlers) {
         List<Throwable> collectedErrors = new CopyOnWriteArrayList<>();
 
         List<CompletableFuture<Void>> futures = handlers.stream()

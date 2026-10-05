@@ -9,6 +9,7 @@ import io.micronaut.core.annotation.AnnotationClassValue;
 import io.micronaut.inject.ast.ClassElement;
 import io.micronaut.inject.visitor.TypeElementVisitor;
 import io.micronaut.inject.visitor.VisitorContext;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 import java.util.Optional;
@@ -16,12 +17,13 @@ import java.util.Optional;
 @AutoService(TypeElementVisitor.class)
 public class PipelineBehaviourTypeVisitor implements TypeElementVisitor<Behaviour, Object> {
     @Override
+    @Nonnull
     public VisitorKind getVisitorKind() {
         return VisitorKind.ISOLATING;
     }
 
     @Override
-    public void visitClass(ClassElement element, VisitorContext context) {
+    public void visitClass(@Nonnull ClassElement element, @Nonnull VisitorContext context) {
         if (element.isAbstract() || element.isInterface() || !element.isAssignable(PipelineBehaviour.class)) {
             return;
         }
@@ -36,7 +38,8 @@ public class PipelineBehaviourTypeVisitor implements TypeElementVisitor<Behaviou
         });
     }
 
-    private Optional<ClassElement> resolveRequestType(ClassElement element) {
+    @Nonnull
+    private Optional<ClassElement> resolveRequestType(@Nonnull ClassElement element) {
         Map<String, ClassElement> typeArguments = element.getTypeArguments(PipelineBehaviour.class);
 
         if (!typeArguments.isEmpty()) {

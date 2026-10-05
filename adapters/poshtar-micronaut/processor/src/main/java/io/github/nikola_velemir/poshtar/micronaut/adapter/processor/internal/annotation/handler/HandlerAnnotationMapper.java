@@ -5,6 +5,7 @@ import io.github.nikola_velemir.poshtar.core.annotations.Handler;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
+import jakarta.annotation.Nonnull;
 import jakarta.inject.Singleton;
 
 import java.util.Collections;
@@ -30,6 +31,7 @@ public class HandlerAnnotationMapper implements TypedAnnotationMapper<Handler> {
      * @return the {@link Handler} class type
      */
     @Override
+    @Nonnull
     public Class<Handler> annotationType() {
         return Handler.class;
     }
@@ -43,7 +45,12 @@ public class HandlerAnnotationMapper implements TypedAnnotationMapper<Handler> {
      *         annotation value
      */
     @Override
-    public List<AnnotationValue<?>> map(AnnotationValue<Handler> annotation, VisitorContext visitorContext) {
+    @Nonnull
+    public List<AnnotationValue<?>> map(
+            @Nonnull
+            AnnotationValue<Handler> annotation,
+            @Nonnull
+            VisitorContext visitorContext) {
         return Collections.singletonList(AnnotationValue.builder(Singleton.class).build());
     }
 }

@@ -5,6 +5,7 @@ import io.github.nikola_velemir.poshtar.core.annotations.Behaviour;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
+import jakarta.annotation.Nonnull;
 import jakarta.inject.Singleton;
 
 import java.util.Collections;
@@ -29,6 +30,7 @@ public class BehaviourAnnotationMapper implements TypedAnnotationMapper<Behaviou
      * @return the {@link Behaviour} class type
      */
     @Override
+    @Nonnull
     public Class<Behaviour> annotationType() {
         return Behaviour.class;
     }
@@ -42,9 +44,12 @@ public class BehaviourAnnotationMapper implements TypedAnnotationMapper<Behaviou
      *         annotation value
      */
     @Override
-    public List<AnnotationValue<?>> map(AnnotationValue<Behaviour> annotation, VisitorContext visitorContext) {
-        System.out.println("It fucking ran didnt it?");
-
+    @Nonnull
+    public List<AnnotationValue<?>> map(
+            @Nonnull
+            AnnotationValue<Behaviour> annotation,
+            @Nonnull
+            VisitorContext visitorContext) {
         return Collections.singletonList(AnnotationValue.builder(Singleton.class).build());
     }
 }

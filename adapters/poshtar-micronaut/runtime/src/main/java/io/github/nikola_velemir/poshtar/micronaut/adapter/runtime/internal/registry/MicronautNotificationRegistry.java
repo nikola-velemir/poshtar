@@ -6,6 +6,7 @@ import io.github.nikola_velemir.poshtar.core.notification.registry.AbstractNotif
 import io.github.nikola_velemir.poshtar.micronaut.adapter.runtime.internal.discovery.NotificationType;
 import io.micronaut.context.BeanContext;
 import io.micronaut.inject.BeanDefinition;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -27,7 +28,7 @@ public final class MicronautNotificationRegistry extends AbstractNotificationReg
      * @param context the Micronaut {@link BeanContext} used for handler discovery
      *                and lookup
      */
-    public MicronautNotificationRegistry(BeanContext context) {
+    public MicronautNotificationRegistry(@Nonnull BeanContext context) {
         Collection<BeanDefinition<NotificationHandler>> definitions = context
                 .getBeanDefinitions(NotificationHandler.class);
 
@@ -36,7 +37,6 @@ public final class MicronautNotificationRegistry extends AbstractNotificationReg
 
             if (notificationType != null && Notification.class.isAssignableFrom(notificationType)) {
                 @SuppressWarnings("unchecked")
-
                 Class<? extends Notification> castedType = (Class<? extends Notification>) notificationType;
                 NotificationHandler handler = context.getBean(definition);
 

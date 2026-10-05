@@ -8,6 +8,7 @@ import io.micronaut.core.annotation.AnnotationClassValue;
 import io.micronaut.inject.ast.ClassElement;
 import io.micronaut.inject.visitor.TypeElementVisitor;
 import io.micronaut.inject.visitor.VisitorContext;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @AutoService(TypeElementVisitor.class)
 public class RequestHandlerTypeVisitor implements TypeElementVisitor<Handler, Object> {
     @Override
+    @Nonnull
     public VisitorKind getVisitorKind() {
         // Each handler class is processed independently - no cross-module state needed.
         return VisitorKind.ISOLATING;
@@ -47,7 +49,8 @@ public class RequestHandlerTypeVisitor implements TypeElementVisitor<Handler, Ob
      * of {@link RequestHandler}, checking the class itself first and then
      * each superclass in turn (handlers may extend an abstract base handler).
      */
-    private Optional<ClassElement> resolveRequestType(ClassElement element) {
+    @Nonnull
+    private Optional<ClassElement> resolveRequestType(@Nonnull ClassElement element) {
         Map<String, ClassElement> typeArguments = element.getTypeArguments(RequestHandler.class);
 
         if (!typeArguments.isEmpty()) {
